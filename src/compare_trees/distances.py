@@ -59,15 +59,26 @@ def dist_branch_direction(node1, node2, global_params):
 
         return abs(timer_length1 - timer_length2) * weight
 
-    return visit_virtual(dist, node1, node2)
+    return visit_virtual(dist, node1, node2, global_params)
 
 
-def visit_virtual(fun, node1, node2):
+def visit_virtual(fun, node1, node2, global_params):
     res = fun(node1, node2)
     left1 = None if (node1 is None) else node1.left
     right1 = None if (node1 is None) else node1.right
     left2 = None if (node2 is None) else node2.left
     right2 = None if (node2 is None) else node2.right
+
+    # swap left2 and right2 if they fit better than direct order
+    if global_params.change_left_right:
+        if all(x is not None for x in [left1, left2, right1, right2]):
+            direct_order_fertility = min(left1.fertility, left2.fertility) + min(right1.fertility, right2.fertility)
+            reverse_order_fertility = min(left1.fertility, right2.fertility) + min(right1.fertility, left2.fertility)
+            if reverse_order_fertility > direct_order_fertility:
+                tmp = left2
+                left2 = right2
+                right2 = tmp
+
 
     if (left1 is not None) or (left2 is not None):
         res += visit_virtual(fun, left1, left2)

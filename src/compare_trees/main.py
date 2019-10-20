@@ -9,7 +9,7 @@ src_trees = read_all_trees()
 
 # create a copy to modify
 trees = [copy.deepcopy(src_tree) for src_tree in src_trees]
-global_params = GlobalParams(a=0.8, b=0.8, g=1, param_g_weight=0.1)
+global_params = GlobalParams(a=0.8, b=0.8, g=1, param_g_weight=0.1, change_left_right=True)
 
 # prepare to calculate distances
 for tree in trees:
