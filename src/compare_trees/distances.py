@@ -14,7 +14,7 @@ def dist_branch_direction(node1, node2, global_params):
         (axis1, axis2) = sorted((axis1, axis2))
         # L < d < x < y < z < zNone
 
-        weight = n2.weight if (n1 is None) else n1.weight
+        weight = n2.personal_weight if (n1 is None) else n1.personal_weight
 
         if axis1 == axis2:
             return 0 * weight
@@ -48,7 +48,7 @@ def dist_branch_direction(node1, node2, global_params):
         g1 = 0 if (n1 is None) or (n1.growth is None) else n1.growth - 1
         g2 = 0 if (n2 is None) or (n2.growth is None) else n2.growth - 1
 
-        weight = n2.weight if (n1 is None) else n1.weight
+        weight = n2.personal_weight if (n1 is None) else n1.personal_weight
 
         return abs(g1 - g2) * weight
 
@@ -64,7 +64,7 @@ def dist_branch_direction(node1, node2, global_params):
         #     if n1 is not None and n2 is not None:
         #         print(f"    {n1.name} {n2.name}")
 
-        weight = n2.weight if (n1 is None) else n1.weight
+        weight = n2.personal_weight if (n1 is None) else n1.personal_weight
 
         return abs(chain_length1 - chain_length2) * weight
 
@@ -84,13 +84,13 @@ def visit_virtual(fun, node1, node2, global_params):
             direct_order_fertility = min(left1.fertility, left2.fertility) + min(right1.fertility, right2.fertility)
             reverse_order_fertility = min(left1.fertility, right2.fertility) + min(right1.fertility, left2.fertility)
             global_params.total += 1
-            if reverse_order_fertility > direct_order_fertility:
+            if node1.level <= 10 and reverse_order_fertility > 2 * direct_order_fertility:
                 # swap
                 tmp = left2
                 left2 = right2
                 right2 = tmp
                 global_params.swaps += 1
-                print(f"swap {direct_order_fertility} {reverse_order_fertility} {node1.level}")
+                print(f"swap {direct_order_fertility} {reverse_order_fertility} {node1.level} {node2.level} {node1.name} {node2.name} {node1.address} {node2.address} {node1.axis} {node2.axis}")
 
     if (left1 is not None) or (left2 is not None):
         res += visit_virtual(fun, left1, left2, global_params)
