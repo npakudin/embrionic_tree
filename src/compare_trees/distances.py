@@ -79,7 +79,7 @@ def visit_virtual(fun, node1, node2, global_params):
     right2 = None if (node2 is None) else node2.right
 
     # swap left2 and right2 if reverse order fit better than direct order
-    if global_params.change_left_right:
+    if global_params.is_swap_left_right:
         if all(x is not None for x in [left1, left2, right1, right2]):
             direct_order_fertility = min(left1.fertility, left2.fertility) + min(right1.fertility, right2.fertility)
             reverse_order_fertility = min(left1.fertility, right2.fertility) + min(right1.fertility, left2.fertility)

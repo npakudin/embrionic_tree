@@ -4,7 +4,7 @@ from unittest import TestCase
 from src.compare_trees.compare_trees import get_distances_by_files
 from src.compare_trees.global_params import GlobalParams
 
-global_params = GlobalParams(a=0.6, b=0.5, g=1, param_g_weight=0.1, chain_length_weight=0.1, change_left_right=False,
+global_params = GlobalParams(a=0.6, b=0.5, g=1, param_g_weight=0.1, chain_length_weight=0.1, is_swap_left_right=False,
                              max_levels=4)
 
 
@@ -26,14 +26,14 @@ class TestDistance(TestCase):
 
     def test_no_swap_left_right(self):
         global_params_copy = copy.deepcopy(global_params)
-        global_params_copy.change_left_right = False
+        global_params_copy.is_swap_left_right = False
         [_trees, distance_matrix] = get_distances_by_files("../../test/test_input/test_swap_left_right*.xtg", global_params_copy)
         expected_distance = 2.424
         self.assertAlmostEqual(expected_distance, distance_matrix[0][1])
 
     def test_swap_left_right(self):
         global_params_copy = copy.deepcopy(global_params)
-        global_params_copy.change_left_right = True
+        global_params_copy.is_swap_left_right = True
         [_trees, distance_matrix] = get_distances_by_files("../../test/test_input/test_swap_left_right*.xtg", global_params_copy)
         expected_distance = 0
         self.assertAlmostEqual(expected_distance, distance_matrix[0][1])
