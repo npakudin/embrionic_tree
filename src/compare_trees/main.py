@@ -1,24 +1,10 @@
-import copy
-from src.compare_trees.development_tree_reader import read_all_trees
-from src.compare_trees.distances import dist_branch_direction
+from src.compare_trees.compare_trees import get_distances_by_files
 from src.compare_trees.global_params import GlobalParams
 
+global_params = GlobalParams(a=0.8, b=0.8, g=1, param_g_weight=0.1, chain_length_weight=0.1, change_left_right=False,
+                             max_levels=11)
 
-# read trees from *.xtg files in xtg folder
-src_trees = read_all_trees()
-
-
-# create a copy of trees to modify
-trees = [copy.deepcopy(src_tree) for src_tree in src_trees]
-global_params = GlobalParams(a=0.8, b=0.8, g=1, param_g_weight=0.1, chain_length_weight=0.1, change_left_right=False)
-
-# prepare to calculate distances
-for tree in trees:
-    tree.root.reduce(global_params.g, 1)
-    tree.root.prepare(global_params)
-
-# calculate distances matrix
-distance_matrix = [[dist_branch_direction(v1.root, v2.root, global_params) for v2 in trees] for v1 in trees]
+[trees, distance_matrix] = get_distances_by_files("../../input/xtg/*.xtg", global_params)
 
 # print distance matrix to console
 for tree in trees:

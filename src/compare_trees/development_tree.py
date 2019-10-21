@@ -50,7 +50,10 @@ class TreeNode:
             assert self.depth == self.right.depth
 
     # merge chains (nodes in line without division) into single edge
-    def reduce(self, g, chain_length):
+    def reduce(self, global_params):
+        self.internal_reduce(global_params.g, 1)
+
+    def internal_reduce(self, g, chain_length):
 
         self.chain_length = chain_length
 
@@ -61,12 +64,12 @@ class TreeNode:
             return self
         if self.right is None:
             # if continue chain - add 1 to its' length
-            return self.left.reduce(self.growth, chain_length + 1)
+            return self.left.internal_reduce(self.growth, chain_length + 1)
         assert self.left is not None
 
         # if there is a division - set length to 1
-        self.left = self.left.reduce(g, 1)
-        self.right = self.right.reduce(g, 1)
+        self.left = self.left.internal_reduce(g, 1)
+        self.right = self.right.internal_reduce(g, 1)
 
         return self
 

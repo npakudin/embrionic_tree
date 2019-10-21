@@ -60,11 +60,9 @@ def read_tree_from_xml(filename):
     return tree
 
 
-def read_all_trees():
-    max_levels = 11
-
+def read_all_trees(pattern, max_levels):
     # read source files
-    filenames = glob.glob("../../input/xtg/*.xtg")
+    filenames = glob.glob(pattern)
     filenames.sort()
     src_trees = [read_tree_from_xml(filename) for filename in filenames]
 

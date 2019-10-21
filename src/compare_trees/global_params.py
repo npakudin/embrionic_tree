@@ -1,11 +1,12 @@
 class GlobalParams:
-    def __init__(self, a, b, g, param_g_weight, chain_length_weight, change_left_right):
+    def __init__(self, a, b, g, param_g_weight, chain_length_weight, change_left_right, max_levels):
         self.a = a
         self.b = b
         self.g = g
         self.param_g_weight = param_g_weight
         self.chain_length_weight = chain_length_weight
         self.change_left_right = change_left_right
+        self.max_levels = max_levels
 
         self.swaps = 0
         self.total = 0
