@@ -1,7 +1,9 @@
 def dist_branch_direction(node1, node2, global_params):
     def dist(n1, n2):
         assert not (n1 is None and n2 is None)
-        return global_params.param_g_weight * dist_gr(n1, n2) + dist_br_dir(n1, n2)
+        return global_params.param_g_weight * dist_gr(n1, n2) + \
+               global_params.chain_length_weight * dist_chain_length(n1, n2) + \
+               1 * dist_br_dir(n1, n2)
 
     def dist_br_dir(n1, n2):
         none = 'zNone'
@@ -50,14 +52,21 @@ def dist_branch_direction(node1, node2, global_params):
 
         return abs(g1 - g2) * weight
 
-    # TODO: n1.timer_length - count of items in the chain
-    def dist_timer(n1, n2):
-        timer_length1 = 0 if (n1 is None) or (n1.timer_length is None) else n1.timer_length - 1
-        timer_length2 = 0 if (n2 is None) or (n2.timer_length is None) else n2.timer_length - 1
+    def dist_chain_length(n1, n2):
+        # if any(x is None for x in [n1, n2]):
+        #     pass
+
+        chain_length1 = 1 if (n1 is None) or (n1.chain_length is None) else n1.chain_length
+        chain_length2 = 1 if (n2 is None) or (n2.chain_length is None) else n2.chain_length
+
+        # if chain_length1 != chain_length2:
+        #     print(f"chain_length: {chain_length1} {chain_length2}")
+        #     if n1 is not None and n2 is not None:
+        #         print(f"    {n1.name} {n2.name}")
 
         weight = n2.weight if (n1 is None) else n1.weight
 
-        return abs(timer_length1 - timer_length2) * weight
+        return abs(chain_length1 - chain_length2) * weight
 
     return visit_virtual(dist, node1, node2, global_params)
 
@@ -69,19 +78,22 @@ def visit_virtual(fun, node1, node2, global_params):
     left2 = None if (node2 is None) else node2.left
     right2 = None if (node2 is None) else node2.right
 
-    # swap left2 and right2 if they fit better than direct order
+    # swap left2 and right2 if reverse order fit better than direct order
     if global_params.change_left_right:
         if all(x is not None for x in [left1, left2, right1, right2]):
             direct_order_fertility = min(left1.fertility, left2.fertility) + min(right1.fertility, right2.fertility)
             reverse_order_fertility = min(left1.fertility, right2.fertility) + min(right1.fertility, left2.fertility)
+            global_params.total += 1
             if reverse_order_fertility > direct_order_fertility:
+                # swap
                 tmp = left2
                 left2 = right2
                 right2 = tmp
-
+                global_params.swaps += 1
+                print(f"swap {direct_order_fertility} {reverse_order_fertility} {node1.level}")
 
     if (left1 is not None) or (left2 is not None):
-        res += visit_virtual(fun, left1, left2)
+        res += visit_virtual(fun, left1, left2, global_params)
     if (right1 is not None) or (right2 is not None):
-        res += visit_virtual(fun, right1, right2)
+        res += visit_virtual(fun, right1, right2, global_params)
     return res

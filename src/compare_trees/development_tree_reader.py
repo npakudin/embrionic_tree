@@ -9,6 +9,7 @@ def parse_xml_node(xml, filename, cell_timer):
     data = xml.find('b:Branch', ns).find('b:TextLabel', ns).attrib['Text'].replace(",", ".").lower().split(' ')
 
     node = TreeNode()
+    node.name = filename
 
     if data[0] == 'ww':
         data[0] = 'w_in_w'
@@ -24,14 +25,19 @@ def parse_xml_node(xml, filename, cell_timer):
         # pass
     else:
         if data[1] == 's':
+            # chain item, no growth
             node.axis = 'None'
             node.growth = 1
         else:
             try:
+                # chain item, there is growth
                 node.axis = 'None'
                 node.growth = float(data[1])
+                assert node.growth >= 1
             except:
-                node.axis = data[1]
+                node.axis = data[1] # axis of division x or y
+                #print(node.axis)
+                assert any(node.axis == x for x in ['x', 'y', 'd']), f"filename={filename}"
     children = xml.findall('b:Node', ns)
     assert len(children) <= 2, f"filename: {filename}, children: {children}"
     if len(children) > 0:

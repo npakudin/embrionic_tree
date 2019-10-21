@@ -4,16 +4,17 @@ from src.compare_trees.distances import dist_branch_direction
 from src.compare_trees.global_params import GlobalParams
 
 
+# read trees from *.xtg files in xtg folder
 src_trees = read_all_trees()
 
 
-# create a copy to modify
+# create a copy of trees to modify
 trees = [copy.deepcopy(src_tree) for src_tree in src_trees]
-global_params = GlobalParams(a=0.8, b=0.8, g=1, param_g_weight=0.1, change_left_right=True)
+global_params = GlobalParams(a=0.8, b=0.8, g=1, param_g_weight=0.1, chain_length_weight=0.1, change_left_right=False)
 
 # prepare to calculate distances
 for tree in trees:
-    tree.root.reduce(global_params.g)
+    tree.root.reduce(global_params.g, 1)
     tree.root.prepare(global_params)
 
 # calculate distances matrix
@@ -27,3 +28,5 @@ for row in distance_matrix:
     for item in row:
         print("%0.2f " % item, end='')
     print()
+
+print(f"res {global_params.swaps} / {global_params.total}")

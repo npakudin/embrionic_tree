@@ -18,6 +18,7 @@ class Tree:
 
 class TreeNode:
     def __init__(self, left=None, right=None, time=None):
+        self.name = "unknown"
         self.global_params = None
         self.type = None
         self.left = left
@@ -26,11 +27,13 @@ class TreeNode:
         self.growth = 1.0
         self.depth = 0
         self.level = 0
+        self.chain_length = 1
         self.weight = 0
         self.total_weight = 0
         self.total_weight_b = 0
         self.fertility = 0
 
+    # cut tree to max_level if more levels exist in the source tree
     def cut(self, max_level):
         self.internal_cut(0, max_level)
 
@@ -46,27 +49,41 @@ class TreeNode:
             self.right.internal_cut(level + 1, max_level)
             assert self.depth == self.right.depth
 
-    def reduce(self, g):
+    # merge chains (nodes in line without division) into single edge
+    def reduce(self, g, chain_length):
+
+        self.chain_length = chain_length
+
+        # multiply growth of cells on each edge in the chain
         self.growth = self.growth * g
+
         if self.left is None and self.right is None:
             return self
         if self.right is None:
-            return self.left.reduce(self.growth)
+            # if continue chain - add 1 to its' length
+            return self.left.reduce(self.growth, chain_length + 1)
         assert self.left is not None
-        self.left = self.left.reduce(g)
-        self.right = self.right.reduce(g)
+
+        # if there is a division - set length to 1
+        self.left = self.left.reduce(g, 1)
+        self.right = self.right.reduce(g, 1)
+
         return self
 
     def prepare(self, global_params):
         self.internal_prepare(0, global_params)
 
+    # calculate node.weight = a^level
+    # calculate node.total_weight = node.weight + node.left.weight + node.right.weight
     def internal_prepare(self, level, global_params):
+
         self.level = level
         self.weight = math.pow(global_params.a, level)
         weight_b = math.pow(global_params.b, level)
         self.total_weight = self.weight
         self.total_weight_b = weight_b
         self.fertility = 0
+
         if self.left is not None:
             self.left.internal_prepare(level + 1, global_params)
             self.total_weight += self.left.total_weight
@@ -76,14 +93,13 @@ class TreeNode:
             self.right.internal_prepare(level + 1, global_params)
             self.total_weight += self.right.total_weight
             self.total_weight_b += self.right.total_weight_b
-            # TODO: investigate why it doesn't always true
-            # if self.left.depth != self.right.depth:
-            #     print(f"({self.level}, {self.z}, {self.a}, {self.depth})  l:({self.left.level}, {self.left.z}, {self.left.g}, {self.left.depth})  r:({self.right.level}, {self.right.z}, {self.right.g}, {self.right.depth})")
-            # self.depth = max(self.depth, self.right.depth)
+
+            assert self.left.depth == self.right.depth
+
         # self.fertility = (self.total_weight_b - weight_b) / weight_b
 
         if weight_b == 0:
             print(f"weight_b: {weight_b}, level: {level}")
 
         self.fertility = (self.total_weight_b - 0.5 * weight_b) / weight_b
-        # assert self.fertility >= 0
+        assert self.fertility >= 0
