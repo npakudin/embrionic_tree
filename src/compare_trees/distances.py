@@ -90,7 +90,7 @@ def visit_virtual(fun, node1, node2, global_params):
                 left2 = right2
                 right2 = tmp
                 global_params.swaps += 1
-                print(f"swap {direct_order_fertility} {reverse_order_fertility} {node1.level} {node2.level} {node1.name} {node2.name} {node1.address} {node2.address} {node1.axis} {node2.axis}")
+                #print(f"swap {direct_order_fertility} {reverse_order_fertility} {node1.level} {node2.level} {node1.name} {node2.name} {node1.address} {node2.address} {node1.axis} {node2.axis}")
 
     if (left1 is not None) or (left2 is not None):
         res += visit_virtual(fun, left1, left2, global_params)

@@ -2,7 +2,7 @@ from src.compare_trees.compare_trees import get_distances_by_files
 from src.compare_trees.global_params import GlobalParams
 from src.ultra_metric.ultra_metric import UltraMetricParams, get_ultra_metric, average_error
 
-ultra_metric_params = UltraMetricParams(b=4)
+ultra_metric_params = UltraMetricParams(level_count=6)
 
 global_params = GlobalParams(a=0.5, b=0.5, g=1, param_g_weight=0.1, chain_length_weight=0.1, is_swap_left_right=True,
                              max_levels=11)
