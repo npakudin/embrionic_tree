@@ -1,5 +1,5 @@
-import math
 from enum import Enum
+import math
 
 
 class NodeType(Enum):
@@ -31,7 +31,6 @@ class TreeNode:
         self.chain_length = 1
         self.personal_weight = 0
         self.total_weight = 0
-        self.total_weight_b = 0
         self.fertility = 0
 
     # cut tree to max_level if more levels exist in the source tree
@@ -83,27 +82,20 @@ class TreeNode:
 
         self.level = level
         self.personal_weight = math.pow(global_params.a, level)
-        personal_weight_b = math.pow(global_params.b, level)
         self.total_weight = self.personal_weight
-        self.total_weight_b = personal_weight_b
         self.fertility = 0
 
         if self.left is not None:
             self.left.internal_prepare(level + 1, global_params)
             self.total_weight += self.left.total_weight
-            self.total_weight_b += self.left.total_weight_b
 
         if self.right is not None:
             self.right.internal_prepare(level + 1, global_params)
             self.total_weight += self.right.total_weight
-            self.total_weight_b += self.right.total_weight_b
 
             assert self.left.depth == self.right.depth
 
-        # self.fertility = (self.total_weight_b - weight_b) / weight_b
+        self.fertility = (self.total_weight - self.personal_weight) / self.personal_weight
 
-        if personal_weight_b == 0:
-            print(f"personal_weight_b: {personal_weight_b}, level: {level}")
-
-        self.fertility = (self.total_weight_b - 0.5 * personal_weight_b) / personal_weight_b
+        #self.fertility = (self.total_weight - 0.5 * self.personal_weight) / self.personal_weight
         assert self.fertility >= 0

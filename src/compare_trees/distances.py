@@ -84,7 +84,7 @@ def visit_virtual(fun, node1, node2, global_params):
             direct_order_fertility = min(left1.fertility, left2.fertility) + min(right1.fertility, right2.fertility)
             reverse_order_fertility = min(left1.fertility, right2.fertility) + min(right1.fertility, left2.fertility)
             global_params.total += 1
-            if node1.level <= 10 and reverse_order_fertility > 2 * direct_order_fertility:
+            if reverse_order_fertility > direct_order_fertility:
                 # swap
                 tmp = left2
                 left2 = right2
