@@ -1,9 +1,9 @@
 def dist_branch_direction(node1, node2, global_params):
     def dist(n1, n2):
         assert not (n1 is None and n2 is None)
-        return global_params.param_g_weight * dist_gr(n1, n2) + \
-               global_params.chain_length_weight * dist_chain_length(n1, n2) + \
-               1 * dist_br_dir(n1, n2)
+        return global_params.g_weight * dist_gr(n1, n2) + \
+               1 * dist_br_dir(n1, n2) +\
+               global_params.chain_length_weight * dist_chain_length(n1, n2)
 
     def dist_br_dir(n1, n2):
         none = 'zNone'

@@ -14,6 +14,18 @@ def get_ultra_metric(src_matrix, ultra_metric_params):
     matrix = copy.deepcopy(src_matrix)
     normalize_to_levels(matrix, ultra_metric_params.level_count)
 
+    print("src_matrix")
+    for row in src_matrix:
+        for item in row:
+            print("%0.2f " % item, end='')
+        print()
+
+    print("normalized")
+    for row in matrix:
+        for item in row:
+            print("%0.2f " % item, end='')
+        print()
+
     target_value = 0
     while True:
         target_value += 1
@@ -27,6 +39,16 @@ def get_ultra_metric(src_matrix, ultra_metric_params):
         [clusters, row_to_cluster] = get_cluster_mapping(matrix, target_value)
         cluster_matrix = cluster_distances(matrix, clusters)
 
+        print("")
+        print("clusters")
+        for row in clusters:
+            print(row)
+        print()
+        print("row_to_cluster")
+        for key in sorted(row_to_cluster):
+            print(f"{key}:{row_to_cluster[key]}")
+        print()
+
         [cluster_min, cluster_max] = find_min_max(cluster_matrix)
         if cluster_min >= target_value + 0.5:
             # everything merged
@@ -35,6 +57,12 @@ def get_ultra_metric(src_matrix, ultra_metric_params):
             # TODO: this is hack, replace with min error
             set_to(matrix, target_value, target_value, target_value + 0.5)  # set to 1 for all items in (1.0; 1.5]
             pass
+
+        print("")
+        for row in matrix:
+            for item in row:
+                print("%0.2f " % item, end='')
+            print()
 
     # divide_matrix(matrix, 1.0 / (M * min_non_zero))
 
@@ -58,12 +86,17 @@ def normalize_to_levels(matrix, level_count, type='line'):
     [min, max] = find_min_max(matrix)
     b = math.pow(max / min, -level_count)  # for log type
 
+    print(f"min: {min}")
+
     for i in range(len(matrix)):
         for j in range(len(matrix[i])):
-            if type == 'line':
-                matrix[i][j] = (matrix[i][j] - min) / (max - min) * level_count + 0.5
+            if i == j:
+                0
             else:
-                matrix[i][j] = math.log(matrix[i][j] / min, b) + 0.5
+                if type == 'line':
+                    matrix[i][j] = (matrix[i][j] - min) / (max - min) * level_count + 0.5
+                else:
+                    matrix[i][j] = math.log(matrix[i][j] / min, b) + 0.5
     return matrix
 
 
@@ -71,7 +104,7 @@ def find_min_max(matrix, more_than=0):
     min = 1.0E+300
     max = -1.0E+300
     for i in range(len(matrix)):
-        for j in range(len(matrix[i]) - i - 1):
+        for j in range(len(matrix[i])):
             if more_than < matrix[i][j] < min:
                 min = matrix[i][j]
             if matrix[i][j] > max:
@@ -93,7 +126,7 @@ def find_average_of_less_b(matrix, b):
             if matrix[i][j] <= b:
                 sum += matrix[i][j]
                 count += 1
-    return [sum / (count + 1.0E-10), count]
+    return [sum / (count + 1.0E-100), count]
 
 
 def set_to(matrix, target_value, src_from_value, src_to_value):
@@ -114,14 +147,14 @@ def average_error(m1, m2):
             sum1 += m1[i][j]
             sum2 += m2[i][j]
             count += 1
-    return [sum / (count + 1.0E-10), sum / max(sum1, sum2)]
+    return [sum / (count + 1.0E-100), sum / max(sum1, sum2)]
 
 
 def join_triangles(matrix, target_value):
     joined_count = 0
     for i in range(len(matrix)):
         for j in range(len(matrix[i])):
-            for j2 in range(len(matrix[i]) - j - 1):
+            for j2 in range(len(matrix[i]) - j):
                 if matrix[i][j] == target_value and matrix[i][j2] == target_value:
                     if matrix[j][j2] != target_value:
                         joined_count += 1

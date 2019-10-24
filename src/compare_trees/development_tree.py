@@ -51,25 +51,25 @@ class TreeNode:
 
     # merge chains (nodes in line without division) into single edge
     def reduce(self, global_params):
-        self.internal_reduce(global_params.g, 1)
+        self.internal_reduce(parent_growth=1, chain_length=1)
 
-    def internal_reduce(self, g, chain_length):
+    def internal_reduce(self, parent_growth, chain_length):
 
         self.chain_length = chain_length
 
         # multiply growth of cells on each edge in the chain
-        self.growth = self.growth * g
+        self.growth = self.growth * parent_growth
 
         if self.left is None and self.right is None:
             return self
         if self.right is None:
             # if continue chain - add 1 to its' length
-            return self.left.internal_reduce(self.growth, chain_length + 1)
+            return self.left.internal_reduce(parent_growth=self.growth, chain_length=chain_length + 1)
         assert self.left is not None
 
         # if there is a division - set length to 1
-        self.left = self.left.internal_reduce(g, 1)
-        self.right = self.right.internal_reduce(g, 1)
+        self.left = self.left.internal_reduce(parent_growth=1, chain_length=1)
+        self.right = self.right.internal_reduce(parent_growth=1, chain_length=1)
 
         return self
 
