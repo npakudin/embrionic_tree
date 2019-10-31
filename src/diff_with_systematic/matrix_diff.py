@@ -3,7 +3,7 @@ import copy
 import numpy
 
 from src.compare_trees.development_tree_reader import read_all_trees
-from src.compare_trees.diff_with_systematic.build_morph_graph import taxon_from_xml
+from src.diff_with_systematic.build_morph_graph import taxon_from_xml
 from src.compare_trees.distances import development_tree_distance
 from src.compare_trees.global_params import GlobalParams
 
