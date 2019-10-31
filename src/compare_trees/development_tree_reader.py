@@ -5,12 +5,13 @@ import xml.etree.ElementTree as ElementTree
 ns = {'b': 'http://bioinfweb.info/xmlns/xtg'}
 
 
-def parse_xml_node(xml, filename, cell_timer, address):
+def parse_xml_node(xml, filename, src_level, address):
     data = xml.find('b:Branch', ns).find('b:TextLabel', ns).attrib['Text'].replace(",", ".").lower().split(' ')
 
     node = TreeNode()
     node.name = filename
     node.address = address
+    node.src_level = src_level
 
     if data[0] == 'ww':
         data[0] = 'w_in_w'
@@ -45,9 +46,9 @@ def parse_xml_node(xml, filename, cell_timer, address):
     children = xml.findall('b:Node', ns)
     assert len(children) <= 2, f"filename: {filename}, children: {children}"
     if len(children) > 0:
-        node.left = parse_xml_node(xml=children[0], filename=filename, cell_timer=cell_timer + 1, address=address + ".L")
+        node.left = parse_xml_node(xml=children[0], filename=filename, src_level=src_level + 1, address=address + ".L")
     if len(children) > 1:
-        node.right = parse_xml_node(xml=children[1], filename=filename, cell_timer=cell_timer + 1, address=address + ".R")
+        node.right = parse_xml_node(xml=children[1], filename=filename, src_level=src_level + 1, address=address + ".R")
 
     return node
 
@@ -57,7 +58,7 @@ def read_tree_from_xml(filename):
     name = path[len(path) - 1][:-4]  # "../input/xtg/Arabidopsis_thaliana.xtg" => "Arabidopsis_thaliana"
 
     node = parse_xml_node(xml=ElementTree.parse(filename).getroot().find('b:Tree', ns).find('b:Node', ns),
-                          filename=filename, cell_timer=0, address="Z")
+                          filename=filename, src_level=0, address="Z")
 
     tree = Tree(root=node, name=name)
 
