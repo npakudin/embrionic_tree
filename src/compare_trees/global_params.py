@@ -8,3 +8,6 @@ class GlobalParams:
 
         self.swaps = 0
         self.total = 0
+
+        self.total_dist = 0
+        self.dcl_more_zero = 0

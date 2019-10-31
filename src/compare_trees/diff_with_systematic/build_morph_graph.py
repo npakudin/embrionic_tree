@@ -51,8 +51,6 @@ class Taxon:
 
     # remove all leaves excluding with names
     def leave_only_names(self, names):
-        #spaced_names = list(map(lambda x: x.replace("_", " "), names))
-        #self.mark_names(spaced_names)
         self.mark_names(names)
         self.set_parents_necessarity()
         self.internal_leave_only_marked()
@@ -121,19 +119,3 @@ class Taxon:
 
     def __str__(self):
         return self.to_str(0)
-
-# taxon = taxon_from_xml("../phylo_morph_tree.xtg")
-# taxon.leave_only_names(["Arabidopsis_thaliana", "Drosera_rotundifolia", "Linum_catharticum"])
-#
-# print(taxon)
-#
-# print("taxon.get_leaves()")
-# for node in taxon.get_leaves():
-#     print(f", {node.name}", end='')
-#
-#
-#
-# #taxon.calculate()
-#
-# print("taxon.calculate()")
-# print(taxon.calculate())

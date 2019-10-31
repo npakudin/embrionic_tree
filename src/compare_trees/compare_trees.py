@@ -1,6 +1,6 @@
 import copy
 from src.compare_trees.development_tree_reader import read_all_trees
-from src.compare_trees.distances import dist_branch_direction
+from src.compare_trees.distances import development_tree_distance
 
 
 def get_distances_by_files(pattern, global_params):
@@ -17,7 +17,7 @@ def get_distances_by_files(pattern, global_params):
         tree.root.prepare(global_params)
 
     # calculate distances matrix
-    distance_matrix = [[dist_branch_direction(v1.root, v2.root, global_params) for v2 in trees] for v1 in trees]
+    distance_matrix = [[development_tree_distance(v1.root, v2.root, global_params) for v2 in trees] for v1 in trees]
 
     return [src_trees, distance_matrix]
 

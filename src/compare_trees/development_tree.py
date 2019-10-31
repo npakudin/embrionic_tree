@@ -79,6 +79,7 @@ class TreeNode:
     # calculate node.personal_weight = a^level
     # calculate node.total_weight = node.personal_weight + node.left.personal_weight + node.right.personal_weight
     def internal_prepare(self, level, global_params):
+        assert (self.left is None) == (self.right is None)
 
         self.level = level
         self.personal_weight = math.pow(global_params.a, level)
@@ -98,4 +99,4 @@ class TreeNode:
         self.fertility = (self.total_weight - self.personal_weight) / self.personal_weight
 
         #self.fertility = (self.total_weight - 0.5 * self.personal_weight) / self.personal_weight
-        assert self.fertility >= 0
+        assert self.fertility >= 0, f"global_params.a: {global_params.a}"

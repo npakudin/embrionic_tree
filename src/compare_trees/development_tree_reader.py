@@ -18,6 +18,9 @@ def parse_xml_node(xml, filename, cell_timer, address):
         data[0] = 'b_in_w'
         node.z = data[0]
 
+    if data[0] != 'w' and data[0] != 'b':
+        print(f"{filename} : {data[0]}")
+
     # error message on wrong input
     assert len(data) == 2, f"filename: {filename}, data: {data}"
 

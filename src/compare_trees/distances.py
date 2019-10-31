@@ -1,9 +1,15 @@
-def dist_branch_direction(node1, node2, global_params):
+def development_tree_distance(node1, node2, global_params):
     def dist(n1, n2):
         assert not (n1 is None and n2 is None)
-        return global_params.g_weight * dist_gr(n1, n2) + \
-               1 * dist_br_dir(n1, n2) +\
-               global_params.chain_length_weight * dist_chain_length(n1, n2)
+
+        # dcl = dist_chain_length(n1, n2)
+        # global_params.total_dist += 1
+        # if dcl > 0:
+        #     global_params.dcl_more_zero += 1
+
+        return 1 * dist_br_dir(n1, n2) +\
+            global_params.g_weight * dist_gr(n1, n2) + \
+            global_params.chain_length_weight * dist_chain_length(n1, n2)
 
     def dist_br_dir(n1, n2):
         none = 'zNone'
@@ -33,8 +39,6 @@ def dist_branch_direction(node1, node2, global_params):
             if axis2 == none:
                 return 1 * weight
             if axis1 == 'L':
-                if axis2 == 'd':
-                    return 0.6 * weight
                 if axis2 == 'z':
                     return 1 * weight
                 return 0.5 * weight
@@ -73,6 +77,7 @@ def dist_branch_direction(node1, node2, global_params):
 
 def visit_virtual(fun, node1, node2, global_params):
     res = fun(node1, node2)
+
     left1 = None if (node1 is None) else node1.left
     right1 = None if (node1 is None) else node1.right
     left2 = None if (node2 is None) else node2.left
