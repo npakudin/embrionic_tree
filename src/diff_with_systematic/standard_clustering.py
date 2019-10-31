@@ -20,9 +20,9 @@ def draw_plot(clustered_trees, names, plot_name, filename):
     fig.savefig(filename)
 
 
-calc_weights = [const_weight(1.0), threshold_weight(5, 1.0, 0.75), exponent_reduced_weight(0.5)]
-systematic_trees = ["morph", "molecular_genetic"]
-cluster_algorithms = ['complete', 'average', 'weighted', 'centroid', 'median']
+calc_weights = [const_weight(1.0), exponent_reduced_weight(0.5), threshold_weight(5, 1.0, 0.75)]
+systematic_trees = ["molecular_genetic", "morph"]
+cluster_algorithms = ['average', 'centroid', 'complete', 'median', 'weighted']
 
 for calc_weight in calc_weights:
     for systematic_tree in systematic_trees:
