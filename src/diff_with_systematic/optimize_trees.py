@@ -7,13 +7,14 @@ from src.diff_with_systematic.matrix_diff import MatrixDiff
 
 matrDiff = MatrixDiff("../../input/xtg/*.xtg", "../../input/systematic_tree_morph.xtg", ["Angiosperms"], max_levels=11)
 
-# for a in np.linspace(0.05, 0.5, 10):
-#     for g_weight in np.linspace(0.1, 0.7, 7):
-#         for chain_length_weight in np.linspace(0.1, 0.7, 7):
-#             res = matrDiff.matr_diff_sum([a, g_weight, chain_length_weight])
-#             #res = matrDiff.matr_diff_sum([a, 0, 0])
-#             #print(f"res: {res}")
-# exit()
+for chain_length_weight in np.linspace(0.1, 0.7, 7):
+    for a in np.linspace(0.05, 1.0, 20):
+        for g_weight in np.linspace(0.1, 1.0, 10):
+            res = matrDiff.matr_diff_sum([a, g_weight, chain_length_weight])
+            #res = matrDiff.matr_diff_sum([a, 0, 0])
+            #print(f"res: {res}")
+    print("")
+exit()
 
 
 # 0.04000, 0.50000000, 0.50000000 : -0.45027154234063 - reduced
@@ -38,16 +39,6 @@ g_weight = res.x[1]
 chain_length_weight = res.x[2]
 print(f"{a:0.5f}, {g_weight:0.8f}, {chain_length_weight:0.8f} : {res.fun}")
 print(f"{matrDiff.min_params} : {matrDiff.min_value}")
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -142,15 +133,3 @@ print(f"{matrDiff.min_params} : {matrDiff.min_value}")
 # chain_length_weight = res.x[2]
 # print(f"{a:0.5f}, {g_weight:0.8f}, {chain_length_weight:0.8f} : {res.fun}")
 #
-
-
-
-
-
-
-
-
-
-
-
-
