@@ -34,9 +34,6 @@ def get_ultra_metric(src_matrix, ultra_metric_params):
     matrix = copy.deepcopy(src_matrix)
     normalize_to_levels(matrix, ultra_metric_params.level_count)
 
-    print_matrix(src_matrix, "src_matrix")
-    print_matrix(matrix, "normalized")
-
     target_value = 0
     while True:
         target_value += 1
@@ -45,30 +42,19 @@ def get_ultra_metric(src_matrix, ultra_metric_params):
             break
 
         set_to(matrix, target_value, target_value - 0.5, target_value)  # set to 1 for all items in [0.5; 1]
-        print_matrix(matrix, "set_to")
 
         while True:
-            joined_count = join_triangles(matrix, target_value)
+            _joined_count = join_triangles(matrix, target_value)
             [clusters, row_to_cluster] = get_cluster_mapping(matrix, target_value)
-            #cluster_matrix = cluster_distances(matrix, clusters)
             merge_error_matrix = cluster_merge_error(matrix, clusters, target_value)
 
-            print_clusters(clusters, row_to_cluster)
-
-            [[error_min, error_min_i, error_min_j], _] = find_min_max(merge_error_matrix)
-            if error_min_i == -1 or error_min < 0:
+            [_, [error_max, error_max_i, error_max_j]] = find_min_max(merge_error_matrix)
+            if error_max_i == -1 or error_max < 0:
                 # everything is merged
                 break
             else:
                 # merge clusters i and j
-                print(f"merge clusters {error_min_i} and {error_min_j}")
-                merge_clusters(matrix, clusters, target_value, error_min_i, error_min_j)
-
-                #set_to(matrix, target_value, target_value, target_value + 0.5)  # set to 1 for all items in (1.0; 1.5]
-
-            print_matrix(matrix, "merged")
-
-    # divide_matrix(matrix, 1.0 / (M * min_non_zero))
+                merge_clusters(matrix, clusters, target_value, error_max_i, error_max_j)
 
     return matrix
 
@@ -89,8 +75,6 @@ def get_ultra_metric(src_matrix, ultra_metric_params):
 def normalize_to_levels(matrix, level_count, type='line'):
     [[min, _, _], [max, _, _]] = find_min_max(matrix)
     b = math.pow(max / min, -level_count)  # for log type
-
-    print(f"min: {min}")
 
     for i in range(len(matrix)):
         for j in range(len(matrix[i])):
@@ -240,17 +224,3 @@ def merge_clusters(matrix, clusters, target_distance, row, column):
             matrix[i][j] = target_distance
             matrix[j][i] = target_distance
 
-
-# 0  \
-# 1 - 1  \
-# 2  \      8
-# 3 - 3 /
-
-matr = [
-    [0, 1, 8, 8],
-    [1, 0, 8, 8],
-    [8, 8, 0, 2],
-    [8, 8, 2, 0],
-]
-um = get_ultra_metric(matr, UltraMetricParams(level_count=2))
-print_matrix(um, "ultra_metric")
