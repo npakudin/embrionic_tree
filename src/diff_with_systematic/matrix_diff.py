@@ -5,7 +5,7 @@ import numpy
 from src.compare_trees.development_tree_reader import read_all_trees
 from src.diff_with_systematic.build_morph_graph import taxon_from_xml
 from src.compare_trees.distances import development_tree_distance
-from src.compare_trees.global_params import GlobalParams, exponent_reduced_weight
+from src.compare_trees.global_params import GlobalParams, exponent_reduced_weight, exponent_src_weight, const_weight
 
 
 def apply_each(matr, fun):
@@ -96,6 +96,9 @@ class MatrixDiff:
 
         self.taxon_matrix = taxon.calculate()
 
+        self.min_value = float("inf")
+        self.min_params = [0, 0, 0]
+
     def make_full_experiment_matrix(self, global_params):
         left_bottom_matrix = self.make_experiment_matrix(global_params)
         plot_matr = [[(0 if i == j else (left_bottom_matrix[i][j] if i > j else left_bottom_matrix[j][i])) for j in
@@ -150,6 +153,8 @@ class MatrixDiff:
     def matr_diff(self, x):
         global_params = GlobalParams(g_weight=x[1], chain_length_weight=x[2], is_swap_left_right=True,
                                      calc_weight=exponent_reduced_weight(a=x[0]))
+                                     #calc_weight=exponent_src_weight(a=x[0]))
+                                     #calc_weight=const_weight(weight=x[0]))
 
         experiment_matrix = self.make_experiment_matrix(global_params)
         return -self.corrcoef(experiment_matrix)
