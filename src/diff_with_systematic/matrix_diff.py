@@ -52,15 +52,18 @@ def print_matrix(matr, name, tree_names, corrcoef=None, with_headers=False):
                   range(len(matr))] for i in range(len(matr))]
 
     summ = 0
+    maxx = 0
     for i, row in enumerate(plot_matr):
         if with_headers:
             print(f"{tree_names[i]} ", end='')
         for item in row:
             print("%0.2f " % (item), end='')
             summ += item
+            if item > maxx:
+                maxx = item
         print()
     avg = summ / (len(plot_matr) * (len(plot_matr) - 1))
-    print(f"avg: {avg}")
+    print(f"avg: {avg}; max: {maxx}")
     if corrcoef is not None:
         print(f"corrcoef: {corrcoef}")
 

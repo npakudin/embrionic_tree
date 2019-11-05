@@ -1,11 +1,74 @@
 import copy
 import math
 
+from src.diff_with_systematic.build_morph_graph import find_common_ancestor_level
+
 
 class UltraMetricParams:
     def __init__(self, level_count):
         assert level_count >= 1
         self.level_count = level_count
+
+class UltraMetricNode:
+    def __init__(self, clusters, name=None):
+        self.clusters = clusters
+        self.name = name
+        self.parent = None
+
+    def __str__(self):
+        return self.name
+
+# Gets matrix NxN and returns matrix NxN
+# The returned matrix is the ultra metric matrix
+def get_ultra_metric(src_matrix, ultra_metric_params):
+    matrix = copy.deepcopy(src_matrix)
+    normalize_to_levels(matrix, ultra_metric_params.level_count)
+
+    src_history_level = [UltraMetricNode(clusters=None, name=f"0.{i}") for i in range(len(matrix))]
+    history_level = [item for item in src_history_level]
+    target_value = 0
+    while len(matrix) > 1:
+        target_value += 1
+        set_to(matrix, target_value, target_value - 0.5, target_value)  # set to 1 for all items in [0.5; 1]
+
+        while True:
+            _joined_count = join_triangles(matrix, target_value)
+            [clusters, row_to_cluster] = get_cluster_mapping(matrix, target_value)
+
+            merge_error_matrix = cluster_merge_error(matrix, clusters, target_value)
+
+            [_, [error_max, error_max_i, error_max_j]] = find_min_max(merge_error_matrix)
+            if error_max_i == -1 or error_max < 0:
+                # everything is merged
+
+                # save current cluster mapping to restore
+                history_level = create_history_level(clusters, history_level, target_value)
+
+                break
+            else:
+                # merge clusters i and j
+                merge_two_clusters(matrix, clusters, target_value, error_max_i, error_max_j)
+
+        # use cluster matrix for next steps
+        cluster_matrix = cluster_distances(matrix, clusters)
+        matrix = cluster_matrix
+
+    # restore source matrix
+    res = [[0 if i == j else find_common_ancestor_level(src_history_level[i], src_history_level[j]) for j in range(len(src_matrix))] for i in range(len(src_matrix))]
+    # for target, clusters in enumerate(clustering_history):
+    #     pass
+
+    return res
+
+
+def create_history_level(clusters, history_level, target_value):
+    new_history_level = [UltraMetricNode(clusters=[history_level[cluster_row] for cluster_row in cluster],
+                                         name=f"{target_value}.{cluster_index}") for cluster_index, cluster in
+                         enumerate(clusters)]
+    for cluster_index, cluster in enumerate(clusters):
+        for cluster_row in cluster:
+            history_level[cluster_row].parent = new_history_level[cluster_index]
+    return new_history_level
 
 
 def print_matrix(matrix, name):
@@ -26,37 +89,6 @@ def print_clusters(clusters, row_to_cluster):
     for key in sorted(row_to_cluster):
         print(f"{key}:{row_to_cluster[key]}")
     print()
-
-
-# Gets matrix NxN and returns matrix NxN
-# The returned matrix is the ultra metric matrix
-def get_ultra_metric(src_matrix, ultra_metric_params):
-    matrix = copy.deepcopy(src_matrix)
-    normalize_to_levels(matrix, ultra_metric_params.level_count)
-
-    target_value = 0
-    while True:
-        target_value += 1
-        [_, [src_max, _, _]] = find_min_max(matrix, more_than=target_value - 1)
-        if src_max <= target_value:
-            break
-
-        set_to(matrix, target_value, target_value - 0.5, target_value)  # set to 1 for all items in [0.5; 1]
-
-        while True:
-            _joined_count = join_triangles(matrix, target_value)
-            [clusters, row_to_cluster] = get_cluster_mapping(matrix, target_value)
-            merge_error_matrix = cluster_merge_error(matrix, clusters, target_value)
-
-            [_, [error_max, error_max_i, error_max_j]] = find_min_max(merge_error_matrix)
-            if error_max_i == -1 or error_max < 0:
-                # everything is merged
-                break
-            else:
-                # merge clusters i and j
-                merge_clusters(matrix, clusters, target_value, error_max_i, error_max_j)
-
-    return matrix
 
 
 # For both
@@ -215,7 +247,7 @@ def cluster_merge_error(matrix, clusters, target_distance):
     return res
 
 
-def merge_clusters(matrix, clusters, target_distance, row, column):
+def merge_two_clusters(matrix, clusters, target_distance, row, column):
     for i in clusters[row]:
         for j in clusters[column]:
             if i == j:

@@ -64,3 +64,21 @@ class TestUltraMetric(TestCase):
         ]
         res = get_ultra_metric(src_matr, UltraMetricParams(level_count=2))
         self.assertEqual(expected_matr, res)
+
+    def test_ultrametrize_with_empty_levels(self):
+        # Ultrametrize and set to 2 levels already ultrametric from tree below
+        # 0  1     2  3
+        #  \/ d=1   \/ d=3
+        #  01       23
+        #     \    / d=8
+        #      0123
+        src_matr = [
+            [0, 1, 8, 8],
+            [1, 0, 8, 8],
+            [8, 8, 0, 3],
+            [8, 8, 3, 0],
+        ]
+        expected_matr = src_matr
+        res = get_ultra_metric(src_matr, UltraMetricParams(level_count=8))
+        self.assertEqual(expected_matr, res)
+
