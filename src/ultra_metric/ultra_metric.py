@@ -5,9 +5,10 @@ from src.diff_with_systematic.build_morph_graph import find_common_ancestor_leve
 
 
 class UltraMetricParams:
-    def __init__(self, level_count):
-        assert level_count >= 1
-        self.level_count = level_count
+    def __init__(self, max_levels):
+        assert max_levels >= 1
+        self.max_levels = max_levels
+
 
 class UltraMetricNode:
     def __init__(self, clusters, name=None):
@@ -22,16 +23,16 @@ class UltraMetricNode:
 # The returned matrix is the ultra metric matrix
 def get_ultra_metric(src_matrix, ultra_metric_params):
     matrix = copy.deepcopy(src_matrix)
-    normalize_to_levels(matrix, ultra_metric_params.level_count)
+    normalize_to_levels(matrix, ultra_metric_params.max_levels)
 
     src_history_level = [UltraMetricNode(clusters=None, name=f"0.{i}") for i in range(len(matrix))]
     history_level = [item for item in src_history_level]
     target_value = 0
     while len(matrix) > 1:
         target_value += 1
-        set_to(matrix, target_value, target_value - 0.5, target_value)  # set to 1 for all items in [0.5; 1]
 
         while True:
+            set_to(matrix, target_value, target_value - 0.5, target_value)  # set to 1 for all items in [0.5; 1]
             _joined_count = join_triangles(matrix, target_value)
             [clusters, row_to_cluster] = get_cluster_mapping(matrix, target_value)
 
@@ -93,20 +94,20 @@ def print_clusters(clusters, row_to_cluster):
 
 # For both
 #   min -> 0.5
-#   max -> level_count + 0.5
+#   max -> max_levels + 0.5
 #
 # For 'log':
-#   log(max, base) - log(min, base) = level_count
-#   log(max/min, base) = level_count
-#   max/min = base^level_count
-#   base = math.pow(max/min, -level_count)
+#   log(max, base) - log(min, base) = max_levels
+#   log(max/min, base) = max_levels
+#   max/min = base^max_levels
+#   base = math.pow(max/min, -max_levels)
 #
 # So formula for item is:
 #   item = log(item, base) - log(min, base) + 0.5
 #   item = log(item / min, base) + 0.5
-def normalize_to_levels(matrix, level_count, type='line'):
+def normalize_to_levels(matrix, max_levels, type='line'):
     [[min, _, _], [max, _, _]] = find_min_max(matrix)
-    b = math.pow(max / min, -level_count)  # for log type
+    b = math.pow(max / min, -max_levels)  # for log type
 
     for i in range(len(matrix)):
         for j in range(len(matrix[i])):
@@ -115,7 +116,7 @@ def normalize_to_levels(matrix, level_count, type='line'):
                 pass
             else:
                 if type == 'line':
-                    matrix[i][j] = (matrix[i][j] - min) / (max - min) * level_count + 0.5
+                    matrix[i][j] = (matrix[i][j] - min) / (max - min) * max_levels + 0.5
                 else:
                     matrix[i][j] = math.log(matrix[i][j] / min, b) + 0.5
     return matrix
@@ -255,4 +256,4 @@ def merge_two_clusters(matrix, clusters, target_distance, row, column):
                 continue
             matrix[i][j] = target_distance
             matrix[j][i] = target_distance
-
+    # TODO: set average distance?

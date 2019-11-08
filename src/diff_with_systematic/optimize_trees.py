@@ -1,19 +1,69 @@
 import numpy as np
+from mpl_toolkits.mplot3d import Axes3D
 from scipy import optimize
 from scipy.cluster import hierarchy
 import matplotlib.pyplot as plt
-from src.compare_trees.global_params import GlobalParams, exponent_reduced_weight
 from src.diff_with_systematic.matrix_diff import MatrixDiff
+import matplotlib
 
 matrDiff = MatrixDiff("../../input/xtg/*.xtg", "../../input/systematic_tree_morph.xtg", ["Angiosperms"], max_levels=11)
+#
+# for chain_length_weight in np.linspace(0.1, 0.7, 7):
+#     for a in np.linspace(0.05, 1.0, 20):
+#         for g_weight in np.linspace(0.1, 1.0, 10):
+#             res = matrDiff.matr_diff_sum([a, g_weight, chain_length_weight])
+#             #res = matrDiff.matr_diff_sum([a, 0, 0])
+#             #print(f"res: {res}")
+#     print("")
+#
 
-for chain_length_weight in np.linspace(0.1, 0.7, 7):
-    for a in np.linspace(0.05, 1.0, 20):
-        for g_weight in np.linspace(0.1, 1.0, 10):
-            res = matrDiff.matr_diff_sum([a, g_weight, chain_length_weight])
-            #res = matrDiff.matr_diff_sum([a, 0, 0])
-            #print(f"res: {res}")
-    print("")
+
+def create_fun(chain_length_weight):
+    def fun(a, g_weight):
+        return matrDiff.matr_diff_sum([a, g_weight, chain_length_weight])
+    return fun
+
+
+# def my_fun(x, y):
+#     print(f"my_fun {x} {y}")
+#     return x + y
+# a = np.linspace(0.1, 1.0, 4)
+# g_weight = np.linspace(0.1, 1.0, 3)
+#
+# X, Y = np.meshgrid(a, g_weight)
+#
+# vfunc = np.vectorize(my_fun)
+# q = vfunc(X, Y)
+#
+# print(q)
+# exit()
+
+
+a = np.linspace(0.001, 0.4, 20) # 0.001 - 0.05
+g_weight = np.linspace(-0.1, 0.2, 20) # -0.1 - 1.0
+chain_length = 0.5
+
+X, Y = np.meshgrid(a, g_weight)
+Z = np.vectorize(create_fun(chain_length))(X, Y)
+
+fig = plt.figure()
+
+ax = Axes3D(fig)
+ax.plot_surface(X, Y, Z, rstride=1, cstride=1, cmap='viridis', edgecolor='none')
+ax.set_xlabel('param_a')
+ax.set_ylabel('g_weight')
+ax.set_zlabel('coefcorr')
+ax.set_title(f"chain_length_weight={chain_length}")
+
+plt.show()
+
+# fig = plt.figure()
+#
+# ax = plt.axes(projection='3d')
+# ax.plot_surface(X, Y, Z, rstride=1, cstride=1,
+#                 cmap='viridis', edgecolor='none')
+# ax.set_title('surface')
+
 exit()
 
 
@@ -29,16 +79,16 @@ exit()
 
 # 0.30050, 0.27631854, 0.05856897 : -0.44255210249159 - local min
 # 0.22550, 0.27540941, 0.05000028 : -0.45025639992644
-init_values = [0.15, 0.2, 0.1]
-
-res = optimize.minimize(matrDiff.matr_diff_sum, np.array(init_values), bounds=((0.001, 0.7), (0.0, 0.9), (0.0, 0.9)),
-                        method='SLSQP')
-
-a = res.x[0]
-g_weight = res.x[1]
-chain_length_weight = res.x[2]
-print(f"{a:0.5f}, {g_weight:0.8f}, {chain_length_weight:0.8f} : {res.fun}")
-print(f"{matrDiff.min_params} : {matrDiff.min_value}")
+# init_values = [0.15, 0.2, 0.1]
+#
+# res = optimize.minimize(matrDiff.matr_diff_sum, np.array(init_values), bounds=((0.001, 0.7), (0.0, 0.9), (0.0, 0.9)),
+#                         method='SLSQP')
+#
+# a = res.x[0]
+# g_weight = res.x[1]
+# chain_length_weight = res.x[2]
+# print(f"{a:0.5f}, {g_weight:0.8f}, {chain_length_weight:0.8f} : {res.fun}")
+# print(f"{matrDiff.min_params} : {matrDiff.min_value}")
 
 
 

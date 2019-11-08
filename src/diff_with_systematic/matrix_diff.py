@@ -160,7 +160,7 @@ class MatrixDiff:
                                      #calc_weight=const_weight(weight=x[0]))
 
         experiment_matrix = self.make_experiment_matrix(global_params)
-        return -self.corrcoef(experiment_matrix)
+        return self.corrcoef(experiment_matrix)
 
     def matr_diff_sum(self, x):
         res = self.matr_diff(x)
