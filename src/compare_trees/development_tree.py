@@ -2,29 +2,25 @@ from enum import Enum
 import math
 
 
-AXIS_NONE = 'zNone'
+# order should be: x < d < у < z < L < N
+# to provide it, use lexicographic order of: x < xd < у < z < zLeave < zNone
+class Axis():
+    X = 'x'
+    DIAGONAL = 'xd'
+    Y = 'y'
+    Z = 'z'
+    NONE = 'zNone'
+    LEAVE = 'zLeave'
 
 
 def get_axis(node):
-    leave = 'zLeave'
-    diagonal = 'xd'
-
     if node is None:
-        return AXIS_NONE
-    if node.axis == 'None':
-        return AXIS_NONE
-    if node.axis == 'd':
-        return diagonal
-    if node.axis == 'L':
-        return leave
+        return Axis.NONE
     return node.axis
-
-    # should be: x < d < у < z < L < N
-    # to provide it, use lexicograph order of: x < xD < у < z < zL < zN
 
 
 class TreeNode:
-    def __init__(self, name = "unknown", address = "unknown", axis="None", left=None, right=None, reduced_level=0):
+    def __init__(self, name="unknown", address="unknown", axis=Axis.NONE, left=None, right=None, src_level=0, reduced_level=0):
         self.name = name
         self.address = address
         self.global_params = None
@@ -33,7 +29,7 @@ class TreeNode:
         self.right = right
         self.growth = 1.0
         self.depth = 0
-        self.src_level = 0
+        self.src_level = src_level
         self.reduced_level = reduced_level
         self.chain_length = 1
         self.personal_weight = 0
@@ -89,7 +85,25 @@ class TreeNode:
 
         return self
 
+    def internal_restore_with_fake_nodes(self, max_levels):
+        if self.reduced_level >= max_levels:
+            return
+
+        assert (self.left is None) == (self.right is None), f"{self.name} : {self.address}"
+
+        if self.left is None:
+            fake = TreeNode(name=self.name, address=self.address + ".L", reduced_level=self.reduced_level + 1)
+            fake.internal_restore_with_fake_nodes(max_levels)
+            self.left = fake
+        if self.right is None:
+            fake = TreeNode(name=self.name, address=self.address + ".R", reduced_level=self.reduced_level + 1)
+            fake.internal_restore_with_fake_nodes(max_levels)
+            self.right = fake
+
     def prepare(self, global_params):
+        self.reduce(global_params)
+        self.internal_restore_with_fake_nodes(max_levels=global_params.max_levels)
+        self.order_left_right()
         self.internal_prepare(0, global_params)
 
     # calculate node.personal_weight = a^reduced_level

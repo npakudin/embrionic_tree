@@ -1,5 +1,5 @@
 import glob
-from src.compare_trees.development_tree import TreeNode
+from src.compare_trees.development_tree import TreeNode, Axis
 import xml.etree.ElementTree as ElementTree
 
 ns = {'b': 'http://bioinfweb.info/xmlns/xtg'}
@@ -8,41 +8,43 @@ ns = {'b': 'http://bioinfweb.info/xmlns/xtg'}
 def parse_xml_node(xml, name, src_level, address):
     data = xml.find('b:Branch', ns).find('b:TextLabel', ns).attrib['Text'].replace(",", ".").lower().split(' ')
 
-    node = TreeNode()
-    node.name = name
-    node.address = address
-    node.src_level = src_level
+    node = TreeNode(name = name, address = address, src_level = src_level)
 
     if data[0] == 'ww':
         data[0] = 'w_in_w'
     if data[0] == 'wb':
         data[0] = 'b_in_w'
-        node.z = data[0]
 
     if data[0] != 'w' and data[0] != 'b':
-        print(f"{name} : {data[0]}")
+        print(f"{name} : {data[0]}") # error message on wrong input
 
-    # error message on wrong input
-    assert len(data) == 2, f"name: {name}, data: {data}"
+    assert len(data) == 2, f"name: {name}, data: {data}" # error message on wrong input
 
     if data[1] == 'e':
-        node.axis = 'L'  # leave
-        # pass
+        node.axis = Axis.LEAVE
     else:
         if data[1] == 's':
             # chain item, no growth
-            node.axis = 'None'
+            node.axis = Axis.NONE
             node.growth = 1
         else:
             try:
                 # chain item, there is growth
-                node.axis = 'None'
+                node.axis = Axis.NONE
                 node.growth = float(data[1])
                 assert node.growth >= 1
             except:
-                node.axis = data[1] # axis of division x or y
-                #print(node.axis)
-                assert any(node.axis == x for x in ['x', 'y', 'd']), f"name={name}"
+                if data[1] == "x":
+                    node.axis = Axis.X
+                elif data[1] == "y":
+                    node.axis = Axis.Y
+                elif data[1] == "z":
+                    node.axis = Axis.Z
+                elif data[1] == "d":
+                    node.axis = Axis.DIAGONAL
+                else:
+                    assert False, f"wrong node description: '{data[0]} {data[1]}' in file: {name}, address: {address}"
+
     children = xml.findall('b:Node', ns)
     assert len(children) <= 2, f"name: {name}, children: {children}"
     if len(children) > 0:

@@ -28,10 +28,11 @@ def threshold_weight(threshold_level=5, weight_1=1.0, weight_2=0.75):
 
 
 class GlobalParams:
-    def __init__(self, g_weight, chain_length_weight, is_swap_left_right, calc_weight,
+    def __init__(self, max_levels, g_weight, chain_length_weight, is_swap_left_right, calc_weight,
                  subtree_threshold=1.0E+100, subtree_multiplier=1.0,
                  level_weight_multiplier=None
                  ):
+        self.max_levels = max_levels
         self.g_weight = g_weight
         self.chain_length_weight = chain_length_weight
         self.is_swap_left_right = is_swap_left_right

@@ -1,4 +1,4 @@
-from src.compare_trees.development_tree import get_axis, AXIS_NONE
+from src.compare_trees.development_tree import get_axis, Axis
 
 
 def development_tree_distance(node1, node2, global_params):
@@ -49,7 +49,7 @@ def development_tree_distance(node1, node2, global_params):
             # return 1 * weight
 
             # different for leave, D, Z etc
-            if axis2 == AXIS_NONE:
+            if axis2 == Axis.NONE:
                 return 1
             if axis1 == 'L':
                 if axis2 == 'z':

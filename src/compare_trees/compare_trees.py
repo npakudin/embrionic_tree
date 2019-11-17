@@ -13,8 +13,6 @@ def get_distances_by_files(pattern, global_params):
 
     # prepare to calculate distances
     for tree in trees:
-        tree.reduce(global_params)
-        tree.order_left_right()
         tree.prepare(global_params)
 
     # calculate distances matrix

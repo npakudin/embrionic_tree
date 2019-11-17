@@ -20,19 +20,20 @@ def draw_plot(clustered_trees, names, plot_name, filename):
     fig.savefig(filename)
     #plt.show()
 
-calc_weight=exponent_reduced_weight(0.5)
+calc_weight = exponent_reduced_weight(0.5)
 systematic_tree = "molecular_genetic"
 cluster_algorithm = "complete"
-is_swap_left_right=False
+is_swap_left_right = False
+max_levels = 11
 
 for is_swap_left_right in [True, False]:
     global_params = GlobalParams(g_weight=0.1, chain_length_weight=0.1, is_swap_left_right=is_swap_left_right,
-                                 calc_weight=calc_weight,
+                                 calc_weight=calc_weight,  max_levels=max_levels,
                                  subtree_threshold=2, subtree_multiplier=2,
                                  level_weight_multiplier=[1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2])
     name = f"{calc_weight.name}_{systematic_tree}_{cluster_algorithm}_swap={is_swap_left_right}_subtree_(threshold,mult)=({global_params.subtree_threshold},{global_params.subtree_multiplier})_level_weight_multiplier={global_params.level_weight_multiplier}"
 
-    matrDiff = MatrixDiff("../../input/xtg/*.xtg", f"../../input/systematic_tree_{systematic_tree}.xtg", ["Angiosperms"], max_levels=11)
+    matrDiff = MatrixDiff("../../input/xtg/*.xtg", f"../../input/systematic_tree_{systematic_tree}.xtg", ["Angiosperms"], max_levels=max_levels)
 
     experiment_matrix = matrDiff.make_experiment_matrix(global_params)
 

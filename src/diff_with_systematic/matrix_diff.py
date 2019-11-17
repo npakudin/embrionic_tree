@@ -114,7 +114,6 @@ class MatrixDiff:
 
         # prepare to calculate distances
         for tree in trees:
-            tree.reduce(global_params)
             tree.prepare(global_params)
 
         experiment_matrix = []
