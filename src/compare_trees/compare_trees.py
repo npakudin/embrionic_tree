@@ -14,6 +14,7 @@ def get_distances_by_files(pattern, global_params):
     # prepare to calculate distances
     for tree in trees:
         tree.root.reduce(global_params)
+        tree.root.order_left_right()
         tree.root.prepare(global_params)
 
     # calculate distances matrix

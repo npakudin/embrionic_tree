@@ -2,6 +2,26 @@ from enum import Enum
 import math
 
 
+AXIS_NONE = 'zNone'
+
+
+def get_axis(node):
+    leave = 'zLeave'
+    diagonal = 'xD'
+
+    if node is None:
+        return AXIS_NONE
+    if node.axis == 'None':
+        return AXIS_NONE
+    if node.axis == 'D':
+        return diagonal
+    if node.axis == 'L':
+        return leave
+    return node.axis
+
+    # x < d < у < z < L < N
+
+
 class NodeType(Enum):
     NONE = 0
     AXIS_X = 1
@@ -22,6 +42,7 @@ class TreeNode:
         self.address = "unknown"
         self.global_params = None
         self.type = None
+        self.axis = 'None'
         self.left = left
         self.right = right
         self.growth = 1.0
@@ -48,6 +69,15 @@ class TreeNode:
         if self.right is not None:
             self.right.internal_cut(src_level + 1, max_level)
             assert self.depth == self.right.depth
+
+    def order_left_right(self):
+        left_axis = get_axis(self.left)
+        right_axis = get_axis(self.right)
+
+        if left_axis > right_axis:
+            tmp = self.left
+            self.left = self.right
+            self.right = tmp
 
     # merge chains (nodes in line without division) into single edge
     def reduce(self, global_params):

@@ -1,3 +1,6 @@
+from src.compare_trees.development_tree import get_axis, AXIS_NONE
+
+
 def development_tree_distance(node1, node2, global_params):
     def dist(n1, n2):
         assert not (n1 is None and n2 is None)
@@ -12,10 +15,8 @@ def development_tree_distance(node1, node2, global_params):
             global_params.chain_length_weight * dist_chain_length(n1, n2)
 
     def dist_br_dir(n1, n2):
-        none = 'zNone'
-
-        axis1 = none if (n1 is None) else n1.axis
-        axis2 = none if (n2 is None) else n2.axis
+        axis1 = get_axis(n1)
+        axis2 = get_axis(n2)
 
         (axis1, axis2) = sorted((axis1, axis2))
         # L < d < x < y < z < zNone
@@ -36,7 +37,7 @@ def development_tree_distance(node1, node2, global_params):
             # return 1 * weight
 
             # different for leave, D, Z etc
-            if axis2 == none:
+            if axis2 == AXIS_NONE:
                 return 1 * weight
             if axis1 == 'L':
                 if axis2 == 'z':
