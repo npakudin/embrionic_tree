@@ -14,9 +14,19 @@ def development_tree_distance(node1, node2, global_params):
             global_params.g_weight * dist_gr(n1, n2) + \
             global_params.chain_length_weight * dist_chain_length(n1, n2)
 
-        raw_weight = n2.personal_weight if (n1 is None) else n1.personal_weight
+        # get weight from level
+        weight = n2.personal_weight if (n1 is None) else n1.personal_weight
+        reduced_level = n2.reduced_level if (n1 is None) else n1.reduced_level
 
-        return raw_distance * raw_weight
+        # increase subtree weight
+        if raw_distance > global_params.subtree_threshold:
+            print(f"subtree raw_distance: {'%0.2f' % raw_distance}, n1: {None if n1 is None else n1.name} {None if n1 is None else n1.address}, n2: {None if n2 is None else n2.name} {None if n2 is None else n2.address}")
+            weight *= global_params.subtree_multiplier
+
+        # increase some levels weight
+        weight *= global_params.level_weight_multiplier[reduced_level]
+
+        return raw_distance * weight
 
     def dist_br_dir(n1, n2):
         axis1 = get_axis(n1)

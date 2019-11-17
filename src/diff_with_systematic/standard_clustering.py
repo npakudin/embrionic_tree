@@ -26,8 +26,11 @@ cluster_algorithm = "complete"
 is_swap_left_right=False
 
 for is_swap_left_right in [True, False]:
-    name = f"{calc_weight.name}_{systematic_tree}_{cluster_algorithm}_swap={is_swap_left_right}"
-    global_params = GlobalParams(g_weight=0.1, chain_length_weight=0.1, is_swap_left_right=is_swap_left_right, calc_weight=calc_weight)
+    global_params = GlobalParams(g_weight=0.1, chain_length_weight=0.1, is_swap_left_right=is_swap_left_right,
+                                 calc_weight=calc_weight,
+                                 subtree_threshold=2, subtree_multiplier=2,
+                                 level_weight_multiplier=[1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2])
+    name = f"{calc_weight.name}_{systematic_tree}_{cluster_algorithm}_swap={is_swap_left_right}_subtree_(threshold,mult)=({global_params.subtree_threshold},{global_params.subtree_multiplier})_level_weight_multiplier={global_params.level_weight_multiplier}"
 
     matrDiff = MatrixDiff("../../input/xtg/*.xtg", f"../../input/systematic_tree_{systematic_tree}.xtg", ["Angiosperms"], max_levels=11)
 

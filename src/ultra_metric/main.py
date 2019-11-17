@@ -33,7 +33,7 @@ print(experiment_matrix)
 
 for level_count in range(30):
     name = f"ultrametric_{x[0]}_{x[1]}_{x[2]}_{level_count + 1}"
-    ultra_matrix = get_ultra_metric(experiment_matrix, UltraMetricParams(level_count=level_count + 1))
+    ultra_matrix = get_ultra_metric(experiment_matrix, UltraMetricParams(max_levels=level_count + 1))
 
     ultra_array = make_experiment_array(ultra_matrix)
     clustered_trees = hierarchy.linkage(np.asarray(ultra_array), 'average')

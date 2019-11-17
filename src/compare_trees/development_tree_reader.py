@@ -5,11 +5,11 @@ import xml.etree.ElementTree as ElementTree
 ns = {'b': 'http://bioinfweb.info/xmlns/xtg'}
 
 
-def parse_xml_node(xml, filename, src_level, address):
+def parse_xml_node(xml, name, src_level, address):
     data = xml.find('b:Branch', ns).find('b:TextLabel', ns).attrib['Text'].replace(",", ".").lower().split(' ')
 
     node = TreeNode()
-    node.name = filename
+    node.name = name
     node.address = address
     node.src_level = src_level
 
@@ -20,10 +20,10 @@ def parse_xml_node(xml, filename, src_level, address):
         node.z = data[0]
 
     if data[0] != 'w' and data[0] != 'b':
-        print(f"{filename} : {data[0]}")
+        print(f"{name} : {data[0]}")
 
     # error message on wrong input
-    assert len(data) == 2, f"filename: {filename}, data: {data}"
+    assert len(data) == 2, f"name: {name}, data: {data}"
 
     if data[1] == 'e':
         node.axis = 'L'  # leave
@@ -42,13 +42,13 @@ def parse_xml_node(xml, filename, src_level, address):
             except:
                 node.axis = data[1] # axis of division x or y
                 #print(node.axis)
-                assert any(node.axis == x for x in ['x', 'y', 'd']), f"filename={filename}"
+                assert any(node.axis == x for x in ['x', 'y', 'd']), f"name={name}"
     children = xml.findall('b:Node', ns)
-    assert len(children) <= 2, f"filename: {filename}, children: {children}"
+    assert len(children) <= 2, f"name: {name}, children: {children}"
     if len(children) > 0:
-        node.left = parse_xml_node(xml=children[0], filename=filename, src_level=src_level + 1, address=address + ".L")
+        node.left = parse_xml_node(xml=children[0], name=name, src_level=src_level + 1, address=address + ".L")
     if len(children) > 1:
-        node.right = parse_xml_node(xml=children[1], filename=filename, src_level=src_level + 1, address=address + ".R")
+        node.right = parse_xml_node(xml=children[1], name=name, src_level=src_level + 1, address=address + ".R")
 
     return node
 
@@ -58,7 +58,7 @@ def read_tree_from_xml(filename):
     name = path[len(path) - 1][:-4]  # "../input/xtg/Arabidopsis_thaliana.xtg" => "Arabidopsis_thaliana"
 
     node = parse_xml_node(xml=ElementTree.parse(filename).getroot().find('b:Tree', ns).find('b:Node', ns),
-                          filename=filename, src_level=0, address="Z")
+                          name=name, src_level=0, address="Z")
 
     tree = Tree(root=node, name=name)
 
