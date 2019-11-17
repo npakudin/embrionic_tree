@@ -10,9 +10,13 @@ def development_tree_distance(node1, node2, global_params):
         # if dcl > 0:
         #     global_params.dcl_more_zero += 1
 
-        return 1 * dist_br_dir(n1, n2) +\
+        raw_distance = 1 * dist_br_dir(n1, n2) +\
             global_params.g_weight * dist_gr(n1, n2) + \
             global_params.chain_length_weight * dist_chain_length(n1, n2)
+
+        raw_weight = n2.personal_weight if (n1 is None) else n1.personal_weight
+
+        return raw_distance * raw_weight
 
     def dist_br_dir(n1, n2):
         axis1 = get_axis(n1)
@@ -21,10 +25,8 @@ def development_tree_distance(node1, node2, global_params):
         (axis1, axis2) = sorted((axis1, axis2))
         # x < d < у < z < L < N
 
-        weight = n2.personal_weight if (n1 is None) else n1.personal_weight
-
         if axis1 == axis2:
-            return 0 * weight
+            return 0
         else:
             # d1, d2    => 1
             # d1, None  => 1
@@ -38,24 +40,22 @@ def development_tree_distance(node1, node2, global_params):
 
             # different for leave, D, Z etc
             if axis2 == AXIS_NONE:
-                return 1 * weight
+                return 1
             if axis1 == 'L':
                 if axis2 == 'z':
-                    return 1 * weight
-                return 0.5 * weight
+                    return 1
+                return 0.5
             if axis1 == 'd':
                 if axis2 == 'z':
-                    return 1 * weight
-                return 0.5 * weight
-            return 1 * weight
+                    return 1
+                return 0.5
+            return 1
 
     def dist_gr(n1, n2):
         g1 = 0 if (n1 is None) or (n1.growth is None) else n1.growth - 1
         g2 = 0 if (n2 is None) or (n2.growth is None) else n2.growth - 1
 
-        weight = n2.personal_weight if (n1 is None) else n1.personal_weight
-
-        return abs(g1 - g2) * weight
+        return abs(g1 - g2)
 
     def dist_chain_length(n1, n2):
         # if any(x is None for x in [n1, n2]):
@@ -69,9 +69,7 @@ def development_tree_distance(node1, node2, global_params):
         #     if n1 is not None and n2 is not None:
         #         print(f"    {n1.name} {n2.name}")
 
-        weight = n2.personal_weight if (n1 is None) else n1.personal_weight
-
-        return abs(chain_length1 - chain_length2) * weight
+        return abs(chain_length1 - chain_length2)
 
     return visit_virtual(dist, node1, node2, global_params)
 
