@@ -7,19 +7,20 @@ AXIS_NONE = 'zNone'
 
 def get_axis(node):
     leave = 'zLeave'
-    diagonal = 'xD'
+    diagonal = 'xd'
 
     if node is None:
         return AXIS_NONE
     if node.axis == 'None':
         return AXIS_NONE
-    if node.axis == 'D':
+    if node.axis == 'd':
         return diagonal
     if node.axis == 'L':
         return leave
     return node.axis
 
-    # x < d < у < z < L < N
+    # should be: x < d < у < z < L < N
+    # to provide it, use lexicograph order of: x < xD < у < z < zL < zN
 
 
 class NodeType(Enum):

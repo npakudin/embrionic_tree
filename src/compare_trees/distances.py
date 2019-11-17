@@ -19,7 +19,7 @@ def development_tree_distance(node1, node2, global_params):
         axis2 = get_axis(n2)
 
         (axis1, axis2) = sorted((axis1, axis2))
-        # L < d < x < y < z < zNone
+        # x < d < у < z < L < N
 
         weight = n2.personal_weight if (n1 is None) else n1.personal_weight
 
