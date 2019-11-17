@@ -1,5 +1,5 @@
 import glob
-from src.compare_trees.development_tree import Tree, TreeNode
+from src.compare_trees.development_tree import TreeNode
 import xml.etree.ElementTree as ElementTree
 
 ns = {'b': 'http://bioinfweb.info/xmlns/xtg'}
@@ -60,9 +60,7 @@ def read_tree_from_xml(filename):
     node = parse_xml_node(xml=ElementTree.parse(filename).getroot().find('b:Tree', ns).find('b:Node', ns),
                           name=name, src_level=0, address="Z")
 
-    tree = Tree(root=node, name=name)
-
-    return tree
+    return node
 
 
 def read_all_trees(pattern, max_levels):
@@ -73,8 +71,8 @@ def read_all_trees(pattern, max_levels):
 
     # cut to max_levels and assert, that all files has at lease 11 levels
     for src_tree in src_trees:
-        src_tree.root.cut(max_levels - 1)
+        src_tree.cut(max_levels - 1)
 
-        assert src_tree.root.depth == max_levels - 1, f"{src_tree.name}, {src_tree.root.depth}"
+        assert src_tree.depth == max_levels - 1, f"{src_tree.name}, {src_tree.depth}"
 
     return src_trees

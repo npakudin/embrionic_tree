@@ -114,14 +114,14 @@ class MatrixDiff:
 
         # prepare to calculate distances
         for tree in trees:
-            tree.root.reduce(global_params)
-            tree.root.prepare(global_params)
+            tree.reduce(global_params)
+            tree.prepare(global_params)
 
         experiment_matrix = []
         for i in range(len(trees)):
             experiment_matrix.append([])
             for j in range(i):
-                dist = development_tree_distance(trees[i].root, trees[j].root, global_params)
+                dist = development_tree_distance(trees[i], trees[j], global_params)
                 experiment_matrix[i].append(dist)
 
         return experiment_matrix

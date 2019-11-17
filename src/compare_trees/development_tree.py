@@ -23,33 +23,18 @@ def get_axis(node):
     # to provide it, use lexicograph order of: x < xD < у < z < zL < zN
 
 
-class NodeType(Enum):
-    NONE = 0
-    AXIS_X = 1
-    AXIS_Y = 2
-    GROWTH = 3
-    LEAVE = 4
-
-
-class Tree:
-    def __init__(self, root, name):
-        self.root = root
-        self.name = name
-
-
 class TreeNode:
-    def __init__(self, left=None, right=None):
-        self.name = "unknown"
-        self.address = "unknown"
+    def __init__(self, name = "unknown", address = "unknown", axis="None", left=None, right=None, reduced_level=0):
+        self.name = name
+        self.address = address
         self.global_params = None
-        self.type = None
-        self.axis = 'None'
+        self.axis = axis
         self.left = left
         self.right = right
         self.growth = 1.0
         self.depth = 0
         self.src_level = 0
-        self.reduced_level = 0
+        self.reduced_level = reduced_level
         self.chain_length = 1
         self.personal_weight = 0
         self.total_weight = 0
