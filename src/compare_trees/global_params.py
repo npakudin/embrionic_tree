@@ -8,22 +8,22 @@ class WeightCalculator:
 
 
 def exponent_src_weight(a=0.5):
-    return WeightCalculator(f"exponent_src_weight(a={a})",
+    return WeightCalculator(f"exp_src(a={a})",
                             lambda src_level, reduced_level: math.pow(a, src_level))
 
 
 def exponent_reduced_weight(a=0.5):
-    return WeightCalculator(f"exponent_reduced_weight(a={a})",
+    return WeightCalculator(f"exp_reduced(a={a})",
                             lambda src_level, reduced_level: math.pow(a, reduced_level))
 
 
 def const_weight(weight=1.0):
-    return WeightCalculator(f"const_weight({weight})",
+    return WeightCalculator(f"const({weight})",
                             lambda src_level, reduced_level: weight)
 
 
 def threshold_weight(threshold_level=5, weight_1=1.0, weight_2=0.75):
-    return WeightCalculator(f"threshold_weight(threshold_level={threshold_level},weight_1={weight_1},weight_2={weight_2})",
+    return WeightCalculator(f"threshold(thr_lev={threshold_level},weight_1={weight_1},weight_2={weight_2})",
                             lambda src_level, reduced_level: weight_1 if src_level < threshold_level else weight_2)
 
 

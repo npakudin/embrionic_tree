@@ -2,13 +2,8 @@ from src.compare_trees.development_tree import get_axis, Axis
 
 
 def development_tree_distance(node1, node2, global_params):
-    def dist(n1, n2):
+    def dist(n1, n2, full_addr_1, full_addr_2):
         assert not (n1 is None and n2 is None)
-
-        # dcl = dist_chain_length(n1, n2)
-        # global_params.total_dist += 1
-        # if dcl > 0:
-        #     global_params.dcl_more_zero += 1
 
         raw_distance = 1 * dist_br_dir(n1, n2) +\
             global_params.g_weight * dist_gr(n1, n2) + \
@@ -20,7 +15,7 @@ def development_tree_distance(node1, node2, global_params):
 
         # increase subtree weight
         if raw_distance > global_params.subtree_threshold:
-            print(f"subtree raw_distance: {'%0.2f' % raw_distance}, n1: {None if n1 is None else n1.name} {None if n1 is None else n1.address}, n2: {None if n2 is None else n2.name} {None if n2 is None else n2.address}")
+            print(f"subtree_raw_distance: {'%0.2f' % raw_distance} n1: {full_addr_1 if n1 is None else n1.get_full_addr()} n2: {full_addr_2 if n2 is None else n2.get_full_addr()}")
             weight *= global_params.subtree_multiplier
 
         # increase some levels weight
@@ -81,11 +76,11 @@ def development_tree_distance(node1, node2, global_params):
 
         return abs(chain_length1 - chain_length2)
 
-    return visit_virtual(dist, node1, node2, global_params)
+    return visit_virtual(dist, node1, node2, node1.get_full_addr(), node2.get_full_addr(), global_params)
 
 
-def visit_virtual(fun, node1, node2, global_params):
-    res = fun(node1, node2)
+def visit_virtual(fun, node1, node2, full_addr_1, full_addr_2, global_params):
+    res = fun(node1, node2, full_addr_1, full_addr_2)
 
     left1 = None if (node1 is None) else node1.left
     right1 = None if (node1 is None) else node1.right
@@ -107,7 +102,7 @@ def visit_virtual(fun, node1, node2, global_params):
                 #print(f"swap {direct_order_fertility} {reverse_order_fertility} {node1.level} {node2.level} {node1.name} {node2.name} {node1.address} {node2.address} {node1.axis} {node2.axis}")
 
     if (left1 is not None) or (left2 is not None):
-        res += visit_virtual(fun, left1, left2, global_params)
+        res += visit_virtual(fun, left1, left2, full_addr_1 + ".vL" if node1 is None else node1.get_full_addr(), full_addr_2 + ".vL" if node2 is None else node2.get_full_addr(), global_params)
     if (right1 is not None) or (right2 is not None):
-        res += visit_virtual(fun, right1, right2, global_params)
+        res += visit_virtual(fun, right1, right2, full_addr_1 + ".vR" if node1 is None else node1.get_full_addr(), full_addr_2 + ".vR" if node2 is None else node2.get_full_addr(), global_params)
     return res

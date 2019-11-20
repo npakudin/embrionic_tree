@@ -21,7 +21,7 @@ def draw_plot(clustered_trees, names, plot_name, filename):
     #plt.show()
 
 calc_weight = exponent_reduced_weight(0.5)
-systematic_tree = "molecular_genetic"
+systematic_tree = "apg4"
 cluster_algorithm = "complete"
 is_swap_left_right = False
 max_levels = 11
@@ -31,7 +31,7 @@ for is_swap_left_right in [True, False]:
                                  calc_weight=calc_weight,  max_levels=max_levels,
                                  subtree_threshold=2, subtree_multiplier=2,
                                  level_weight_multiplier=[1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2])
-    name = f"{calc_weight.name}_{systematic_tree}_{cluster_algorithm}_swap={is_swap_left_right}_subtree_(threshold,mult)=({global_params.subtree_threshold},{global_params.subtree_multiplier})_level_weight_multiplier={global_params.level_weight_multiplier}"
+    name = f"{calc_weight.name}_{systematic_tree}_{cluster_algorithm}_swap={is_swap_left_right}_subtree_(thr,mult)=({global_params.subtree_threshold},{global_params.subtree_multiplier})_lev_mult={global_params.level_weight_multiplier}"
 
     matrDiff = MatrixDiff("../../input/xtg/*.xtg", f"../../input/systematic_tree_{systematic_tree}.xtg", ["Angiosperms"], max_levels=max_levels)
 
@@ -46,7 +46,7 @@ for is_swap_left_right in [True, False]:
 
 
 # calc_weights = [const_weight(1.0), exponent_reduced_weight(0.5), threshold_weight(5, 1.0, 0.75)]
-# systematic_trees = ["molecular_genetic", "morph"]
+# systematic_trees = ["apg4", "morph"]
 # cluster_algorithms = ['average', 'centroid', 'complete', 'median', 'weighted']
 #
 # for calc_weight in calc_weights:

@@ -36,6 +36,9 @@ class TreeNode:
         self.total_weight = 0
         self.fertility = 0
 
+    def get_full_addr(self):
+        return f"{self.name}: {self.address}"
+
     # cut tree to max_level if more levels exist in the source tree
     def cut(self, max_level):
         self.internal_cut(0, max_level)
@@ -85,24 +88,8 @@ class TreeNode:
 
         return self
 
-    def internal_restore_with_fake_nodes(self, max_levels):
-        if self.reduced_level >= max_levels:
-            return
-
-        assert (self.left is None) == (self.right is None), f"{self.name} : {self.address}"
-
-        if self.left is None:
-            fake = TreeNode(name=self.name, address=self.address + ".L", reduced_level=self.reduced_level + 1)
-            fake.internal_restore_with_fake_nodes(max_levels)
-            self.left = fake
-        if self.right is None:
-            fake = TreeNode(name=self.name, address=self.address + ".R", reduced_level=self.reduced_level + 1)
-            fake.internal_restore_with_fake_nodes(max_levels)
-            self.right = fake
-
     def prepare(self, global_params):
         self.reduce(global_params)
-        self.internal_restore_with_fake_nodes(max_levels=global_params.max_levels)
         self.order_left_right()
         self.internal_prepare(0, global_params)
 

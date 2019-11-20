@@ -92,8 +92,8 @@ exit()
 
 
 
-# #init_values = [0.39706, 0.33998504, 0.27387935] # 0.43221117679823 - phylo_tree_molecular_genetic, Angiosperms
-# #init_values = [0.40015, 0.22183295, 0.06671602] # 0.4242109756144572 - phylo_tree_morph, Angiosperms
+# #init_values = [0.39706, 0.33998504, 0.27387935] # 0.43221117679823 - systematic_tree_apg4, Angiosperms
+# #init_values = [0.40015, 0.22183295, 0.06671602] # 0.4242109756144572 - systematic_tree_morph, Angiosperms
 #
 # init_values = [0.50000, 0.10000000, 0.10000000]
 #
