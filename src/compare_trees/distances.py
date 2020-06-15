@@ -76,6 +76,8 @@ def development_tree_distance(node1, node2, global_params):
 
         return abs(chain_length1 - chain_length2)
 
+    #return abs(node1.right.reduced_depth - node2.right.reduced_depth)
+
     return visit_virtual(dist, node1, node2, node1.get_full_addr(), node2.get_full_addr(), global_params)
 
 
@@ -86,6 +88,7 @@ def visit_virtual(fun, node1, node2, full_addr_1, full_addr_2, global_params):
     right1 = None if (node1 is None) else node1.right
     left2 = None if (node2 is None) else node2.left
     right2 = None if (node2 is None) else node2.right
+    reduced_level = node1.reduced_level if (node2 is None) else node2.reduced_level
 
     # swap left2 and right2 if reverse order fit better than direct order
     if global_params.is_swap_left_right:
@@ -104,5 +107,7 @@ def visit_virtual(fun, node1, node2, full_addr_1, full_addr_2, global_params):
     if (left1 is not None) or (left2 is not None):
         res += visit_virtual(fun, left1, left2, full_addr_1 + ".vL" if node1 is None else node1.get_full_addr(), full_addr_2 + ".vL" if node2 is None else node2.get_full_addr(), global_params)
     if (right1 is not None) or (right2 is not None):
-        res += visit_virtual(fun, right1, right2, full_addr_1 + ".vR" if node1 is None else node1.get_full_addr(), full_addr_2 + ".vR" if node2 is None else node2.get_full_addr(), global_params)
+        #mult = 0.8 if reduced_level < 4 else 1.0
+        mult = 1.0
+        res += mult * visit_virtual(fun, right1, right2, full_addr_1 + ".vR" if node1 is None else node1.get_full_addr(), full_addr_2 + ".vR" if node2 is None else node2.get_full_addr(), global_params)
     return res

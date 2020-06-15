@@ -31,10 +31,12 @@ class TreeNode:
         self.depth = 0
         self.src_level = src_level
         self.reduced_level = reduced_level
+        self.reduced_depth = None
         self.chain_length = 1
         self.personal_weight = 0
         self.total_weight = 0
         self.fertility = 0
+        self.order_index = None
 
     def get_full_addr(self):
         return f"{self.name}: {self.address}"
@@ -90,7 +92,7 @@ class TreeNode:
 
     def prepare(self, global_params):
         self.reduce(global_params)
-        self.order_left_right()
+        #self.order_left_right()
         self.internal_prepare(0, global_params)
 
     # calculate node.personal_weight = a^reduced_level
@@ -103,16 +105,22 @@ class TreeNode:
         self.total_weight = self.personal_weight
         self.fertility = 0
 
+        self.reduced_depth = 0
+
         if self.left is not None:
             self.left.internal_prepare(reduced_level + 1, global_params)
             self.total_weight += self.left.total_weight
+            self.reduced_depth = max(self.reduced_depth, 1 + self.left.reduced_depth)
 
         if self.right is not None:
+            #if self.reduced_level > 0: # skip Z.R and all it's ancestors
             self.right.internal_prepare(reduced_level + 1, global_params)
             self.total_weight += self.right.total_weight
+            self.reduced_depth = max(self.reduced_depth, 1 + self.right.reduced_depth)
 
             assert self.left.depth == self.right.depth
 
         self.fertility = (self.total_weight - self.personal_weight) / self.personal_weight
 
         assert self.fertility >= 0, f"src_level: {self.src_level}, reduced_level: {self.reduced_level}, personal_weight: {self.personal_weight}"
+

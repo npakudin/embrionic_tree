@@ -56,8 +56,11 @@ def print_matrix(matr, name, tree_names, corrcoef=None, with_headers=False):
     for i, row in enumerate(plot_matr):
         if with_headers:
             print(f"{tree_names[i]} ", end='')
-        for item in row:
-            print("%0.2f " % (item), end='')
+        for index, item in enumerate(row):
+            if index == i:
+                print("- ", end='')
+            else:
+                print("%0.2f " % (item), end='')
             summ += item
             if item > maxx:
                 maxx = item
@@ -87,12 +90,33 @@ class MatrixDiff:
         # morph matrix
         taxon = taxon_from_xml(morph_file)
         taxon.leave_only_names(leave_list)
+
         taxon.leave_only_names([v.name for v in vertices])
+
+        # # sort both in order of morph matrix
+        # taxon.set_order_index() # sort taxons in morph tree order
+
+        leaves = taxon.get_leaves()
+        for index, leave in enumerate(leaves):
+            leave.order_index = index
+
         taxon_names = list(map(lambda x: x.name, taxon.get_leaves()))
+        # print("taxon_names")
+        # print(taxon_names)
+
+        # O(n^2), but n~26, so for now it's OK
+        for vertex in vertices:
+            for index, leave in enumerate(leaves):
+                if leave.name == vertex.name:
+                    vertex.order_index = index
 
         # filter experiment vertices
-        self.vertices = list(filter(lambda x: x.name in taxon_names, vertices))
+        self.vertices = sorted(list(filter(lambda x: x.name in taxon_names, vertices)), key=lambda x: x.order_index)
+        #self.vertices = list(filter(lambda x: x.name in taxon_names, vertices))
         self.names = [v.name for v in self.vertices]
+
+        print("names")
+        print(self.names)
 
         # print(f"count of names: {len(self.names)}")
         # print(f"count of vertices: {len(self.vertices)}")
@@ -115,6 +139,12 @@ class MatrixDiff:
         # prepare to calculate distances
         for tree in trees:
             tree.prepare(global_params)
+
+        #trees = [tree.left for tree in trees]
+
+        depths = [v.reduced_depth for v in trees]
+        print("depths")
+        print(depths)
 
         experiment_matrix = []
         for i in range(len(trees)):
@@ -147,6 +177,10 @@ class MatrixDiff:
             for j, systematic_col in enumerate(systematic_row):
                 systematic_array.append(systematic_matrix[i][j])
                 experiment_array.append(experiment_matrix[i][j])
+
+        # print("experiment systematic")
+        # for i in range(len(systematic_array)):
+        #     print(f"{experiment_array[i]:2.3f} {systematic_array[i]}")
 
         corrcoef_matrix = numpy.corrcoef([systematic_array, experiment_array])
 

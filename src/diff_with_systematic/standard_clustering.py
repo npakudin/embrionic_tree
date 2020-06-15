@@ -30,7 +30,9 @@ for is_swap_left_right in [True, False]:
     global_params = GlobalParams(g_weight=0.1, chain_length_weight=0.1, is_swap_left_right=is_swap_left_right,
                                  calc_weight=calc_weight,  max_levels=max_levels,
                                  subtree_threshold=2, subtree_multiplier=2,
-                                 level_weight_multiplier=[1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2])
+                                 #level_weight_multiplier=[1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2]
+                                 level_weight_multiplier=[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+                                 )
     name = f"{calc_weight.name}_{systematic_tree}_{cluster_algorithm}_swap={is_swap_left_right}_subtree_(thr,mult)=({global_params.subtree_threshold},{global_params.subtree_multiplier})_lev_mult={global_params.level_weight_multiplier}"
 
     matrDiff = MatrixDiff("../../input/xtg/*.xtg", f"../../input/systematic_tree_{systematic_tree}.xtg", ["Angiosperms"], max_levels=max_levels)

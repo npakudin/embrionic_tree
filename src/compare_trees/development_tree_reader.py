@@ -71,7 +71,7 @@ def read_all_trees(pattern, max_levels):
     filenames.sort()
     src_trees = [read_tree_from_xml(filename) for filename in filenames]
 
-    # cut to max_levels and assert, that all files has at lease 11 levels
+    # cut to max_levels and assert, that all files has at least 11 levels
     for src_tree in src_trees:
         src_tree.cut(max_levels - 1)
 
