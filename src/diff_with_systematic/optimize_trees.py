@@ -8,7 +8,7 @@ import matplotlib
 from src.compare_trees.global_params import GlobalParams, const_weight, threshold_weight, exponent_reduced_weight
 
 
-systematic_tree = "apg4"
+systematic_tree = "morph"
 cluster_algorithm = "complete"
 is_swap_left_right = False
 max_levels = 11
