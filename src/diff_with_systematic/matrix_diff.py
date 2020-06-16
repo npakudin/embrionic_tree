@@ -93,16 +93,16 @@ class MatrixDiff:
 
         taxon.leave_only_names([v.name for v in vertices])
 
-        # # sort both in order of morph matrix
-        # taxon.set_order_index() # sort taxons in morph tree order
-
+        # sort by name, but also possible to sort both names and taxon_names by order_index
+        # for it in this file and in get_leaves
+        # replace "key=lambda x: x.name" to "key=lambda x: x.order_index"
         leaves = taxon.get_leaves()
         for index, leave in enumerate(leaves):
             leave.order_index = index
 
         taxon_names = list(map(lambda x: x.name, taxon.get_leaves()))
-        # print("taxon_names")
-        # print(taxon_names)
+        print("taxon_names")
+        print(taxon_names)
 
         # O(n^2), but n~26, so for now it's OK
         for vertex in vertices:
@@ -111,15 +111,11 @@ class MatrixDiff:
                     vertex.order_index = index
 
         # filter experiment vertices
-        self.vertices = sorted(list(filter(lambda x: x.name in taxon_names, vertices)), key=lambda x: x.order_index)
-        #self.vertices = list(filter(lambda x: x.name in taxon_names, vertices))
+        self.vertices = sorted(list(filter(lambda x: x.name in taxon_names, vertices)), key=lambda x: x.name)
         self.names = [v.name for v in self.vertices]
 
         print("names")
         print(self.names)
-
-        # print(f"count of names: {len(self.names)}")
-        # print(f"count of vertices: {len(self.vertices)}")
 
         self.taxon_matrix = taxon.calculate()
 
@@ -143,8 +139,8 @@ class MatrixDiff:
         #trees = [tree.left for tree in trees]
 
         depths = [v.reduced_depth for v in trees]
-        print("depths")
-        print(depths)
+        # print("depths")
+        # print(depths)
 
         experiment_matrix = []
         for i in range(len(trees)):
@@ -187,7 +183,7 @@ class MatrixDiff:
         return corrcoef_matrix[0][1]
 
     def matr_diff(self, x):
-        global_params = GlobalParams(g_weight=x[1], chain_length_weight=x[2], is_swap_left_right=True,
+        global_params = GlobalParams(max_levels=11, g_weight=x[1], chain_length_weight=x[2], is_swap_left_right=True,
                                      calc_weight=exponent_reduced_weight(a=x[0]))
                                      #calc_weight=exponent_src_weight(a=x[0]))
                                      #calc_weight=const_weight(weight=x[0]))

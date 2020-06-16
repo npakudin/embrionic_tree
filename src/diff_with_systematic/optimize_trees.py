@@ -8,34 +8,36 @@ import matplotlib
 from src.compare_trees.global_params import GlobalParams, const_weight, threshold_weight, exponent_reduced_weight
 
 
-systematic_tree = "morph"
-cluster_algorithm = "complete"
-is_swap_left_right = False
-max_levels = 11
-
-#for param_a in np.linspace(0.05, 1.00, 20):
-for param_a in np.linspace(0.5, 0.5, 1):
-#for param_a in np.linspace(1, 1, 1):
-    calc_weight = exponent_reduced_weight(param_a)
-    global_params = GlobalParams(g_weight=0.2, chain_length_weight=0.1, is_swap_left_right=is_swap_left_right,
-                                 calc_weight=calc_weight, max_levels=max_levels,
-                                 subtree_threshold=1000, subtree_multiplier=1,
-                                 #level_weight_multiplier=[512, 256, 128, 64, 32, 16, 8, 4, 2, 1, 0]
-                                 #level_weight_multiplier=[4, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0]
-                                 level_weight_multiplier=[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-                                 )
-    name = f"{calc_weight.name}_{systematic_tree}_{cluster_algorithm}_swap={is_swap_left_right}_subtree_(thr,mult)=({global_params.subtree_threshold},{global_params.subtree_multiplier})_lev_mult={global_params.level_weight_multiplier}"
-
-    matrDiff = MatrixDiff("../../input/xtg/*.xtg", f"../../input/systematic_tree_{systematic_tree}.xtg", ["Angiosperms"], max_levels=max_levels)
-
-    experiment_matrix = matrDiff.make_experiment_matrix(global_params)
-
-    corrcoef = matrDiff.corrcoef(experiment_matrix=experiment_matrix)
-    #print(f"{corrcoef:0.4f}")
-    print_matrix(experiment_matrix, name, matrDiff.names, corrcoef, with_headers=True)
-
-
-exit()
+# Build matrices and corr coef only
+#
+# systematic_tree = "morph"
+# cluster_algorithm = "complete"
+# is_swap_left_right = False
+# max_levels = 11
+#
+# #for param_a in np.linspace(0.05, 1.00, 20):
+# for param_a in np.linspace(0.5, 0.5, 1):
+# #for param_a in np.linspace(1, 1, 1):
+#     calc_weight = exponent_reduced_weight(param_a)
+#     global_params = GlobalParams(g_weight=0.2, chain_length_weight=0.1, is_swap_left_right=is_swap_left_right,
+#                                  calc_weight=calc_weight, max_levels=max_levels,
+#                                  subtree_threshold=1000, subtree_multiplier=1,
+#                                  #level_weight_multiplier=[512, 256, 128, 64, 32, 16, 8, 4, 2, 1, 0]
+#                                  #level_weight_multiplier=[4, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0]
+#                                  level_weight_multiplier=[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+#                                  )
+#     name = f"{calc_weight.name}_{systematic_tree}_{cluster_algorithm}_swap={is_swap_left_right}_subtree_(thr,mult)=({global_params.subtree_threshold},{global_params.subtree_multiplier})_lev_mult={global_params.level_weight_multiplier}"
+#
+#     matrDiff = MatrixDiff("../../input/xtg/*.xtg", f"../../input/systematic_tree_{systematic_tree}.xtg", ["Angiosperms"], max_levels=max_levels)
+#
+#     experiment_matrix = matrDiff.make_experiment_matrix(global_params)
+#
+#     corrcoef = matrDiff.corrcoef(experiment_matrix=experiment_matrix)
+#     #print(f"{corrcoef:0.4f}")
+#     print_matrix(experiment_matrix, name, matrDiff.names, corrcoef, with_headers=True)
+#
+#
+# exit()
 
 # param_a: 0.35, corrcoef: 0.4430 - level_weight_multiplier=[1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2]
 # param_a: 0.30, corrcoef: 0.4616 - level_weight_multiplier=[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
@@ -79,8 +81,8 @@ def create_fun(chain_length_weight):
 # exit()
 
 
-a = np.linspace(0.001, 0.4, 20) # 0.001 - 0.05
-g_weight = np.linspace(-0.1, 0.2, 20) # -0.1 - 1.0
+a = np.linspace(0.001, 1.0, 11) # 0.001 - 0.05
+g_weight = np.linspace(-0.1, 1.0, 12) # -0.1 - 1.0
 chain_length = 0.5
 
 X, Y = np.meshgrid(a, g_weight)

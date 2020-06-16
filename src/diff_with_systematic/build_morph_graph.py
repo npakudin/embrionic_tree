@@ -91,7 +91,7 @@ class Taxon:
         res = []
         for child in self.children:
             res += child.get_leaves()
-        #res = sorted(res, key=lambda x: x.name)
+        res = sorted(res, key=lambda x: x.name)
         return res
 
     def set_parents(self):

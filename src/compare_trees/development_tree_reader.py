@@ -15,8 +15,8 @@ def parse_xml_node(xml, name, src_level, address):
     if data[0] == 'wb':
         data[0] = 'b_in_w'
 
-    if data[0] != 'w' and data[0] != 'b':
-        print(f"{name} : {data[0]}") # error message on wrong input
+    # if data[0] != 'w' and data[0] != 'b':
+    #     print(f"{name} : {data[0]}") # error message on wrong input
 
     assert len(data) == 2, f"name: {name}, data: {data}" # error message on wrong input
 
