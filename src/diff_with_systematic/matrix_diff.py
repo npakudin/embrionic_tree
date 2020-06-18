@@ -107,8 +107,8 @@ class MatrixDiff:
             leave.order_index = index
 
         taxon_names = list(map(lambda x: x.name, taxon.get_leaves()))
-        print("taxon_names")
-        print(taxon_names)
+        # print("taxon_names")
+        # print(taxon_names)
 
         # O(n^2), but n~26, so for now it's OK
         for vertex in vertices:
@@ -120,8 +120,8 @@ class MatrixDiff:
         self.vertices = sorted(list(filter(lambda x: x.name in taxon_names, vertices)), key=lambda x: x.name)
         self.names = [v.name for v in self.vertices]
 
-        print("names")
-        print(self.names)
+        # print("names")
+        # print(self.names)
 
         self.taxon_matrix = taxon.calculate()
 
