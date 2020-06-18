@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from src.diff_with_systematic.matrix_diff import MatrixDiff, print_matrix
 import matplotlib
 from src.compare_trees.global_params import GlobalParams, const_weight, threshold_weight, exponent_reduced_weight
-
+import scipy.spatial.distance as ssd
 
 # Build matrices and corr coef only
 #
@@ -46,68 +46,68 @@ from src.compare_trees.global_params import GlobalParams, const_weight, threshol
 
 
 
-
-
-matrDiff = MatrixDiff("../../input/xtg/*.xtg", "../../input/systematic_tree_morph.xtg", ["Angiosperms"], max_levels=11)
 #
-# for chain_length_weight in np.linspace(0.1, 0.7, 7):
-#     for a in np.linspace(0.05, 1.0, 20):
-#         for g_weight in np.linspace(0.1, 1.0, 10):
-#             res = matrDiff.matr_diff_sum([a, g_weight, chain_length_weight])
-#             #res = matrDiff.matr_diff_sum([a, 0, 0])
-#             #print(f"res: {res}")
-#     print("")
 #
-
-
-def create_fun(chain_length_weight):
-    def fun(a, g_weight):
-        return matrDiff.matr_diff_sum([a, g_weight, chain_length_weight])
-    return fun
-
-
-# def my_fun(x, y):
-#     print(f"my_fun {x} {y}")
-#     return x + y
-# a = np.linspace(0.1, 1.0, 4)
-# g_weight = np.linspace(0.1, 1.0, 3)
+# matrDiff = MatrixDiff("../../input/xtg/*.xtg", "../../input/systematic_tree_morph.xtg", ["Angiosperms"], max_levels=11)
+# #
+# # for chain_length_weight in np.linspace(0.1, 0.7, 7):
+# #     for a in np.linspace(0.05, 1.0, 20):
+# #         for g_weight in np.linspace(0.1, 1.0, 10):
+# #             res = matrDiff.matr_diff_sum([a, g_weight, chain_length_weight])
+# #             #res = matrDiff.matr_diff_sum([a, 0, 0])
+# #             #print(f"res: {res}")
+# #     print("")
+# #
+#
+#
+# def create_fun(chain_length_weight):
+#     def fun(a, g_weight):
+#         return matrDiff.matr_diff_sum([a, g_weight, chain_length_weight])
+#     return fun
+#
+#
+# # def my_fun(x, y):
+# #     print(f"my_fun {x} {y}")
+# #     return x + y
+# # a = np.linspace(0.1, 1.0, 4)
+# # g_weight = np.linspace(0.1, 1.0, 3)
+# #
+# # X, Y = np.meshgrid(a, g_weight)
+# #
+# # vfunc = np.vectorize(my_fun)
+# # q = vfunc(X, Y)
+# #
+# # print(q)
+# # exit()
+#
+#
+# a = np.linspace(0.001, 1.0, 11) # 0.001 - 0.05
+# g_weight = np.linspace(-0.1, 1.0, 12) # -0.1 - 1.0
+# chain_length = 0.5
 #
 # X, Y = np.meshgrid(a, g_weight)
+# Z = np.vectorize(create_fun(chain_length))(X, Y)
 #
-# vfunc = np.vectorize(my_fun)
-# q = vfunc(X, Y)
-#
-# print(q)
-# exit()
-
-
-a = np.linspace(0.001, 1.0, 11) # 0.001 - 0.05
-g_weight = np.linspace(-0.1, 1.0, 12) # -0.1 - 1.0
-chain_length = 0.5
-
-X, Y = np.meshgrid(a, g_weight)
-Z = np.vectorize(create_fun(chain_length))(X, Y)
-
-fig = plt.figure()
-
-ax = Axes3D(fig)
-ax.plot_surface(X, Y, Z, rstride=1, cstride=1, cmap='viridis', edgecolor='none')
-ax.set_xlabel('param_a')
-ax.set_ylabel('g_weight')
-ax.set_zlabel('coefcorr')
-ax.set_title(f"chain_length_weight={chain_length}")
-
-plt.show()
-
 # fig = plt.figure()
 #
-# ax = plt.axes(projection='3d')
-# ax.plot_surface(X, Y, Z, rstride=1, cstride=1,
-#                 cmap='viridis', edgecolor='none')
-# ax.set_title('surface')
-
-exit()
-
+# ax = Axes3D(fig)
+# ax.plot_surface(X, Y, Z, rstride=1, cstride=1, cmap='viridis', edgecolor='none')
+# ax.set_xlabel('param_a')
+# ax.set_ylabel('g_weight')
+# ax.set_zlabel('coefcorr')
+# ax.set_title(f"chain_length_weight={chain_length}")
+#
+# plt.show()
+#
+# # fig = plt.figure()
+# #
+# # ax = plt.axes(projection='3d')
+# # ax.plot_surface(X, Y, Z, rstride=1, cstride=1,
+# #                 cmap='viridis', edgecolor='none')
+# # ax.set_title('surface')
+#
+# exit()
+#
 
 # 0.04000, 0.50000000, 0.50000000 : -0.45027154234063 - reduced
 # 0.18000, 0.30000000, 0.10000000 : -0.45251470564757 - reduced
@@ -134,38 +134,8 @@ exit()
 
 
 
-# #init_values = [0.39706, 0.33998504, 0.27387935] # 0.43221117679823 - systematic_tree_apg4, Angiosperms
-# #init_values = [0.40015, 0.22183295, 0.06671602] # 0.4242109756144572 - systematic_tree_morph, Angiosperms
-#
-# init_values = [0.50000, 0.10000000, 0.10000000]
-#
-# #clusterize
-# #ytdist = np.matrix(morph_matrix)
-# global_params = GlobalParams(g_weight=init_values[1], chain_length_weight=init_values[2], is_swap_left_right=True)
-#
-# plot_matr = matrDiff.make_full_experiment_matrix(global_params)
-#
-# for name in matrDiff.names:
-#     print(f"{name.replace(' ', '_')} ", end='')
-# print("")
-#
-# print_matrix(plot_matr, "experiment_matrix")
-# res = matrDiff.matr_diff_sum(init_values)
-# print(f"res: {res}")
-#
-#
-# Z = hierarchy.linkage(np.matrix(plot_matr), 'average')
-# #print(Z)
-# plt.figure()
-# dn = hierarchy.dendrogram(Z, labels = np.array([x.split('_')[0] + ' ' + x.split('_')[1][:5] for x in matrDiff.names], np.str)
-#                           , orientation='right',count_sort = 'ascending', distance_sort='ascending')
-# plt.show()
-# exit
-#
-#
-#
-#
-#
+
+
 # x_arrange = np.arange(0.1, 0.9, 0.1)
 # y_arrange = np.arange(0.1, 0.9, 0.1)
 # X, Y = np.meshgrid(x_arrange, y_arrange)

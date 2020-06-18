@@ -1,8 +1,8 @@
 from src.compare_trees.compare_trees import get_distances_by_files
-from src.compare_trees.global_params import GlobalParams
+from src.compare_trees.global_params import GlobalParams, exponent_reduced_weight
 
-global_params = GlobalParams(a=0.6, g_weight=0.05, chain_length_weight=0.4, is_swap_left_right=True,
-                             max_levels=11)
+global_params = GlobalParams(calc_weight=exponent_reduced_weight(0.50), g_weight=0.05, chain_length_weight=0.4,
+                             is_swap_left_right=True, max_levels=11)
 
 [trees, distance_matrix] = get_distances_by_files("../../input/xtg/*.xtg", global_params)
 

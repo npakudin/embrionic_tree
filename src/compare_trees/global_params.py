@@ -8,27 +8,27 @@ class WeightCalculator:
 
 
 def exponent_src_weight(a=0.5):
-    return WeightCalculator(f"exp_src(a={a})",
+    return WeightCalculator(f"exp_src(a={a:0.2f})",
                             lambda src_level, reduced_level: math.pow(a, src_level))
 
 
 def exponent_reduced_weight(a=0.5):
-    return WeightCalculator(f"exp_reduced(a={a})",
+    return WeightCalculator(f"exp_reduced(a={a:0.2f})",
                             lambda src_level, reduced_level: math.pow(a, reduced_level))
 
 
 def const_weight(weight=1.0):
-    return WeightCalculator(f"const({weight})",
+    return WeightCalculator(f"const({weight:0.2f})",
                             lambda src_level, reduced_level: weight)
 
 
 def threshold_weight(threshold_level=5, weight_1=1.0, weight_2=0.75):
-    return WeightCalculator(f"threshold(thr_lev={threshold_level},weight_1={weight_1},weight_2={weight_2})",
+    return WeightCalculator(f"threshold(thr_lev={threshold_level:0.2f},weight_1={weight_1:0.2f},weight_2={weight_2:0.2f})",
                             lambda src_level, reduced_level: weight_1 if src_level < threshold_level else weight_2)
 
 
 class GlobalParams:
-    def __init__(self, max_levels, g_weight, chain_length_weight, is_swap_left_right, calc_weight,
+    def __init__(self, calc_weight, max_levels, g_weight, chain_length_weight=0.0, is_swap_left_right=False,
                  subtree_threshold=1.0E+100, subtree_multiplier=1.0,
                  level_weight_multiplier=None
                  ):

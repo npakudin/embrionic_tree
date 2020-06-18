@@ -83,6 +83,12 @@ def diff_matrices(experiment_morph_coeff, experiment_matrix, systematic_matrix):
     return res
 
 
+def to_full_matrix(left_bottom_matrix):
+    plot_matr = [[(0 if i == j else (left_bottom_matrix[i][j] if i > j else left_bottom_matrix[j][i])) for j in
+                  range(len(left_bottom_matrix))] for i in range(len(left_bottom_matrix))]
+    return plot_matr
+
+
 class MatrixDiff:
     def __init__(self, experiment_pattern, morph_file, leave_list, max_levels=11):
         vertices = read_all_trees(pattern=experiment_pattern, max_levels=max_levels)
@@ -124,9 +130,7 @@ class MatrixDiff:
 
     def make_full_experiment_matrix(self, global_params):
         left_bottom_matrix = self.make_experiment_matrix(global_params)
-        plot_matr = [[(0 if i == j else (left_bottom_matrix[i][j] if i > j else left_bottom_matrix[j][i])) for j in
-                      range(len(left_bottom_matrix))] for i in range(len(left_bottom_matrix))]
-        return plot_matr
+        return to_full_matrix(left_bottom_matrix)
 
     def make_experiment_matrix(self, global_params):
         # create a copy of trees to modify
