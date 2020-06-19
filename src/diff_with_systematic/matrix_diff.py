@@ -89,6 +89,20 @@ def to_full_matrix(left_bottom_matrix):
     return plot_matr
 
 
+def corrcoef(matr1, matr2):
+    array1 = []
+    array2 = []
+    for i, row1 in enumerate(matr1):
+        for j, col1 in enumerate(row1):
+            array1.append(matr1[i][j])
+            array2.append(matr2[i][j])
+
+    corrcoef_matrix = numpy.corrcoef([array1, array2])
+
+    return corrcoef_matrix[0][1]
+
+
+
 class MatrixDiff:
     def __init__(self, experiment_pattern, morph_file, leave_list, max_levels=11):
         vertices = read_all_trees(pattern=experiment_pattern, max_levels=max_levels)
@@ -174,21 +188,7 @@ class MatrixDiff:
 
     def corrcoef(self, experiment_matrix):
         systematic_matrix = self.make_systematic_matrix()
-
-        systematic_array = []
-        experiment_array = []
-        for i, systematic_row in enumerate(systematic_matrix):
-            for j, systematic_col in enumerate(systematic_row):
-                systematic_array.append(systematic_matrix[i][j])
-                experiment_array.append(experiment_matrix[i][j])
-
-        # print("experiment systematic")
-        # for i in range(len(systematic_array)):
-        #     print(f"{experiment_array[i]:2.3f} {systematic_array[i]}")
-
-        corrcoef_matrix = numpy.corrcoef([systematic_array, experiment_array])
-
-        return corrcoef_matrix[0][1]
+        return corrcoef(systematic_matrix, experiment_matrix)
 
     def matr_diff(self, x):
         global_params = GlobalParams(max_levels=11, g_weight=x[1], chain_length_weight=x[2], is_swap_left_right=False,
