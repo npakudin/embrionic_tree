@@ -33,9 +33,9 @@ class TreeNode:
         self.reduced_level = reduced_level
         self.reduced_depth = None
         self.chain_length = 1
-        self.personal_weight = 0
-        self.total_weight = 0
-        self.fertility = 0
+        # self.personal_weight = 0
+        # self.total_weight = 0
+        # self.fertility = 0
         self.order_index = None
 
     def __str__(self):
@@ -70,7 +70,7 @@ class TreeNode:
             self.right = tmp
 
     # merge chains (nodes in line without division) into single edge
-    def reduce(self, global_params):
+    def reduce(self):
         self.internal_reduce(parent_growth=1, chain_length=1)
 
     def internal_reduce(self, parent_growth, chain_length):
@@ -94,38 +94,34 @@ class TreeNode:
 
         return self
 
-    def prepare(self, global_params):
-        self.reduce(global_params)
+    def prepare(self):
+        self.reduce()
         #self.order_left_right()
-        self.internal_prepare(0, global_params)
+        self.internal_prepare(0)
 
-    # calculate node.personal_weight = a^reduced_level
-    # calculate node.total_weight = node.personal_weight + node.left.personal_weight + node.right.personal_weight
-    def internal_prepare(self, reduced_level, global_params):
+    def internal_prepare(self, reduced_level):
         assert (self.left is None) == (self.right is None)
 
         self.reduced_level = reduced_level
-        self.personal_weight = global_params.calc_weight.fun(self.src_level, self.reduced_level) #math.pow(global_params.a, reduced_level)
-        self.total_weight = self.personal_weight
-        self.fertility = 0
+        # self.personal_weight = global_params.calc_weight.fun(self.src_level, self.reduced_level) #math.pow(global_params.a, reduced_level)
+        # self.total_weight = self.personal_weight
+        # self.fertility = 0
 
         self.reduced_depth = 0
 
         if self.left is not None:
-            self.left.internal_prepare(reduced_level + 1, global_params)
-            self.total_weight += self.left.total_weight
+            self.left.internal_prepare(reduced_level + 1)
+            # self.total_weight += self.left.total_weight
             self.reduced_depth = max(self.reduced_depth, 1 + self.left.reduced_depth)
 
         if self.right is not None:
             #if self.reduced_level > 0: # skip Z.R and all it's ancestors
-            self.right.internal_prepare(reduced_level + 1, global_params)
-            self.total_weight += self.right.total_weight
+            self.right.internal_prepare(reduced_level + 1)
+            # self.total_weight += self.right.total_weight
             self.reduced_depth = max(self.reduced_depth, 1 + self.right.reduced_depth)
 
             assert self.left is not None
             assert self.left.depth == self.right.depth
-
-        self.fertility = (self.total_weight - self.personal_weight) / self.personal_weight
-
-        assert self.fertility >= 0, f"src_level: {self.src_level}, reduced_level: {self.reduced_level}, personal_weight: {self.personal_weight}"
-
+        # self.fertility = (self.total_weight - self.personal_weight) / self.personal_weight
+        #
+        # assert self.fertility >= 0, f"src_level: {self.src_level}, reduced_level: {self.reduced_level}, personal_weight: {self.personal_weight}"

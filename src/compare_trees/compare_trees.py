@@ -13,7 +13,7 @@ def get_distances_by_files(pattern, global_params):
 
     # prepare to calculate distances
     for tree in trees:
-        tree.prepare(global_params)
+        tree.prepare()
 
     # calculate distances matrix
     distance_matrix = [[development_tree_distance(v1, v2, global_params) for v2 in trees] for v1 in trees]

@@ -13,68 +13,53 @@ import scipy.spatial.distance as ssd
 # param_a: 0.30, corrcoef: 0.4616 - level_weight_multiplier=[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 # param_a: 0.10, corrcoef: 0.4524 - level_weight_multiplier=[1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 
-#
-#
-# matrDiff = MatrixDiff("../../input/xtg/*.xtg", "../../input/systematic_tree_morph.xtg", ["Angiosperms"], max_levels=11)
-# #
-# # for chain_length_weight in np.linspace(0.1, 0.7, 7):
-# #     for a in np.linspace(0.05, 1.0, 20):
-# #         for g_weight in np.linspace(0.1, 1.0, 10):
-# #             res = matrDiff.matr_diff_sum([a, g_weight, chain_length_weight])
-# #             #res = matrDiff.matr_diff_sum([a, 0, 0])
-# #             #print(f"res: {res}")
-# #     print("")
-# #
-#
-#
-# def create_fun(chain_length_weight):
-#     def fun(a, g_weight):
-#         return matrDiff.matr_diff_sum([a, g_weight, chain_length_weight])
-#     return fun
-#
-#
-# # def my_fun(x, y):
-# #     print(f"my_fun {x} {y}")
-# #     return x + y
-# # a = np.linspace(0.1, 1.0, 4)
-# # g_weight = np.linspace(0.1, 1.0, 3)
-# #
-# # X, Y = np.meshgrid(a, g_weight)
-# #
-# # vfunc = np.vectorize(my_fun)
-# # q = vfunc(X, Y)
-# #
-# # print(q)
-# # exit()
-#
-#
-# a = np.linspace(0.001, 1.0, 11) # 0.001 - 0.05
-# g_weight = np.linspace(-0.1, 1.0, 12) # -0.1 - 1.0
-# chain_length = 0.5
-#
-# X, Y = np.meshgrid(a, g_weight)
-# Z = np.vectorize(create_fun(chain_length))(X, Y)
-#
+
+
+matrDiff = MatrixDiff("../../input/xtg/*.xtg", "../../input/systematic_tree_morph.xtg", ["Angiosperms"], max_levels=11)
+
+def create_fun(chain_length_weight):
+    def fun(a, g_weight):
+        return matrDiff.matr_diff_sum([a, g_weight, chain_length_weight])
+    return fun
+
+
+a = np.linspace(0.001, 1.0, 11)
+g_weight = np.linspace(-0.1, 1.0, 12)
+chain_length = 0.0
+
+X, Y = np.meshgrid(a, g_weight)
+Z = np.vectorize(create_fun(chain_length))(X, Y)
+
+fig = plt.figure()
+
+ax = Axes3D(fig)
+ax.plot_surface(X, Y, Z, rstride=1, cstride=1, cmap='viridis', edgecolor='none')
+ax.set_xlabel('param_a')
+ax.set_ylabel('g_weight')
+ax.set_zlabel('coefcorr')
+ax.set_title(f"chain_length_weight={chain_length}")
+
+plt.show()
+
+# 0.30070, 0.50000000, 0.50000000 : 0.41224894149190
+# 0.30070, 0.40000000, 0.00000000 : 0.42048571352381
+# 0.40060, 0.40000000, 0.00000000 : 0.42303040074809
+# 0.30070, 0.50000000, 0.00000000 : 0.42195595982394
+# 0.40060, 0.50000000, 0.00000000 : 0.42201579508909
+# 0.30070, 0.60000000, 0.00000000 : 0.42000523107738
+# 0.40060, 0.60000000, 0.00000000 : 0.41840974229453
+
+
+
 # fig = plt.figure()
 #
-# ax = Axes3D(fig)
-# ax.plot_surface(X, Y, Z, rstride=1, cstride=1, cmap='viridis', edgecolor='none')
-# ax.set_xlabel('param_a')
-# ax.set_ylabel('g_weight')
-# ax.set_zlabel('coefcorr')
-# ax.set_title(f"chain_length_weight={chain_length}")
-#
-# plt.show()
-#
-# # fig = plt.figure()
-# #
-# # ax = plt.axes(projection='3d')
-# # ax.plot_surface(X, Y, Z, rstride=1, cstride=1,
-# #                 cmap='viridis', edgecolor='none')
-# # ax.set_title('surface')
-#
-# exit()
-#
+# ax = plt.axes(projection='3d')
+# ax.plot_surface(X, Y, Z, rstride=1, cstride=1,
+#                 cmap='viridis', edgecolor='none')
+# ax.set_title('surface')
+
+#exit()
+
 
 # 0.04000, 0.50000000, 0.50000000 : -0.45027154234063 - reduced
 # 0.18000, 0.30000000, 0.10000000 : -0.45251470564757 - reduced

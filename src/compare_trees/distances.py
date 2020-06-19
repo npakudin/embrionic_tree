@@ -100,17 +100,18 @@ def visit_virtual(fun, node1, node2, full_addr_1, full_addr_2, global_params, le
 
     # swap left2 and right2 if reverse order fit better than direct order
     if global_params.is_swap_left_right:
-        if all(x is not None for x in [left1, left2, right1, right2]):
-            direct_order_fertility = min(left1.fertility, left2.fertility) + min(right1.fertility, right2.fertility)
-            reverse_order_fertility = min(left1.fertility, right2.fertility) + min(right1.fertility, left2.fertility)
-            global_params.total += 1
-            if reverse_order_fertility > direct_order_fertility:
-                # swap
-                tmp = left2
-                left2 = right2
-                right2 = tmp
-                global_params.swaps += 1
-                #print(f"swap {direct_order_fertility} {reverse_order_fertility} {node1.level} {node2.level} {node1.name} {node2.name} {node1.address} {node2.address} {node1.axis} {node2.axis}")
+        raise "Not supported"
+        # if all(x is not None for x in [left1, left2, right1, right2]):
+        #     direct_order_fertility = min(left1.fertility, left2.fertility) + min(right1.fertility, right2.fertility)
+        #     reverse_order_fertility = min(left1.fertility, right2.fertility) + min(right1.fertility, left2.fertility)
+        #     global_params.total += 1
+        #     if reverse_order_fertility > direct_order_fertility:
+        #         # swap
+        #         tmp = left2
+        #         left2 = right2
+        #         right2 = tmp
+        #         global_params.swaps += 1
+        #         #print(f"swap {direct_order_fertility} {reverse_order_fertility} {node1.level} {node2.level} {node1.name} {node2.name} {node1.address} {node2.address} {node1.axis} {node2.axis}")
 
     if (left1 is not None) or (left2 is not None):
         res += visit_virtual(fun, left1, left2, full_addr_1 + ".vL" if node1 is None else node1.get_full_addr(), full_addr_2 + ".vL" if node2 is None else node2.get_full_addr(), global_params, level + 1)

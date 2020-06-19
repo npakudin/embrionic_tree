@@ -120,6 +120,9 @@ class MatrixDiff:
         self.vertices = sorted(list(filter(lambda x: x.name in taxon_names, vertices)), key=lambda x: x.name)
         self.names = [v.name for v in self.vertices]
 
+        for tree in self.vertices:
+            tree.prepare()
+
         # print("names")
         # print(self.names)
 
@@ -134,13 +137,14 @@ class MatrixDiff:
 
     def make_experiment_matrix(self, global_params):
         # create a copy of trees to modify
-        trees = [copy.deepcopy(src_tree) for src_tree in self.vertices]
-
-        # prepare to calculate distances
-        for tree in trees:
-            tree.prepare(global_params)
+        # trees = [copy.deepcopy(src_tree) for src_tree in self.vertices]
+        #
+        # # prepare to calculate distances
+        # for tree in trees:
+        #     tree.prepare(global_params)
 
         #trees = [tree.left for tree in trees]
+        trees = self.vertices
 
         depths = [v.reduced_depth for v in trees]
         # print("depths")
@@ -187,7 +191,7 @@ class MatrixDiff:
         return corrcoef_matrix[0][1]
 
     def matr_diff(self, x):
-        global_params = GlobalParams(max_levels=11, g_weight=x[1], chain_length_weight=x[2], is_swap_left_right=True,
+        global_params = GlobalParams(max_levels=11, g_weight=x[1], chain_length_weight=x[2], is_swap_left_right=False,
                                      calc_weight=exponent_reduced_weight(a=x[0]))
                                      #calc_weight=exponent_src_weight(a=x[0]))
                                      #calc_weight=const_weight(weight=x[0]))

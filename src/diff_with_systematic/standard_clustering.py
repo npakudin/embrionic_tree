@@ -36,7 +36,7 @@ cluster_algorithms = ['complete', 'average']
 for calc_weight in calc_weights:
     for systematic_tree in systematic_trees:
         for cluster_algorithm in cluster_algorithms:
-            global_params = GlobalParams(g_weight=0.1, chain_length_weight=0.0, is_swap_left_right=is_swap_left_right,
+            global_params = GlobalParams(g_weight=0.5, chain_length_weight=0.0, is_swap_left_right=is_swap_left_right,
                                          calc_weight=calc_weight,  max_levels=max_levels,
                                          subtree_threshold=100, subtree_multiplier=1,
                                          #level_weight_multiplier=[1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2]
