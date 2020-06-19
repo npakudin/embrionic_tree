@@ -38,6 +38,9 @@ class TreeNode:
         self.fertility = 0
         self.order_index = None
 
+    def __str__(self):
+        return self.get_full_addr()
+
     def get_full_addr(self):
         return f"{self.name}: {self.address}"
 
@@ -78,6 +81,7 @@ class TreeNode:
         self.growth = self.growth * parent_growth
 
         if self.left is None and self.right is None:
+            self.axis = Axis.LEAVE # this is a leave
             return self
         if self.right is None:
             # if continue chain - add 1 to its' length
@@ -118,6 +122,7 @@ class TreeNode:
             self.total_weight += self.right.total_weight
             self.reduced_depth = max(self.reduced_depth, 1 + self.right.reduced_depth)
 
+            assert self.left is not None
             assert self.left.depth == self.right.depth
 
         self.fertility = (self.total_weight - self.personal_weight) / self.personal_weight

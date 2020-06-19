@@ -20,33 +20,35 @@ def parse_xml_node(xml, name, src_level, address):
 
     assert len(data) == 2, f"name: {name}, data: {data}" # error message on wrong input
 
-    if data[1] == 'e':
-        node.axis = Axis.LEAVE
+    if data[1] == 's' or data[1] == 'e':
+        # chain item, no growth
+        node.axis = Axis.NONE
+        node.growth = 1
     else:
-        if data[1] == 's':
-            # chain item, no growth
+        try:
+            # chain item, there is growth
             node.axis = Axis.NONE
-            node.growth = 1
-        else:
-            try:
-                # chain item, there is growth
-                node.axis = Axis.NONE
-                node.growth = float(data[1])
-                assert node.growth >= 1
-            except:
-                if data[1] == "x":
-                    node.axis = Axis.X
-                elif data[1] == "y":
-                    node.axis = Axis.Y
-                elif data[1] == "z":
-                    node.axis = Axis.Z
-                elif data[1] == "d":
-                    node.axis = Axis.DIAGONAL
-                else:
-                    assert False, f"wrong node description: '{data[0]} {data[1]}' in file: {name}, address: {address}"
+            node.growth = float(data[1])
+            assert node.growth >= 1
+        except:
+            if data[1] == "x":
+                node.axis = Axis.X
+            elif data[1] == "y":
+                node.axis = Axis.Y
+            elif data[1] == "z":
+                node.axis = Axis.Z
+            elif data[1] == "d":
+                node.axis = Axis.DIAGONAL
+            else:
+                assert False, f"wrong node description: '{data[0]} {data[1]}' in file: {name}, address: {address}"
 
     children = xml.findall('b:Node', ns)
     assert len(children) <= 2, f"name: {name}, children: {children}"
+
+    # if no children - it's a leave
+    if len(children) == 0:
+        node.axis = Axis.LEAVE
+
     if len(children) > 0:
         node.left = parse_xml_node(xml=children[0], name=name, src_level=src_level + 1, address=address + ".L")
     if len(children) > 1:
