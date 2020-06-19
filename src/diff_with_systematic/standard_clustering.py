@@ -6,6 +6,8 @@ from src.diff_with_systematic.matrix_diff import MatrixDiff, print_matrix, make_
     corrcoef
 import scipy.spatial.distance as ssd
 
+from src.ultra_metric.ultra_metric import get_ultra_metric, UltraMetricParams
+
 
 def draw_plot(clustered_trees, names, plot_name, filename):
     plt.rcParams["figure.figsize"] = (12.5, 8)
@@ -63,7 +65,7 @@ max_levels = 11
 calc_weights = [exponent_reduced_weight(0.45), exponent_reduced_weight(0.50), exponent_reduced_weight(0.55)]
 #calc_weights = [exponent_reduced_weight(0.50)]
 systematic_trees = ["morph"]
-cluster_algorithms = ['complete', 'average', 'weighted', 'centroid', 'median']
+cluster_algorithms = ['complete', 'average', 'weighted', 'centroid', 'median', 'ultrametric']
 #cluster_algorithms = ['complete']
 
 alg_to_corr = {}
@@ -74,6 +76,7 @@ matrDiff = MatrixDiff("../../input/xtg/*.xtg", f"../../input/systematic_tree_{sy
 
 #for calc_weight in calc_weights:
 for param_a in np.linspace(0.2, 0.6, 5):
+#for param_a in np.linspace(0.1, 1.0, 10):
     calc_weight = exponent_reduced_weight(param_a)
     for systematic_tree in systematic_trees:
         for cluster_algorithm in cluster_algorithms:
@@ -86,10 +89,16 @@ for param_a in np.linspace(0.2, 0.6, 5):
 
             experiment_matrix = matrDiff.make_experiment_matrix(global_params)
 
-            corr = matrDiff.corrcoef(experiment_matrix=experiment_matrix)
-            name = f"{calc_weight.name}_corr_{corr:0.2f}_{systematic_tree}_{cluster_algorithm}_swap={is_swap_left_right}_subtree_(thr,mult)=({global_params.subtree_threshold},{global_params.subtree_multiplier})_lev_mult={global_params.level_weight_multiplier}"
+            # corr = matrDiff.corrcoef(experiment_matrix=experiment_matrix)
+            # name = f"{calc_weight.name}_corr_{corr:0.2f}_{systematic_tree}_{cluster_algorithm}_swap={is_swap_left_right}_subtree_(thr,mult)=({global_params.subtree_threshold},{global_params.subtree_multiplier})_lev_mult={global_params.level_weight_multiplier}"
             #print_matrix(experiment_matrix, name, matrDiff.names, corr, with_headers=True)
-            experiment_array = make_experiment_array(experiment_matrix)
+            #experiment_array = make_experiment_array(experiment_matrix)
+
+            effective_cluster_algorithm = cluster_algorithm
+            if cluster_algorithm == 'ultrametric':
+                ultra_matrix = get_ultra_metric(to_full_matrix(experiment_matrix), UltraMetricParams(max_levels=len(experiment_matrix)))
+                experiment_matrix = ultra_matrix
+                effective_cluster_algorithm = 'average'
 
             plot_matrix = to_full_matrix(experiment_matrix)
             # convert the redundant n*n square matrix form into a condensed nC2 array
@@ -97,7 +106,8 @@ for param_a in np.linspace(0.2, 0.6, 5):
             dist_array = ssd.squareform(plot_matrix)
 
             #clustered_trees = hierarchy.linkage(np.asarray(experiment_array), cluster_algorithm)
-            clustered_trees = hierarchy.linkage(dist_array, cluster_algorithm)
+            clustered_trees = hierarchy.linkage(dist_array, effective_cluster_algorithm)
+
             #draw_plot(clustered_trees, matrDiff.names, name, f"../../output/diff_with_systematic/{name}.png")
 
             corr = corr_clustered_trees(clustered_trees, matrDiff.names, matrDiff.make_systematic_matrix())
@@ -110,7 +120,7 @@ for param_a in np.linspace(0.2, 0.6, 5):
 for k in alg_to_corr.keys():
     mean = np.mean(alg_to_corr[k])
     stddev = np.std(alg_to_corr[k], ddof=1)
-    print(f"{k} {mean} {stddev} {mean - stddev} {mean + stddev}")
+    print(f"{k} {mean:0.3f} {stddev:0.3f}")
 
 
 # calc_weights = [const_weight(1.0), exponent_reduced_weight(0.5), threshold_weight(5, 1.0, 0.75)]
