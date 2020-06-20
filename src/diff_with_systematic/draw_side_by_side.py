@@ -56,10 +56,10 @@ def draw_legend(draw, item_left, item_top, color, text):
     draw.text((item_left + ITEM_SIZE + ITEM_SPACE, item_top), text, fill=color)
 
 
-def draw_tree(tree1, tree2, dist, ndist, taxon_dist):
-    dist_diff = taxon_dist - ndist
+def draw_tree(tree1, tree2, dist, ndist, taxon_dist, diff_ndist):
+
     # hack to order by real dist_diff in the directory
-    dist_diff_str = f"{dist_diff:0.2f}" if dist_diff >= 0 else f"-{(6+dist_diff):0.2f}"
+    dist_diff_str = f"{diff_ndist:0.3f}" if diff_ndist >= 0 else f"-{(6+diff_ndist):0.3f}"
 
     # hack to skip more or less OK images
     # if abs(dist_diff) < 3.85:
@@ -86,7 +86,7 @@ def draw_tree(tree1, tree2, dist, ndist, taxon_dist):
     draw.text((200, 30), tree2.name, fill=COLOR_RIGHT)
     draw.text((10, 10), f"taxon_dist = {taxon_dist:0.3f}", fill='black')
     draw.text((10, 30), f"ndist      = {ndist:0.3f}", fill='black')
-    draw.text((10, 50), f"ndist diff = {(taxon_dist - ndist):0.3f}", fill=0x80000080)
+    draw.text((10, 50), f"ndist diff = {diff_ndist:0.3f}", fill=0x80000080)
     draw.text((10, 70), f"dist       = {dist:0.3f}", fill='black')
     #draw.text((10, 90), f"total_dist = {total_distance:0.3f}", fill='black')
 
@@ -130,17 +130,23 @@ step = 0
 for i in range(0, len(trees)):
     for j in range(i+1, len(trees)):
     #for j in range(0, len(trees)):
-        if i == j:
-            continue
+        # if i == j:
+        #     continue
         step += 1
         dist = development_tree_distance(trees[i], trees[j], global_params)
         taxon_dist = matrDiff.taxon_matrix[i][j]
         ndist = dist / max_dist * MORPH_MAX_DIST
-        draw_tree(trees[i], trees[j], dist, ndist, taxon_dist)
-        print(f"{step} {trees[i].name} {trees[j].name} {taxon_dist} {ndist} {taxon_dist - ndist}")
+        diff_ndist = (taxon_dist - ndist) / max(taxon_dist, ndist)
+        draw_tree(trees[i], trees[j], dist, ndist, taxon_dist, diff_ndist)
+        print(f"{step} {trees[i].name} {trees[j].name} {taxon_dist} {ndist} {taxon_dist - ndist} {diff_ndist}")
+
         if trees[i].name not in distrib.keys():
             distrib[trees[i].name] = []
-        distrib[trees[i].name].append(taxon_dist - ndist)
+        distrib[trees[i].name].append(diff_ndist)
+
+        if trees[j].name not in distrib.keys():
+            distrib[trees[j].name] = []
+        distrib[trees[j].name].append(diff_ndist)
 
 for k in distrib.keys():
     mean = np.mean(distrib[k])
