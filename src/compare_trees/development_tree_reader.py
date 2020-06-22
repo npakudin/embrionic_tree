@@ -37,7 +37,7 @@ def parse_xml_node(xml, name, src_level, address):
                 node.axis = Axis.Y
             elif data[1] == "z":
                 node.axis = Axis.Z
-            elif data[1] == "d":
+            elif data[1] == "d" or data[1] == "xy":
                 node.axis = Axis.DIAGONAL
             else:
                 assert False, f"wrong node description: '{data[0]} {data[1]}' in file: {name}, address: {address}"
@@ -77,6 +77,6 @@ def read_all_trees(pattern, max_levels):
     for src_tree in src_trees:
         src_tree.cut(max_levels - 1)
 
-        assert src_tree.depth == max_levels - 1, f"{src_tree.name}, {src_tree.depth}"
+        #assert src_tree.depth == max_levels - 1, f"{src_tree.name}, {src_tree.depth}"
 
     return src_trees

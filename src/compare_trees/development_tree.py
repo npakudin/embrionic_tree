@@ -92,6 +92,11 @@ class TreeNode:
         self.left = self.left.internal_reduce(parent_growth=1, chain_length=1)
         self.right = self.right.internal_reduce(parent_growth=1, chain_length=1)
 
+        # usually input xtg contains 'W E' in this case, but here we cut
+        # TODO: chain_length is a little wrong here
+        if self.axis == 'z':
+            return self.left
+
         return self
 
     def prepare(self):

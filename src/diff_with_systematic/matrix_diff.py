@@ -104,7 +104,7 @@ def corrcoef(matr1, matr2):
 
 
 class MatrixDiff:
-    def __init__(self, experiment_pattern, morph_file, leave_list, max_levels=11):
+    def __init__(self, experiment_pattern, morph_file, leave_list, max_levels=11, filter_by_taxon=True):
         vertices = read_all_trees(pattern=experiment_pattern, max_levels=max_levels)
 
         # morph matrix
@@ -131,10 +131,12 @@ class MatrixDiff:
                     vertex.order_index = index
 
         # filter experiment vertices
-        self.vertices = sorted(list(filter(lambda x: x.name in taxon_names, vertices)), key=lambda x: x.name)
+        vertices = filter(lambda x: x.name in taxon_names, vertices) if filter_by_taxon else vertices
+        self.vertices = sorted(list(vertices), key=lambda x: x.name)
         self.names = [v.name for v in self.vertices]
 
         for tree in self.vertices:
+            print(f"prepare {tree.name}")
             tree.prepare()
 
         # print("names")
