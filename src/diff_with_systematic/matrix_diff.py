@@ -104,8 +104,8 @@ def corrcoef(matr1, matr2):
 
 
 class MatrixDiff:
-    def __init__(self, experiment_pattern, morph_file, leave_list, max_levels=11, filter_by_taxon=True):
-        vertices = read_all_trees(pattern=experiment_pattern, max_levels=max_levels)
+    def __init__(self, experiment_pattern, morph_file, leave_list, max_level=11, filter_by_taxon=True):
+        vertices = read_all_trees(pattern=experiment_pattern, max_level=max_level)
 
         # morph matrix
         taxon = taxon_from_xml(morph_file)
@@ -193,7 +193,7 @@ class MatrixDiff:
         return corrcoef(systematic_matrix, experiment_matrix)
 
     def matr_diff(self, x):
-        global_params = GlobalParams(max_levels=11, g_weight=x[1], chain_length_weight=x[2], is_swap_left_right=False,
+        global_params = GlobalParams(max_level=11, g_weight=x[1], chain_length_weight=x[2], is_swap_left_right=False,
                                      calc_weight=exponent_reduced_weight(a=x[0]))
                                      #calc_weight=exponent_src_weight(a=x[0]))
                                      #calc_weight=const_weight(weight=x[0]))

@@ -5,9 +5,9 @@ from src.diff_with_systematic.build_morph_graph import find_common_ancestor_leve
 
 
 class UltraMetricParams:
-    def __init__(self, max_levels):
-        assert max_levels >= 1
-        self.max_levels = max_levels
+    def __init__(self, max_level):
+        assert max_level >= 1
+        self.max_level = max_level
 
 
 class UltraMetricNode:
@@ -23,7 +23,7 @@ class UltraMetricNode:
 # The returned matrix is the ultra metric matrix
 def get_ultra_metric(src_matrix, ultra_metric_params):
     matrix = copy.deepcopy(src_matrix)
-    normalize_to_levels(matrix, ultra_metric_params.max_levels)
+    normalize_to_levels(matrix, ultra_metric_params.max_level)
 
     src_history_level = [UltraMetricNode(clusters=None, name=f"0.{i}") for i in range(len(matrix))]
     history_level = [item for item in src_history_level]
@@ -94,20 +94,20 @@ def print_clusters(clusters, row_to_cluster):
 
 # For both
 #   min -> 0.5
-#   max -> max_levels + 0.5
+#   max -> max_level + 0.5
 #
 # For 'log':
-#   log(max, base) - log(min, base) = max_levels
-#   log(max/min, base) = max_levels
-#   max/min = base^max_levels
-#   base = math.pow(max/min, -max_levels)
+#   log(max, base) - log(min, base) = max_level
+#   log(max/min, base) = max_level
+#   max/min = base^max_level
+#   base = math.pow(max/min, -max_level)
 #
 # So formula for item is:
 #   item = log(item, base) - log(min, base) + 0.5
 #   item = log(item / min, base) + 0.5
-def normalize_to_levels(matrix, max_levels, type='line'):
+def normalize_to_levels(matrix, max_level, type='line'):
     [[min, _, _], [max, _, _]] = find_min_max(matrix)
-    b = math.pow(max / min, -max_levels)  # for log type
+    b = math.pow(max / min, -max_level)  # for log type
 
     for i in range(len(matrix)):
         for j in range(len(matrix[i])):
@@ -116,7 +116,7 @@ def normalize_to_levels(matrix, max_levels, type='line'):
                 pass
             else:
                 if type == 'line':
-                    matrix[i][j] = (matrix[i][j] - min) / (max - min) * max_levels + 0.5
+                    matrix[i][j] = (matrix[i][j] - min) / (max - min) * max_level + 0.5
                 else:
                     matrix[i][j] = math.log(matrix[i][j] / min, b) + 0.5
     return matrix

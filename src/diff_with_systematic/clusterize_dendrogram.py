@@ -13,14 +13,14 @@ import scipy.spatial.distance as ssd
 systematic_tree = "morph"
 cluster_algorithm = "complete"
 is_swap_left_right = False
-max_levels = 11
+max_level = 11
 param_a = 0.5
 g_weight=0.1
 chain_length_weight=0.0
 
 calc_weight = exponent_reduced_weight(param_a)
 global_params = GlobalParams(g_weight=g_weight, chain_length_weight=chain_length_weight, is_swap_left_right=is_swap_left_right,
-                             calc_weight=calc_weight, max_levels=max_levels,
+                             calc_weight=calc_weight, max_level=max_level,
                              subtree_threshold=1000, subtree_multiplier=1,
                              #level_weight_multiplier=[512, 256, 128, 64, 32, 16, 8, 4, 2, 1, 0]
                              #level_weight_multiplier=[4, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -28,7 +28,7 @@ global_params = GlobalParams(g_weight=g_weight, chain_length_weight=chain_length
                              )
 name = f"{calc_weight.name}_{systematic_tree}_{cluster_algorithm}_swap={is_swap_left_right}_subtree_(thr,mult)=({global_params.subtree_threshold},{global_params.subtree_multiplier})_lev_mult={global_params.level_weight_multiplier}"
 
-matrDiff = MatrixDiff("../../input/xtg/*.xtg", f"../../input/systematic_tree_{systematic_tree}.xtg", ["Angiosperms"], max_levels=max_levels)
+matrDiff = MatrixDiff("../../input/xtg/*.xtg", f"../../input/systematic_tree_{systematic_tree}.xtg", ["Angiosperms"], max_level=max_level)
 
 experiment_matrix = matrDiff.make_experiment_matrix(global_params)
 plot_matrix = to_full_matrix(experiment_matrix)

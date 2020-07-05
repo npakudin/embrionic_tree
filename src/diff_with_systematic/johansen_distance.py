@@ -6,17 +6,35 @@ from src.diff_with_systematic.clustering import draw_plot
 from src.diff_with_systematic.matrix_diff import MatrixDiff, print_matrix, to_full_matrix
 import scipy.spatial.distance as ssd
 
-systematic_tree = "morph"
-max_levels = 6
 
-global_params = GlobalParams(g_weight=0.5, calc_weight=exponent_reduced_weight(0.50), max_levels=max_levels,
+def first_vowel(str, from_index=1):
+    vowels = ['a', 'e', 'i', 'o', 'u', 'y']
+    for i in range(from_index, len(str)):
+        if str[i] in vowels:
+            return i
+    return len(str)
+
+
+# 'Arabidopsis_thaliana' => 'Arab. t.'
+def short_sp_name(name):
+    genus_index = first_vowel(name, from_index=3)
+    underscore_index = name.find('_')
+    personal_name = name[underscore_index + 1:]
+    personal_index = first_vowel(personal_name)
+    return f"{name[:genus_index]}. {personal_name[:personal_index]}"
+
+
+systematic_tree = "morph"
+max_level = 4
+
+global_params = GlobalParams(g_weight=0.5, calc_weight=exponent_reduced_weight(0.50), max_level=max_level,
                              level_weight_multiplier=[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
                              )
 
 matrDiff = MatrixDiff("../../input/xtg/*.xtg", f"../../input/systematic_tree_{systematic_tree}.xtg", ["Angiosperms"],
-                      max_levels=max_levels, filter_by_taxon=False)
+                      max_level=max_level, filter_by_taxon=False)
 johansenMatrDiff = MatrixDiff("../../input/xtg_johansen/*.xtg", f"../../input/systematic_tree_{systematic_tree}.xtg", ["Angiosperms"],
-                      max_levels=max_levels, filter_by_taxon=False)
+                      max_level=max_level, filter_by_taxon=False)
 
 
 johansen_experiment_matrix = johansenMatrDiff.make_experiment_matrix(global_params)
@@ -43,6 +61,7 @@ print(f"nearest_johansen_dist nearest_johansen")
 
 johansen_matr = []
 for i in range(len(trees)):
+    #print(f"{matrDiff.names[i]} - {short_sp_name(matrDiff.names[i])}")
     print(f"{matrDiff.names[i]} ", end='')
     johansen_matr.append([])
     min_dist = (-1, 1.0E+100)

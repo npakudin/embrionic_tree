@@ -20,12 +20,12 @@ def common_corrcoef(systematic_matrix, experiment_matrix):
     return corrcoef_matrix[0][1]
 
 
-matrDiff = MatrixDiff("../../input/xtg/*.xtg", "../../input/systematic_tree_morph.xtg", ["Angiosperms"], max_levels=11)
+matrDiff = MatrixDiff("../../input/xtg/*.xtg", "../../input/systematic_tree_morph.xtg", ["Angiosperms"], max_level=11)
 
 init_values = [0.5, 0.1, 0.0]
 x = init_values
 global_params = GlobalParams(g_weight=x[1], chain_length_weight=x[2], is_swap_left_right=True,
-                             calc_weight=exponent_reduced_weight(a=x[0]), max_levels=11)
+                             calc_weight=exponent_reduced_weight(a=x[0]), max_level=11)
 
 
 experiment_matrix = matrDiff.make_full_experiment_matrix(global_params)
@@ -33,7 +33,7 @@ print(experiment_matrix)
 
 for level_count in range(30):
     name = f"ultrametric_{x[0]}_{x[1]}_{x[2]}_{level_count + 1}"
-    ultra_matrix = get_ultra_metric(experiment_matrix, UltraMetricParams(max_levels=level_count + 1))
+    ultra_matrix = get_ultra_metric(experiment_matrix, UltraMetricParams(max_level=level_count + 1))
 
     ultra_array = make_experiment_array(ultra_matrix)
     clustered_trees = hierarchy.linkage(np.asarray(ultra_array), 'average')

@@ -80,6 +80,11 @@ class TreeNode:
         # multiply growth of cells on each edge in the chain
         self.growth = self.growth * parent_growth
 
+        # HACK to remove axis Z
+        if self.axis == Axis.Z:
+            self.axis = Axis.NONE
+            self.right = None
+
         if self.left is None and self.right is None:
             self.axis = Axis.LEAVE # this is a leave
             return self
@@ -91,11 +96,6 @@ class TreeNode:
         # if there is a division - set length to 1
         self.left = self.left.internal_reduce(parent_growth=1, chain_length=1)
         self.right = self.right.internal_reduce(parent_growth=1, chain_length=1)
-
-        # usually input xtg contains 'W E' in this case, but here we cut
-        # TODO: chain_length is a little wrong here
-        if self.axis == 'z':
-            return self.left
 
         return self
 

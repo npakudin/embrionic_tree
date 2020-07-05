@@ -15,7 +15,7 @@ import scipy.spatial.distance as ssd
 
 
 
-matrDiff = MatrixDiff("../../input/xtg/*.xtg", "../../input/systematic_tree_morph.xtg", ["Angiosperms"], max_levels=11)
+matrDiff = MatrixDiff("../../input/xtg/*.xtg", "../../input/systematic_tree_morph.xtg", ["Angiosperms"], max_level=11)
 
 def create_fun(chain_length_weight):
     def fun(a, g_weight):

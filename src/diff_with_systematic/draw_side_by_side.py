@@ -100,14 +100,14 @@ def draw_tree(tree1, tree2, dist, ndist, taxon_dist, diff_ndist):
 
 
 systematic_tree = "morph"
-max_levels = 11
+max_level = 11
 
-global_params = GlobalParams(g_weight=0.5, calc_weight=exponent_reduced_weight(0.50), max_levels=max_levels,
+global_params = GlobalParams(g_weight=0.5, calc_weight=exponent_reduced_weight(0.50), max_level=max_level,
                              level_weight_multiplier=[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
                              )
 
 matrDiff = MatrixDiff("../../input/xtg/*.xtg", f"../../input/systematic_tree_{systematic_tree}.xtg", ["Angiosperms"],
-                      max_levels=max_levels)
+                      max_level=max_level)
 trees = matrDiff.vertices
 for tree in trees:
     tree.prepare()

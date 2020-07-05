@@ -12,7 +12,7 @@ from src.ultra_metric.ultra_metric import get_ultra_metric, UltraMetricParams
 systematic_tree = "morph"
 cluster_algorithm = "complete"
 is_swap_left_right = False
-max_levels = 11
+max_level = 11
 
 #calc_weights = [const_weight(1.0), exponent_reduced_weight(0.5), threshold_weight(5, 1.0, 0.75)]
 calc_weights = [exponent_reduced_weight(0.45), exponent_reduced_weight(0.50), exponent_reduced_weight(0.55)]
@@ -25,7 +25,7 @@ alg_to_corr = {}
 
 
 matrDiff = MatrixDiff("../../input/xtg/*.xtg", f"../../input/systematic_tree_{systematic_tree}.xtg", ["Angiosperms"],
-                      max_levels=max_levels)
+                      max_level=max_level)
 
 #for calc_weight in calc_weights:
 for param_a in np.linspace(0.2, 0.6, 5):
@@ -34,7 +34,7 @@ for param_a in np.linspace(0.2, 0.6, 5):
     for systematic_tree in systematic_trees:
         for cluster_algorithm in cluster_algorithms:
             global_params = GlobalParams(g_weight=0.5, chain_length_weight=0.0, is_swap_left_right=is_swap_left_right,
-                                         calc_weight=calc_weight, max_levels=max_levels,
+                                         calc_weight=calc_weight, max_level=max_level,
                                          subtree_threshold=100, subtree_multiplier=1,
                                          # level_weight_multiplier=[1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2]
                                          level_weight_multiplier=[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
@@ -49,7 +49,7 @@ for param_a in np.linspace(0.2, 0.6, 5):
 
             effective_cluster_algorithm = cluster_algorithm
             if cluster_algorithm == 'ultrametric':
-                ultra_matrix = get_ultra_metric(to_full_matrix(experiment_matrix), UltraMetricParams(max_levels=len(experiment_matrix)))
+                ultra_matrix = get_ultra_metric(to_full_matrix(experiment_matrix), UltraMetricParams(max_level=len(experiment_matrix)))
                 experiment_matrix = ultra_matrix
                 effective_cluster_algorithm = 'average'
 
@@ -88,7 +88,7 @@ for k in alg_to_corr.keys():
 #
 #             global_params = GlobalParams(g_weight=0.1, chain_length_weight=0.1, is_swap_left_right=True, calc_weight=calc_weight)
 #
-#             matrDiff = MatrixDiff("../../input/xtg/*.xtg", f"../../input/systematic_tree_{systematic_tree}.xtg", ["Angiosperms"], max_levels=11)
+#             matrDiff = MatrixDiff("../../input/xtg/*.xtg", f"../../input/systematic_tree_{systematic_tree}.xtg", ["Angiosperms"], max_level=11)
 #
 #             experiment_matrix = matrDiff.make_experiment_matrix(global_params)
 #

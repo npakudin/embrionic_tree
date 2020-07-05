@@ -12,20 +12,20 @@ import scipy.spatial.distance as ssd
 systematic_tree = "morph"
 
 globalMatrDiff = MatrixDiff("../../input/xtg/*.xtg", f"../../input/systematic_tree_{systematic_tree}.xtg", ["Angiosperms"],
-                      max_levels=11)
+                      max_level=11)
 
 res_matrices = []
 res_corrcoef = []
 
-# iterate over max_levels
-for max_level in range(2, 12):
+# iterate over max_level
+for cur_max_level in range(2, 12):
 
-    global_params = GlobalParams(g_weight=0.5, calc_weight=exponent_reduced_weight(0.50), max_levels=max_level,
+    global_params = GlobalParams(g_weight=0.5, calc_weight=exponent_reduced_weight(0.50), max_level=max_level,
                                  level_weight_multiplier=[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
                                  )
 
     matrDiff = MatrixDiff("../../input/xtg/*.xtg", f"../../input/systematic_tree_{systematic_tree}.xtg", ["Angiosperms"],
-                          max_levels=max_level)
+                          max_level=cur_max_level)
 
     experiment_matrix = matrDiff.make_experiment_matrix(global_params)
     corrcoef = matrDiff.corrcoef(experiment_matrix=experiment_matrix)
@@ -39,6 +39,6 @@ trees = globalMatrDiff.vertices
 for i in range(len(res_matrices[0])):
     for j in range(len(res_matrices[0][i])):
         print(f"{trees[i].name} {trees[j].name}", end='')
-        for max_level in range(len(res_matrices)):
-            print(f" {res_matrices[max_level][i][j]:0.3f}", end='')
+        for cur_max_level in range(len(res_matrices)):
+            print(f" {res_matrices[cur_max_level][i][j]:0.3f}", end='')
         print("")
