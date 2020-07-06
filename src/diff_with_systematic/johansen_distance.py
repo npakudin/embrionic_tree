@@ -27,7 +27,8 @@ def short_sp_name(name):
 systematic_tree = "morph"
 max_level = 4
 
-global_params = GlobalParams(g_weight=0.5, calc_weight=exponent_reduced_weight(0.50), max_level=max_level,
+#global_params = GlobalParams(g_weight=0.5, calc_weight=exponent_reduced_weight(0.50), max_level=max_level,
+global_params = GlobalParams(g_weight=0.0, calc_weight=exponent_reduced_weight(0.50), max_level=max_level,
                              level_weight_multiplier=[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
                              )
 
@@ -48,27 +49,28 @@ dist_array = ssd.squareform(plot_matrix)
 #clustered_trees = hierarchy.linkage(np.asarray(experiment_array), cluster_algorithm)
 clustered_trees = hierarchy.linkage(dist_array, 'average')
 
-name = "johansen_experiment_matrix"
-draw_plot(clustered_trees, matrDiff.names, name, f"../../output/johansen/{name}.png")
+matr_name = "johansen_experiment_matrix"
+draw_plot(clustered_trees, matrDiff.names, matr_name, f"../../output/johansen/{matr_name}.png")
 
 trees = matrDiff.vertices
 johansenTrees = johansenMatrDiff.vertices
 
-print(f"name ", end='')
-for j in range(len(johansenTrees)):
-    print(f"{johansenMatrDiff.names[j]} ", end='')
-print(f"nearest_johansen_dist nearest_johansen")
+print()
+print(f"name expected_embryo_type 1st_embryo_type 1st_embryo_type_dist 2nd_embryo_type 2nd_embryo_type_dist")
+# for j in range(len(johansenTrees)):
+#     print(f"{johansenMatrDiff.names[j]} ", end='')
+# print(f"nearest_johansen_dist nearest_johansen")
 
 johansen_matr = []
 for i in range(len(trees)):
     #print(f"{matrDiff.names[i]} - {short_sp_name(matrDiff.names[i])}")
-    print(f"{matrDiff.names[i]} ", end='')
+    print(f"{matrDiff.names[i]} {trees[i].embryo_type} ", end='')
     johansen_matr.append([])
     min_dist = (-1, 1.0E+100)
     for j in range(len(johansenTrees)):
-        dist = development_tree_distance(trees[i], johansenTrees[j], global_params)
-        johansen_matr[i].append(dist)
-        if dist < min_dist[1]:
-            min_dist = (j, dist)
-        print(f"{dist:0.4f} ", end='')
-    print(f"{min_dist[1]} {johansenMatrDiff.names[min_dist[0]]}")
+        dist = development_tree_distance(trees[i].node, johansenTrees[j].node, global_params)
+        johansen_matr[i].append((dist, johansenMatrDiff.names[j]))
+    johansen_matr[i] = sorted(johansen_matr[i], key=lambda dist_name: dist_name[0])
+    for (dist, name) in johansen_matr[i]:
+        print(f"{name} {dist:0.4f} ", end='')
+    print(f"")

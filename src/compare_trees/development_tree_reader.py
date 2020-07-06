@@ -1,14 +1,15 @@
 import glob
-from src.compare_trees.development_tree import TreeNode, Axis
+from src.compare_trees.development_tree import TreeNode, Axis, Tree
 import xml.etree.ElementTree as ElementTree
 
 ns = {'b': 'http://bioinfweb.info/xmlns/xtg'}
 
 
+# name is necessary for debug and input control
 def parse_xml_node(xml, name, src_level, address):
     data = xml.find('b:Branch', ns).find('b:TextLabel', ns).attrib['Text'].replace(",", ".").lower().split(' ')
 
-    node = TreeNode(name = name, address = address, src_level = src_level)
+    node = TreeNode(address = address, src_level = src_level)
 
     if data[0] == 'ww':
         data[0] = 'w_in_w'
@@ -58,13 +59,25 @@ def parse_xml_node(xml, name, src_level, address):
 
 
 def read_tree_from_xml(filename):
+    def get_name_type(name_type):
+        strs = name_type.split('_') # ["Arabidopsis", "thaliana", "onagrad"]
+        assert len(strs) == 1 or len(strs) == 3, f"name_type: {name_type}"
+        if len(strs) == 1:
+            return strs[0], strs[0]
+        if len(strs) == 3:
+            [gen_name, sp_name, embryo_type] = strs
+            return f"{gen_name}_{sp_name}", embryo_type
+
+
+
     path = filename.split('/')
-    name = path[len(path) - 1][:-4]  # "../input/xtg/Arabidopsis_thaliana.xtg" => "Arabidopsis_thaliana"
+    name_type = path[len(path) - 1][:-4]  # "../input/xtg/Arabidopsis_thaliana_onagrad.xtg" => "Arabidopsis_thaliana_onagrad"
+    (name, embryo_type) = get_name_type(name_type)
 
     node = parse_xml_node(xml=ElementTree.parse(filename).getroot().find('b:Tree', ns).find('b:Node', ns),
                           name=name, src_level=0, address="Z")
 
-    return node
+    return Tree(node, name = name, embryo_type = embryo_type)
 
 
 def read_all_trees(pattern, max_level):

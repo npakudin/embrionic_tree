@@ -20,10 +20,8 @@ def get_axis(node):
 
 
 class TreeNode:
-    def __init__(self, name="unknown", address="unknown", axis=Axis.NONE, left=None, right=None, src_level=0, reduced_level=0):
-        self.name = name
+    def __init__(self, address="unknown", axis=Axis.NONE, left=None, right=None, src_level=0, reduced_level=0):
         self.address = address
-        self.global_params = None
         self.axis = axis
         self.left = left
         self.right = right
@@ -42,7 +40,7 @@ class TreeNode:
         return self.get_full_addr()
 
     def get_full_addr(self):
-        return f"{self.name}: {self.address}"
+        return f"{self.address}"
 
     # cut tree to max_level if more levels exist in the source tree
     def cut(self, max_level):
@@ -130,3 +128,28 @@ class TreeNode:
         # self.fertility = (self.total_weight - self.personal_weight) / self.personal_weight
         #
         # assert self.fertility >= 0, f"src_level: {self.src_level}, reduced_level: {self.reduced_level}, personal_weight: {self.personal_weight}"
+
+
+class Tree:
+    def __init__(self, node, name="unknown", embryo_type="unknown"):
+        self.name = name
+        self.embryo_type = embryo_type
+        self.node = node
+
+    def __str__(self):
+        return self.get_full_addr()
+
+    def get_full_addr(self):
+        return f"{self.name} {self.node.get_full_addr()}"
+
+    # cut tree to max_level if more levels exist in the source tree
+    def cut(self, max_level):
+        self.node.internal_cut(0, max_level)
+
+    def reduce(self):
+        self.node.internal_reduce(parent_growth=1, chain_length=1)
+
+    def prepare(self):
+        self.node.reduce()
+        #self.order_left_right()
+        self.node.internal_prepare(0)

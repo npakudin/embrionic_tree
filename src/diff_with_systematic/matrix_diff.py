@@ -162,7 +162,7 @@ class MatrixDiff:
         #trees = [tree.left for tree in trees]
         trees = self.vertices
 
-        depths = [v.reduced_depth for v in trees]
+        # depths = [v.reduced_depth for v in trees]
         # print("depths")
         # print(depths)
 
@@ -170,7 +170,7 @@ class MatrixDiff:
         for i in range(len(trees)):
             experiment_matrix.append([])
             for j in range(i):
-                dist = development_tree_distance(trees[i], trees[j], global_params)
+                dist = development_tree_distance(trees[i].node, trees[j].node, global_params)
                 experiment_matrix[i].append(dist)
 
         return experiment_matrix

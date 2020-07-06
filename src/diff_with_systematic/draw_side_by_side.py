@@ -117,7 +117,7 @@ MORPH_MAX_DIST = 6
 max_dist = 0
 for i in range(0, len(trees)):
     for j in range(i+1, len(trees)):
-        dist = development_tree_distance(trees[i], trees[j], global_params)
+        dist = development_tree_distance(trees[i].node, trees[j].node, global_params)
         max_dist = max(max_dist, dist)
 
 
@@ -133,7 +133,7 @@ for i in range(0, len(trees)):
         # if i == j:
         #     continue
         step += 1
-        dist = development_tree_distance(trees[i], trees[j], global_params)
+        dist = development_tree_distance(trees[i].node, trees[j].node, global_params)
         taxon_dist = matrDiff.taxon_matrix[i][j]
         ndist = dist / max_dist * MORPH_MAX_DIST
         diff_ndist = (taxon_dist - ndist) / max(taxon_dist, ndist)
