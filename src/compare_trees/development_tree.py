@@ -48,9 +48,10 @@ class TreeNode:
 
     def internal_cut(self, src_level, max_level):
         self.depth = src_level
-        if src_level >= max_level:
+        if src_level > max_level:
             self.left = None
             self.right = None
+            self.axis = Axis.NONE
         if self.left is not None:
             self.left.internal_cut(src_level + 1, max_level)
             self.depth = self.left.depth

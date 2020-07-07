@@ -56,7 +56,7 @@ trees = matrDiff.vertices
 johansenTrees = johansenMatrDiff.vertices
 
 print()
-print(f"name expected_embryo_type 1st_embryo_type 1st_embryo_type_dist 2nd_embryo_type 2nd_embryo_type_dist")
+print(f"name expected_embryo_type 1st_embryo_type 1st_embryo_type_dist 2nd_embryo_type 2nd_embryo_type_dist 3rd_embryo_type 3rd_embryo_type_dist")
 # for j in range(len(johansenTrees)):
 #     print(f"{johansenMatrDiff.names[j]} ", end='')
 # print(f"nearest_johansen_dist nearest_johansen")
