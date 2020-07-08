@@ -2,6 +2,7 @@ import numpy as np
 from scipy.cluster import hierarchy
 import matplotlib.pyplot as plt
 from src.compare_trees.global_params import GlobalParams, const_weight, threshold_weight, exponent_reduced_weight
+from src.diff_with_systematic.clustering import corr_clustered_trees, draw_plot
 from src.diff_with_systematic.matrix_diff import MatrixDiff, print_matrix, make_experiment_array, to_full_matrix, \
     corrcoef
 import scipy.spatial.distance as ssd
@@ -18,8 +19,8 @@ max_level = 11
 calc_weights = [exponent_reduced_weight(0.45), exponent_reduced_weight(0.50), exponent_reduced_weight(0.55)]
 #calc_weights = [exponent_reduced_weight(0.50)]
 systematic_trees = ["morph"]
-cluster_algorithms = ['complete', 'average', 'weighted', 'centroid', 'median', 'ultrametric']
-#cluster_algorithms = ['complete']
+#cluster_algorithms = ['complete', 'average', 'weighted', 'centroid', 'median', 'ultrametric']
+cluster_algorithms = ['average']
 
 alg_to_corr = {}
 
@@ -61,14 +62,16 @@ for param_a in np.linspace(0.2, 0.6, 5):
             #clustered_trees = hierarchy.linkage(np.asarray(experiment_array), cluster_algorithm)
             clustered_trees = hierarchy.linkage(dist_array, effective_cluster_algorithm)
 
-            #draw_plot(clustered_trees, matrDiff.names, name, f"../../output/diff_with_systematic/{name}.png")
-
             corr = corr_clustered_trees(clustered_trees, matrDiff.names, matrDiff.make_systematic_matrix())
             print(f"{global_params.g_weight:0.2f} {param_a:0.2f} {cluster_algorithm} {corr:0.2f}")
 
             if cluster_algorithm not in alg_to_corr.keys():
                 alg_to_corr[cluster_algorithm] = []
             alg_to_corr[cluster_algorithm].append(corr)
+
+            name = f"{calc_weight.name}_corr_{corr:0.2f}_{systematic_tree}_{cluster_algorithm}_swap={is_swap_left_right}_subtree_(thr,mult)=({global_params.subtree_threshold},{global_params.subtree_multiplier})_lev_mult={global_params.level_weight_multiplier}"
+            draw_plot(clustered_trees, matrDiff.names, name, f"../../output/diff_with_systematic/{name}.png")
+
 
 for k in alg_to_corr.keys():
     mean = np.mean(alg_to_corr[k])

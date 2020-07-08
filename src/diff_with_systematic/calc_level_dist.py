@@ -71,7 +71,7 @@ trees = matrDiff.vertices
 tree_number = 0
 for i in range(0, len(trees)):
     for j in range(i+1, len(trees)):
-        proceed_node(trees[i], trees[j], 0)
+        proceed_node(trees[i].node, trees[j].node, 0)
         tree_number += 1
 
 print(f"level total one_only eq ineq both_existing_part existing_part")

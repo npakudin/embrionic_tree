@@ -24,7 +24,7 @@ matrDiff = MatrixDiff("../../input/xtg/*.xtg", "../../input/systematic_tree_morp
 
 init_values = [0.5, 0.1, 0.0]
 x = init_values
-global_params = GlobalParams(g_weight=x[1], chain_length_weight=x[2], is_swap_left_right=True,
+global_params = GlobalParams(g_weight=x[1], chain_length_weight=x[2], is_swap_left_right=False,
                              calc_weight=exponent_reduced_weight(a=x[0]), max_level=11)
 
 

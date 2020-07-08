@@ -73,7 +73,7 @@ def draw_tree(tree1, tree2, dist, ndist, taxon_dist, diff_ndist):
     im = Image.new('RGBA', [1000, 400], (255, 255, 255, 255))
     draw = ImageDraw.Draw(im)
 
-    total_distance = draw_node(draw, tree1, tree2, 0, 0, im.size[0] - ITEM_SIZE - ITEM_SPACE, im.size[1], 0)
+    total_distance = draw_node(draw, tree1.node, tree2.node, 0, 0, im.size[0] - ITEM_SIZE - ITEM_SPACE, im.size[1], 0)
 
     # legend
     draw_legend(draw, 400, 10, COLOR_LEFT, 'Node exists in the left tree only')

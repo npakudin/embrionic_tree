@@ -57,7 +57,7 @@ class TreeNode:
             self.depth = self.left.depth
         if self.right is not None:
             self.right.internal_cut(src_level + 1, max_level)
-            assert self.depth == self.right.depth
+            assert self.depth == self.right.depth, f"self.depth: {self.depth} self.right.depth: {self.right.depth}, right.address: {self.right.address}"
 
     def order_left_right(self):
         left_axis = get_axis(self.left)

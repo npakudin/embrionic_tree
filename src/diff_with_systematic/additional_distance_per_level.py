@@ -20,7 +20,7 @@ res_corrcoef = []
 # iterate over max_level
 for cur_max_level in range(2, 12):
 
-    global_params = GlobalParams(g_weight=0.5, calc_weight=exponent_reduced_weight(0.50), max_level=max_level,
+    global_params = GlobalParams(g_weight=0.5, calc_weight=exponent_reduced_weight(0.50), max_level=cur_max_level,
                                  level_weight_multiplier=[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
                                  )
 
