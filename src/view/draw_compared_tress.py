@@ -64,15 +64,15 @@ def draw_tree(tree1, tree2, global_params, dist, taxon_dist, folder):
     [raw_max_dist, raw_min_dist] = draw_node(draw, tree1.node, tree2.node, global_params, 0, 0, im.size[0] - ITEM_SIZE - ITEM_SPACE, im.size[1], 0, min_reduced_depth)
 
     # legend
-    draw_legend(draw, 400, 10, COLOR_LEFT, 'Node exists in the left tree only')
-    draw_legend(draw, 400, 30, COLOR_RIGHT, 'Node exists in the right tree only')
-    draw_legend(draw, 400, 50, COLOR_EQ, 'Node exists in both trees and axis are equal, e.g. X and X')
-    draw_legend(draw, 400, 70, COLOR_INEQ, 'Node exists in both trees and axis are NOT equal, e.g. X and Y')
+    draw_legend(draw, 500, 10, COLOR_LEFT, 'Node exists in the left tree only')
+    draw_legend(draw, 500, 30, COLOR_RIGHT, 'Node exists in the right tree only')
+    draw_legend(draw, 500, 50, COLOR_EQ, 'Node exists in both trees and axis are equal, e.g. X and X')
+    draw_legend(draw, 500, 70, COLOR_INEQ, 'Node exists in both trees and axis are NOT equal, e.g. X and Y')
 
     # distances
     correction_coef = sum([pow(2, i) * global_params.calc_weight.fun(i, i) for i in range(min_reduced_depth)])
-    draw.text((200, 10), f"{tree1.name} reduced_depth: {tree1.node.reduced_depth}", fill=COLOR_LEFT)
-    draw.text((200, 30), f"{tree2.name} reduced_depth: {tree2.node.reduced_depth}", fill=COLOR_RIGHT)
+    draw.text((200, 10), f"{tree1.name[:15]} reduced_depth: {tree1.node.reduced_depth}", fill=COLOR_LEFT)
+    draw.text((200, 30), f"{tree2.name[:15]} reduced_depth: {tree2.node.reduced_depth}", fill=COLOR_RIGHT)
     draw.text((10, 10), f"taxon_dist   = {taxon_dist:0.4f}", fill='black')
     draw.text((10, 30), f"raw_max_dist = {raw_max_dist:0.4f}", fill='black')
     draw.text((10, 50), f"raw_min_dist = {raw_min_dist:0.4f}", fill='black')

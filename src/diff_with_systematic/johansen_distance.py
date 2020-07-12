@@ -88,7 +88,7 @@ for i in range(len(trees)):
     for j in range(len(johansenTrees)):
         dist = development_tree_distance(trees[i], johansenTrees[j], global_params)
         johansen_matr[i].append((dist, johansenMatrDiff.names[j]))
-        #draw_tree(trees[i], johansenTrees[j], global_params, dist, 0, "johansen")
+        draw_tree(trees[i], johansenTrees[j], global_params, dist, 0, "johansen")
 
     johansen_matr[i] = sorted(johansen_matr[i], key=lambda dist_name: dist_name[0])
     for (dist, name) in johansen_matr[i]:
