@@ -141,7 +141,7 @@ class MatrixDiff:
             # tree.node.reduce()
             # tree.node.internal_prepare(0)
             tree.prepare()
-            tree.cut(max_level=max_level)
+            #tree.cut(max_level=max_level)
 
         # print("names")
         # print(self.names)

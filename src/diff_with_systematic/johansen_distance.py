@@ -27,7 +27,7 @@ max_level = 11
 
 #for param_a in np.linspace(0.2, 1.0, 9):
 
-param_a=0.5
+param_a=1.0
 
 #global_params = GlobalParams(g_weight=0.5, calc_weight=exponent_reduced_weight(0.50), max_level=max_level,
 global_params = GlobalParams(g_weight=0.0, calc_weight=exponent_reduced_weight(param_a), max_level=max_level,
@@ -74,7 +74,7 @@ for j in range(len(johansenTrees)):
 
 
 print()
-print(f"name expected_embryo_type 1st_embryo_type 1st_embryo_type_dist 2nd_embryo_type 2nd_embryo_type_dist 3rd_embryo_type 3rd_embryo_type_dist")
+print(f"name joh+g 1st_embryo_type 1st_embryo_type_dist 2nd_embryo_type 2nd_embryo_type_dist 3rd_embryo_type 3rd_embryo_type_dist")
 # for j in range(len(johansenTrees)):
 #     print(f"{johansenMatrDiff.names[j]} ", end='')
 # print(f"nearest_johansen_dist nearest_johansen")
@@ -88,7 +88,7 @@ for i in range(len(trees)):
     for j in range(len(johansenTrees)):
         dist = development_tree_distance(trees[i], johansenTrees[j], global_params)
         johansen_matr[i].append((dist, johansenMatrDiff.names[j]))
-        draw_tree(trees[i], johansenTrees[j], global_params, dist, 0, "johansen")
+        #draw_tree(trees[i], johansenTrees[j], global_params, dist, 0, "johansen")
 
     johansen_matr[i] = sorted(johansen_matr[i], key=lambda dist_name: dist_name[0])
     for (dist, name) in johansen_matr[i]:
@@ -96,11 +96,11 @@ for i in range(len(trees)):
     print(f"")
 
 
-# johansen types
-johansen_experiment_matrix = johansenMatrDiff.make_experiment_matrix(global_params)
-print_matrix(johansen_experiment_matrix, "johansen_experiment_matrix", johansenMatrDiff.names, with_headers=True)
-
-for i in range(len(johansenTrees)):
-    for j in range(len(johansenTrees)):
-        dist = development_tree_distance(johansenTrees[i], johansenTrees[j], global_params)
-        draw_tree(johansenTrees[i], johansenTrees[j], global_params, dist, 0, "johansen")
+# # johansen types
+# johansen_experiment_matrix = johansenMatrDiff.make_experiment_matrix(global_params)
+# print_matrix(johansen_experiment_matrix, "johansen_experiment_matrix", johansenMatrDiff.names, with_headers=True)
+#
+# for i in range(len(johansenTrees)):
+#     for j in range(len(johansenTrees)):
+#         dist = development_tree_distance(johansenTrees[i], johansenTrees[j], global_params)
+#         draw_tree(johansenTrees[i], johansenTrees[j], global_params, dist, 0, "johansen")
