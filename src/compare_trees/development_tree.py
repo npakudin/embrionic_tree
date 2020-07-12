@@ -1,3 +1,4 @@
+import copy
 from enum import Enum
 import math
 
@@ -48,7 +49,7 @@ class TreeNode:
 
     def internal_cut(self, src_level, max_level):
         self.depth = src_level
-        if src_level > max_level:
+        if src_level >= max_level:
             self.left = None
             self.right = None
             self.axis = Axis.NONE
@@ -57,7 +58,8 @@ class TreeNode:
             self.depth = self.left.depth
         if self.right is not None:
             self.right.internal_cut(src_level + 1, max_level)
-            assert self.depth == self.right.depth, f"self.depth: {self.depth} self.right.depth: {self.right.depth}, right.address: {self.right.address}"
+            #assert self.depth == self.right.depth, f"self.depth: {self.depth} self.right.depth: {self.right.depth}, right.address: {self.right.address}"
+            self.depth = max(self.right.depth, self.depth)
 
     def order_left_right(self):
         left_axis = get_axis(self.left)
@@ -104,7 +106,7 @@ class TreeNode:
         self.internal_prepare(0)
 
     def internal_prepare(self, reduced_level):
-        assert (self.left is None) == (self.right is None)
+        #assert (self.left is None) == (self.right is None)
 
         self.reduced_level = reduced_level
         # self.personal_weight = global_params.calc_weight.fun(self.src_level, self.reduced_level) #math.pow(global_params.a, reduced_level)
@@ -136,6 +138,7 @@ class Tree:
         self.name = name
         self.embryo_type = embryo_type
         self.node = node
+        self.nodes = []
 
     def __str__(self):
         return self.get_full_addr()
@@ -154,3 +157,9 @@ class Tree:
         self.node.reduce()
         #self.order_left_right()
         self.node.internal_prepare(0)
+
+        for i in range(self.node.reduced_depth + 1):
+            cur_node = copy.deepcopy(self.node)
+            cur_node.internal_cut(0, i)
+            self.nodes.append(cur_node)
+

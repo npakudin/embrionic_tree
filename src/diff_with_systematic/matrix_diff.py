@@ -136,8 +136,12 @@ class MatrixDiff:
         self.names = [v.name for v in self.vertices]
 
         for tree in self.vertices:
-            print(f"prepare {tree.name}")
+            #print(f"prepare {tree.name}")
+            tree.cut(max_level=11) # cut all to 11 levels to ignore overlevels if we have 12 or 13 for some species
+            # tree.node.reduce()
+            # tree.node.internal_prepare(0)
             tree.prepare()
+            tree.cut(max_level=max_level)
 
         # print("names")
         # print(self.names)
@@ -170,7 +174,7 @@ class MatrixDiff:
         for i in range(len(trees)):
             experiment_matrix.append([])
             for j in range(i):
-                dist = development_tree_distance(trees[i].node, trees[j].node, global_params)
+                dist = development_tree_distance(trees[i], trees[j], global_params)
                 experiment_matrix[i].append(dist)
 
         return experiment_matrix

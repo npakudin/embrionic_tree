@@ -81,12 +81,20 @@ def dist_chain_length(n1, n2):
     return abs(chain_length1 - chain_length2)
 
 
-def development_tree_distance(node1, node2, global_params):
-    # if node1.right.reduced_depth <= 1 and node2.right.reduced_depth <= 1:
-    #     node1 = node1.left
-    #     node2 = node2.left
+def development_tree_distance(tree1, tree2, global_params):
 
-    return visit_virtual(node_dist, node1, node2, node1.get_full_addr(), node2.get_full_addr(), global_params, 0)
+    # get trees cut to the same level - min of both reduced trees
+    min_reduced_depth = min(tree1.node.reduced_depth, tree2.node.reduced_depth)
+    node1 = tree1.nodes[min_reduced_depth]
+    node2 = tree2.nodes[min_reduced_depth]
+
+    # for exp_reduced_weight = sum([ (2*a) ^ i for i in ... ])
+    correction_coef = sum([pow(2, i) * global_params.calc_weight.fun(i, i) for i in range(min_reduced_depth)])
+
+    raw_res = visit_virtual(node_dist, node1, node2, node1.get_full_addr(), node2.get_full_addr(), global_params, 0)
+    res = raw_res / correction_coef
+
+    return res
 
 
 def visit_virtual(fun, node1, node2, full_addr_1, full_addr_2, global_params, level):

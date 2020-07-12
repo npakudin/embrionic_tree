@@ -19,7 +19,8 @@ def draw_plot(clustered_trees, names, plot_name, filename):
     ax1.set_xlabel("distance, Minarskys")
 
     hierarchy.dendrogram(clustered_trees,
-                         labels=np.array([x.split('_')[0] + ' ' + x.split('_')[1][:5] for x in names], np.str),
+                         #labels=np.array([x.split('_')[0] + ' ' + x.split('_')[1][:5] for x in names], np.str),
+                         labels=np.array([x for x in names], np.str),
                          orientation='right', count_sort='ascending', distance_sort='ascending')
     fig.savefig(filename)
     plt.close(fig)
