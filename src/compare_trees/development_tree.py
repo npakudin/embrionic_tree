@@ -154,7 +154,7 @@ class Tree:
         self.node.internal_reduce(parent_growth=1, chain_length=1)
 
     def prepare(self):
-        #self.node.reduce()
+        self.node.reduce()
         #self.order_left_right()
         self.node.internal_prepare(0)
 
