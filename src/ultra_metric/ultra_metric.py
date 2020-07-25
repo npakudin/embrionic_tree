@@ -1,7 +1,7 @@
 import copy
 import math
 
-from src.diff_with_systematic.build_morph_graph import find_common_ancestor_level
+from src.view.build_morph_graph import find_common_ancestor_level
 
 
 class UltraMetricParams:

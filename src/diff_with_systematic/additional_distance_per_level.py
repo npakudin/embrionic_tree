@@ -1,13 +1,5 @@
-from PIL import Image, ImageDraw
-import numpy as np
-from scipy.cluster import hierarchy
-import matplotlib.pyplot as plt
-
-from src.compare_trees.distances import development_tree_distance, node_dist
-from src.compare_trees.global_params import GlobalParams, const_weight, threshold_weight, exponent_reduced_weight
-from src.diff_with_systematic.matrix_diff import MatrixDiff, print_matrix, make_experiment_array, to_full_matrix
-import scipy.spatial.distance as ssd
-
+from src.compare_trees.global_params import GlobalParams
+from src.diff_with_systematic.matrix_diff import MatrixDiff
 
 systematic_tree = "morph"
 
@@ -20,9 +12,8 @@ res_corrcoef = []
 # iterate over max_level
 for cur_max_level in range(2, 12):
 
-    global_params = GlobalParams(g_weight=0.5, calc_weight=exponent_reduced_weight(0.50), max_level=cur_max_level,
-                                 level_weight_multiplier=[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-                                 )
+    global_params = GlobalParams(max_level=cur_max_level, param_a=0.50, g_weight=0.5,
+                                 level_weight_multiplier=[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
 
     matrDiff = MatrixDiff("../../input/xtg/*.xtg", f"../../input/systematic_tree_{systematic_tree}.xtg", ["Angiosperms"],
                           max_level=cur_max_level)

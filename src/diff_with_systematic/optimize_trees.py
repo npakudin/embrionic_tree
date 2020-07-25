@@ -1,13 +1,8 @@
+import matplotlib.pyplot as plt
 import numpy as np
 from mpl_toolkits.mplot3d import Axes3D
-from scipy import optimize
-from scipy.cluster import hierarchy
-import matplotlib.pyplot as plt
-from src.diff_with_systematic.matrix_diff import MatrixDiff, print_matrix
-import matplotlib
-from src.compare_trees.global_params import GlobalParams, const_weight, threshold_weight, exponent_reduced_weight
-import scipy.spatial.distance as ssd
 
+from src.diff_with_systematic.matrix_diff import MatrixDiff
 
 # param_a: 0.35, corrcoef: 0.4430 - level_weight_multiplier=[1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2]
 # param_a: 0.30, corrcoef: 0.4616 - level_weight_multiplier=[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]

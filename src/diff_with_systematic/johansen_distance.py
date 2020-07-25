@@ -1,5 +1,5 @@
 from src.compare_trees.distances import development_tree_distance
-from src.compare_trees.global_params import GlobalParams, exponent_reduced_weight
+from src.compare_trees.global_params import GlobalParams
 from src.diff_with_systematic.matrix_diff import MatrixDiff
 from src.diff_with_systematic.matrix_diff import print_matrix
 from src.view.draw_compared_tress import draw_tree
@@ -29,10 +29,8 @@ max_level = 11
 
 param_a=0.5
 
-#global_params = GlobalParams(g_weight=0.5, calc_weight=exponent_reduced_weight(0.50), max_level=max_level,
-global_params = GlobalParams(g_weight=0.0, calc_weight=exponent_reduced_weight(param_a), max_level=max_level,
-                             level_weight_multiplier=[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-                             )
+global_params = GlobalParams(max_level=max_level, param_a=param_a, g_weight=0.0,
+                             level_weight_multiplier=[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
 
 matrDiff = MatrixDiff("../../input/xtg/*.xtg", f"../../input/systematic_tree_{systematic_tree}.xtg", ["Angiosperms"],
                       max_level=max_level, filter_by_taxon=False)
@@ -70,7 +68,7 @@ johansenTrees = johansenMatrDiff.vertices
 
 print(f"joh trees depth")
 for j in range(len(johansenTrees)):
-    print(f"{johansenTrees[j].name} {johansenTrees[j].node.depth}")
+    print(f"{johansenTrees[j].name} {johansenTrees[j].root.depth}")
 
 
 print()

@@ -1,12 +1,6 @@
-from PIL import Image, ImageDraw
-import numpy as np
-from scipy.cluster import hierarchy
-import matplotlib.pyplot as plt
-
-from src.compare_trees.distances import development_tree_distance, node_dist
-from src.compare_trees.global_params import GlobalParams, const_weight, threshold_weight, exponent_reduced_weight
-from src.diff_with_systematic.matrix_diff import MatrixDiff, print_matrix, make_experiment_array, to_full_matrix
-import scipy.spatial.distance as ssd
+from src.compare_trees.distances import node_dist
+from src.compare_trees.global_params import GlobalParams
+from src.diff_with_systematic.matrix_diff import MatrixDiff
 
 ITEM_SIZE = 20
 ITEM_SPACE = 20
@@ -41,7 +35,7 @@ def proceed_node(node1, node2, level):
     else:
         total[level][EQ] += 1
 
-    node_distance = node_dist(node1, node2, "", "", global_params, level)
+    node_distance = node_dist(node1, node2, "", "", global_params)
 
     left1 = None if (node1 is None) else node1.left
     right1 = None if (node1 is None) else node1.right
@@ -60,9 +54,8 @@ def proceed_node(node1, node2, level):
 systematic_tree = "morph"
 max_level = 11
 
-global_params = GlobalParams(g_weight=0.5, calc_weight=exponent_reduced_weight(0.50), max_level=max_level,
-                             level_weight_multiplier=[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-                             )
+global_params = GlobalParams(max_level=max_level, param_a=0.50, g_weight=0.5,
+                             level_weight_multiplier=[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
 
 matrDiff = MatrixDiff("../../input/xtg/*.xtg", f"../../input/systematic_tree_{systematic_tree}.xtg", ["Angiosperms"],
                       max_level=max_level)
@@ -71,7 +64,7 @@ trees = matrDiff.vertices
 tree_number = 0
 for i in range(0, len(trees)):
     for j in range(i+1, len(trees)):
-        proceed_node(trees[i].node, trees[j].node, 0)
+        proceed_node(trees[i].root, trees[j].root, 0)
         tree_number += 1
 
 print(f"level total one_only eq ineq both_existing_part existing_part")

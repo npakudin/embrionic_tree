@@ -61,12 +61,12 @@ def parse_xml_node(xml, name, src_level, address):
 def read_tree_from_xml(filename):
     def get_name_type(name_type):
         strs = name_type.split('_') # ["Arabidopsis", "thaliana", "onagrad"]
-        assert len(strs) == 1 or len(strs) == 3, f"name_type: {name_type}"
         if len(strs) == 1:
             return strs[0], strs[0]
         if len(strs) == 3:
             [gen_name, sp_name, embryo_type] = strs
             return f"{gen_name}_{sp_name}", embryo_type
+        return name_type, name_type
 
 
 

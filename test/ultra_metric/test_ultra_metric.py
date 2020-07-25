@@ -22,7 +22,7 @@ class TestUltraMetric(TestCase):
             [2, 2, 0, 1],
             [2, 2, 1, 0],
         ]
-        res = get_ultra_metric(src_matr, UltraMetricParams(level_count=2))
+        res = get_ultra_metric(src_matr, UltraMetricParams(max_level=2))
         self.assertEqual(expected_matr, res)
 
     def test_ultrametrize_to_top_level(self):
@@ -44,7 +44,7 @@ class TestUltraMetric(TestCase):
             [2, 2, 0, 2],
             [2, 2, 2, 0],
         ]
-        res = get_ultra_metric(src_matr, UltraMetricParams(level_count=2))
+        res = get_ultra_metric(src_matr, UltraMetricParams(max_level=2))
         self.assertEqual(expected_matr, res)
 
     def test_ultrametrize_non_ultrametric(self):
@@ -62,7 +62,7 @@ class TestUltraMetric(TestCase):
             [2, 2, 0, 1],
             [2, 2, 1, 0],
         ]
-        res = get_ultra_metric(src_matr, UltraMetricParams(level_count=2))
+        res = get_ultra_metric(src_matr, UltraMetricParams(max_level=2))
         self.assertEqual(expected_matr, res)
 
     def test_ultrametrize_with_empty_levels(self):
@@ -79,6 +79,6 @@ class TestUltraMetric(TestCase):
             [8, 8, 3, 0],
         ]
         expected_matr = src_matr
-        res = get_ultra_metric(src_matr, UltraMetricParams(level_count=8))
+        res = get_ultra_metric(src_matr, UltraMetricParams(max_level=8))
         self.assertEqual(expected_matr, res)
 

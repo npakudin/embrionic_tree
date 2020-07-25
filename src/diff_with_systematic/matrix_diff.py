@@ -1,11 +1,9 @@
-import copy
-
 import numpy
 
 from src.compare_trees.development_tree_reader import read_all_trees
-from src.diff_with_systematic.build_morph_graph import taxon_from_xml
+from src.view.build_morph_graph import taxon_from_xml
 from src.compare_trees.distances import development_tree_distance
-from src.compare_trees.global_params import GlobalParams, exponent_reduced_weight, exponent_src_weight, const_weight
+from src.compare_trees.global_params import GlobalParams
 
 
 def apply_each(matr, fun):
@@ -104,7 +102,9 @@ def corrcoef(matr1, matr2):
 
 
 class MatrixDiff:
-    def __init__(self, experiment_pattern, morph_file, leave_list, max_level=11, filter_by_taxon=True):
+    def __init__(self, experiment_pattern, morph_file, leave_list, max_level=11, filter_by_taxon=True,
+                 # reduce
+                 is_reducing=True):
         vertices = read_all_trees(pattern=experiment_pattern, max_level=max_level)
 
         # morph matrix
@@ -137,9 +137,12 @@ class MatrixDiff:
 
         for tree in self.vertices:
             #print(f"prepare {tree.name}")
-            tree.cut(max_level=11) # cut all to 11 levels to ignore overlevels if we have 12 or 13 for some species
-            # tree.node.reduce()
-            # tree.node.internal_prepare(0)
+
+            # cut all to 11 levels to ignore overlevels if we have 12 or 13 for some species
+            tree.cut(max_level=11)
+
+            if is_reducing:
+                tree.reduce()
             tree.prepare()
             tree.cut(max_level=max_level)
 
@@ -148,27 +151,12 @@ class MatrixDiff:
 
         self.taxon_matrix = taxon.calculate()
 
-        self.min_value = float("inf")
-        self.min_params = [0, 0, 0]
-
     def make_full_experiment_matrix(self, global_params):
         left_bottom_matrix = self.make_experiment_matrix(global_params)
         return to_full_matrix(left_bottom_matrix)
 
     def make_experiment_matrix(self, global_params):
-        # create a copy of trees to modify
-        # trees = [copy.deepcopy(src_tree) for src_tree in self.vertices]
-        #
-        # # prepare to calculate distances
-        # for tree in trees:
-        #     tree.prepare(global_params)
-
-        #trees = [tree.left for tree in trees]
         trees = self.vertices
-
-        # depths = [v.reduced_depth for v in trees]
-        # print("depths")
-        # print(depths)
 
         experiment_matrix = []
         for i in range(len(trees)):
@@ -197,10 +185,8 @@ class MatrixDiff:
         return corrcoef(systematic_matrix, experiment_matrix)
 
     def matr_diff(self, x):
-        global_params = GlobalParams(max_level=11, g_weight=x[1], chain_length_weight=x[2], is_swap_left_right=False,
-                                     calc_weight=exponent_reduced_weight(a=x[0]))
-                                     #calc_weight=exponent_src_weight(a=x[0]))
-                                     #calc_weight=const_weight(weight=x[0]))
+        global_params = GlobalParams(max_level=11, param_a=x[0], g_weight=x[1],
+                                     chain_length_weight=x[2])
 
         experiment_matrix = self.make_experiment_matrix(global_params)
         return self.corrcoef(experiment_matrix)

@@ -19,7 +19,7 @@ def draw_node(draw, node1, node2, global_params, border_left, border_top, border
     elif node1.axis != node2.axis:
         color = COLOR_INEQ
 
-    cur_node_distance = node_dist(node1, node2, "", "", global_params, level)
+    cur_node_distance = node_dist(node1, node2, "", "", global_params)
 
     center_x = (border_right + border_left) / 2
     item_left = center_x - ITEM_SIZE / 2
@@ -60,8 +60,8 @@ def draw_tree(tree1, tree2, global_params, dist, taxon_dist, folder):
     im = Image.new('RGBA', [1000, 400], (255, 255, 255, 255))
     draw = ImageDraw.Draw(im)
 
-    min_reduced_depth = min(tree1.node.reduced_depth, tree2.node.reduced_depth)
-    [raw_max_dist, raw_min_dist] = draw_node(draw, tree1.node, tree2.node, global_params, 0, 0, im.size[0] - ITEM_SIZE - ITEM_SPACE, im.size[1], 0, min_reduced_depth)
+    min_reduced_depth = min(tree1.root.reduced_depth, tree2.root.reduced_depth)
+    [raw_max_dist, raw_min_dist] = draw_node(draw, tree1.root, tree2.root, global_params, 0, 0, im.size[0] - ITEM_SIZE - ITEM_SPACE, im.size[1], 0, min_reduced_depth)
 
     # legend
     draw_legend(draw, 500, 10, COLOR_LEFT, 'Node exists in the left tree only')
@@ -70,9 +70,9 @@ def draw_tree(tree1, tree2, global_params, dist, taxon_dist, folder):
     draw_legend(draw, 500, 70, COLOR_INEQ, 'Node exists in both trees and axis are NOT equal, e.g. X and Y')
 
     # distances
-    correction_coef = sum([pow(2, i) * global_params.calc_weight.fun(i, i) for i in range(min_reduced_depth)])
-    draw.text((200, 10), f"{tree1.name[:15]} reduced_depth: {tree1.node.reduced_depth}", fill=COLOR_LEFT)
-    draw.text((200, 30), f"{tree2.name[:15]} reduced_depth: {tree2.node.reduced_depth}", fill=COLOR_RIGHT)
+    correction_coef = sum([pow(2 * global_params.param_a, i) for i in range(min_reduced_depth)])
+    draw.text((200, 10), f"{tree1.name[:15]} reduced_depth: {tree1.root.reduced_depth}", fill=COLOR_LEFT)
+    draw.text((200, 30), f"{tree2.name[:15]} reduced_depth: {tree2.root.reduced_depth}", fill=COLOR_RIGHT)
     draw.text((10, 10), f"taxon_dist   = {taxon_dist:0.4f}", fill='black')
     draw.text((10, 30), f"raw_max_dist = {raw_max_dist:0.4f}", fill='black')
     draw.text((10, 50), f"raw_min_dist = {raw_min_dist:0.4f}", fill='black')

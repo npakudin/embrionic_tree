@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.cluster import hierarchy
 import matplotlib.pyplot as plt
-from src.compare_trees.global_params import GlobalParams, const_weight, threshold_weight, exponent_reduced_weight
+from src.compare_trees.global_params import GlobalParams
 from src.diff_with_systematic.matrix_diff import MatrixDiff, print_matrix, make_experiment_array, to_full_matrix, \
     corrcoef
 import scipy.spatial.distance as ssd

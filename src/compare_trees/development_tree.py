@@ -1,6 +1,4 @@
 import copy
-from enum import Enum
-import math
 
 
 # order should be: x < d < у < z < L < N
@@ -32,9 +30,6 @@ class TreeNode:
         self.reduced_level = reduced_level
         self.reduced_depth = None
         self.chain_length = 1
-        # self.personal_weight = 0
-        # self.total_weight = 0
-        # self.fertility = 0
         self.order_index = None
 
     def __str__(self):
@@ -42,6 +37,11 @@ class TreeNode:
 
     def get_full_addr(self):
         return f"{self.address}"
+
+    def full_tree_str(self):
+        left_str = "" if self.left is None else self.left.full_tree_str()
+        right_str = "" if self.right is None else self.right.full_tree_str()
+        return f"({left_str}, {right_str})"
 
     # cut tree to max_level if more levels exist in the source tree
     def cut(self, max_level):
@@ -100,66 +100,50 @@ class TreeNode:
 
         return self
 
-    def prepare(self):
-        self.reduce()
-        #self.order_left_right()
-        self.internal_prepare(0)
-
     def internal_prepare(self, reduced_level):
         #assert (self.left is None) == (self.right is None)
 
         self.reduced_level = reduced_level
-        # self.personal_weight = global_params.calc_weight.fun(self.src_level, self.reduced_level) #math.pow(global_params.a, reduced_level)
-        # self.total_weight = self.personal_weight
-        # self.fertility = 0
 
         self.reduced_depth = 0
 
         if self.left is not None:
             self.left.internal_prepare(reduced_level + 1)
-            # self.total_weight += self.left.total_weight
             self.reduced_depth = max(self.reduced_depth, 1 + self.left.reduced_depth)
 
         if self.right is not None:
             #if self.reduced_level > 0: # skip Z.R and all it's ancestors
             self.right.internal_prepare(reduced_level + 1)
-            # self.total_weight += self.right.total_weight
             self.reduced_depth = max(self.reduced_depth, 1 + self.right.reduced_depth)
 
             assert self.left is not None
             assert self.left.depth == self.right.depth
-        # self.fertility = (self.total_weight - self.personal_weight) / self.personal_weight
-        #
-        # assert self.fertility >= 0, f"src_level: {self.src_level}, reduced_level: {self.reduced_level}, personal_weight: {self.personal_weight}"
 
 
 class Tree:
-    def __init__(self, node, name="unknown", embryo_type="unknown"):
+    def __init__(self, root, name="unknown", embryo_type="unknown"):
         self.name = name
         self.embryo_type = embryo_type
-        self.node = node
-        self.nodes = []
+        self.root = root
+        self.roots = [] # trees, which were cut to levels 0, 1, 2, 3 etc
 
     def __str__(self):
         return self.get_full_addr()
 
     def get_full_addr(self):
-        return f"{self.name} {self.node.get_full_addr()}"
+        return f"{self.name} {self.root.get_full_addr()}"
 
     # cut tree to max_level if more levels exist in the source tree
     def cut(self, max_level):
-        self.node.internal_cut(0, max_level)
+        self.root.internal_cut(0, max_level)
 
     def reduce(self):
-        self.node.internal_reduce(parent_growth=1, chain_length=1)
+        self.root.internal_reduce(parent_growth=1, chain_length=1)
 
     def prepare(self):
-        self.node.reduce()
-        #self.order_left_right()
-        self.node.internal_prepare(0)
+        self.root.internal_prepare(0)
 
-        for i in range(self.node.reduced_depth + 1):
-            cur_node = copy.deepcopy(self.node)
+        for i in range(self.root.reduced_depth + 1):
+            cur_node = copy.deepcopy(self.root)
             cur_node.internal_cut(0, i)
-            self.nodes.append(cur_node)
-
+            self.roots.append(cur_node)

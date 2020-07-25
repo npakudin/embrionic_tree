@@ -3,7 +3,7 @@ from src.compare_trees.development_tree_reader import read_all_trees
 from src.compare_trees.distances import development_tree_distance
 
 
-def get_distances_by_files(pattern, global_params):
+def get_distances_by_files(pattern, global_params, is_reducing=True):
 
     # read trees from *.xtg files in xtg folder
     src_trees = read_all_trees(pattern=pattern, max_level = global_params.max_level)
@@ -13,6 +13,8 @@ def get_distances_by_files(pattern, global_params):
 
     # prepare to calculate distances
     for tree in trees:
+        if is_reducing:
+            tree.reduce()
         tree.prepare()
 
     # calculate distances matrix
