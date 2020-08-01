@@ -106,14 +106,14 @@ def development_tree_distance(tree1, tree2, global_params):
         # sum([ (2*a) ^ i for i in ... ])
         correction_coef = sum([pow(2 * global_params.param_a, i) for i in range(min_reduced_depth)])
 
-    raw_res = visit_virtual(node_dist, node1, node2, node1.get_full_addr(), node2.get_full_addr(), global_params)
+    raw_res = visit_virtual(node1, node2, node1.get_full_addr(), node2.get_full_addr(), global_params)
     res = raw_res / correction_coef
 
     return res
 
 
-def visit_virtual(fun, node1, node2, full_addr_1, full_addr_2, global_params):
-    res = fun(node1, node2, full_addr_1, full_addr_2, global_params)
+def visit_virtual(node1, node2, full_addr_1, full_addr_2, global_params):
+    res = node_dist(node1, node2, full_addr_1, full_addr_2, global_params)
 
     left1 = None if (node1 is None) else node1.left
     right1 = None if (node1 is None) else node1.right
@@ -121,7 +121,7 @@ def visit_virtual(fun, node1, node2, full_addr_1, full_addr_2, global_params):
     right2 = None if (node2 is None) else node2.right
 
     if (left1 is not None) or (left2 is not None):
-        res += visit_virtual(fun, left1, left2, full_addr_1 + ".vL" if node1 is None else node1.get_full_addr(), full_addr_2 + ".vL" if node2 is None else node2.get_full_addr(), global_params)
+        res += visit_virtual(left1, left2, full_addr_1 + ".vL" if node1 is None else node1.get_full_addr(), full_addr_2 + ".vL" if node2 is None else node2.get_full_addr(), global_params)
     if (right1 is not None) or (right2 is not None):
-        res += visit_virtual(fun, right1, right2, full_addr_1 + ".vR" if node1 is None else node1.get_full_addr(), full_addr_2 + ".vR" if node2 is None else node2.get_full_addr(), global_params)
+        res += visit_virtual(right1, right2, full_addr_1 + ".vR" if node1 is None else node1.get_full_addr(), full_addr_2 + ".vR" if node2 is None else node2.get_full_addr(), global_params)
     return res
