@@ -1,4 +1,4 @@
-from src.compare_trees.development_tree import get_axis, Axis
+from src.compare_trees.development_tree import get_axis, Axis, TreeNode
 
 
 def addr(node, reduced_addr):
@@ -91,7 +91,18 @@ def dist_chain_length(n1, n2):
     return abs(chain_length1 - chain_length2)
 
 
-def development_tree_distance(tree1, tree2, global_params):
+def pattern_tree_infinite():
+    root = TreeNode()
+    root.left = root
+    root.right = root
+    return root
+
+
+def iterate_pattern_tree(max_level, cur_level=0):
+    yield TreeNode()
+
+
+def development_tree_distance(tree1, tree2, global_params, pattern_tree=pattern_tree_infinite()):
 
     node1 = tree1.root
     node2 = tree2.root
@@ -106,22 +117,24 @@ def development_tree_distance(tree1, tree2, global_params):
         # sum([ (2*a) ^ i for i in ... ])
         correction_coef = sum([pow(2 * global_params.param_a, i) for i in range(min_reduced_depth)])
 
-    raw_res = visit_virtual(node1, node2, node1.get_full_addr(), node2.get_full_addr(), global_params)
+    raw_res = visit_virtual(node1, node2, node1.get_full_addr(), node2.get_full_addr(), global_params, pattern_tree)
     res = raw_res / correction_coef
 
     return res
 
 
-def visit_virtual(node1, node2, full_addr_1, full_addr_2, global_params):
+def visit_virtual(node1, node2, full_addr_1, full_addr_2, global_params, pattern_node):
     res = node_dist(node1, node2, full_addr_1, full_addr_2, global_params)
 
     left1 = None if (node1 is None) else node1.left
     right1 = None if (node1 is None) else node1.right
     left2 = None if (node2 is None) else node2.left
     right2 = None if (node2 is None) else node2.right
+    pattern_left = None if (pattern_node is None) else pattern_node.left
+    pattern_right = None if (pattern_node is None) else pattern_node.right
 
-    if (left1 is not None) or (left2 is not None):
-        res += visit_virtual(left1, left2, full_addr_1 + ".vL" if node1 is None else node1.get_full_addr(), full_addr_2 + ".vL" if node2 is None else node2.get_full_addr(), global_params)
-    if (right1 is not None) or (right2 is not None):
-        res += visit_virtual(right1, right2, full_addr_1 + ".vR" if node1 is None else node1.get_full_addr(), full_addr_2 + ".vR" if node2 is None else node2.get_full_addr(), global_params)
+    if ((left1 is not None) or (left2 is not None)) and (pattern_left is not None):
+        res += visit_virtual(left1, left2, full_addr_1 + ".vL" if node1 is None else node1.get_full_addr(), full_addr_2 + ".vL" if node2 is None else node2.get_full_addr(), global_params, pattern_left)
+    if ((right1 is not None) or (right2 is not None)) and (pattern_right is not None):
+        res += visit_virtual(right1, right2, full_addr_1 + ".vR" if node1 is None else node1.get_full_addr(), full_addr_2 + ".vR" if node2 is None else node2.get_full_addr(), global_params, pattern_right)
     return res
