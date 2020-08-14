@@ -29,6 +29,7 @@ class TreeNode:
         self.src_level = src_level
         self.reduced_level = reduced_level
         self.reduced_depth = None
+        self.reduced_address = None
         self.chain_length = 1
         self.order_index = None
 
@@ -100,24 +101,24 @@ class TreeNode:
 
         return self
 
-    def internal_prepare(self, reduced_level):
+    def internal_prepare(self, reduced_level, reduced_address="Z"):
         #assert (self.left is None) == (self.right is None)
 
         self.reduced_level = reduced_level
-
+        self.reduced_address = reduced_address
         self.reduced_depth = 0
 
         if self.left is not None:
-            self.left.internal_prepare(reduced_level + 1)
+            self.left.internal_prepare(reduced_level + 1, reduced_address + ".L")
             self.reduced_depth = max(self.reduced_depth, 1 + self.left.reduced_depth)
 
         if self.right is not None:
             #if self.reduced_level > 0: # skip Z.R and all it's ancestors
-            self.right.internal_prepare(reduced_level + 1)
+            self.right.internal_prepare(reduced_level + 1, reduced_address + ".R")
             self.reduced_depth = max(self.reduced_depth, 1 + self.right.reduced_depth)
 
             assert self.left is not None
-            assert self.left.depth == self.right.depth
+            #assert self.left.depth == self.right.depth
 
 
 class Tree:

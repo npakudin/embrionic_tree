@@ -1,3 +1,5 @@
+import copy
+
 from src.compare_trees.development_tree import get_axis, Axis, TreeNode
 
 
@@ -10,14 +12,14 @@ def addr(node, reduced_addr):
 def node_dist(n1, n2, full_addr_1, full_addr_2, global_params):
     assert not (n1 is None and n2 is None)
 
-    raw_distance = global_params.fertility_weight * fertility_dist(n1, n2) + \
+    raw_distance = global_params.fertility_weight * dist_fertility(n1, n2) + \
                    global_params.axis_weight * dist_axis(n1, n2) + \
                    global_params.g_weight * dist_gr(n1, n2) + \
                    global_params.chain_length_weight * dist_chain_length(n1, n2)
 
     # get weight from level
     reduced_level = n2.reduced_level if (n1 is None) else n1.reduced_level
-    weight = pow(2 * global_params.param_a, reduced_level)
+    weight = pow(global_params.param_a, reduced_level)
 
     # increase subtree weight
     if raw_distance > global_params.subtree_threshold:
@@ -32,7 +34,7 @@ def node_dist(n1, n2, full_addr_1, full_addr_2, global_params):
 
 # distance is 1 if one of nodes exists and the 2nd does not
 # don't care about axis
-def fertility_dist(n1, n2):
+def dist_fertility(n1, n2):
     if n1 is None or n2 is None:
         return 1
     return 0
@@ -103,38 +105,78 @@ def iterate_pattern_tree(max_level, cur_level=0):
 
 
 def development_tree_distance(tree1, tree2, global_params, pattern_tree=pattern_tree_infinite()):
-
-    node1 = tree1.root
-    node2 = tree2.root
+    n1 = tree1.root
+    n2 = tree2.root
     correction_coef = 1
 
     if global_params.use_min_common_depth:
         # get trees cut to the same level - min of both reduced trees
         min_reduced_depth = min(tree1.root.reduced_depth, tree2.root.reduced_depth)
-        node1 = tree1.roots[min_reduced_depth]
-        node2 = tree2.roots[min_reduced_depth]
+        n1 = tree1.roots[min_reduced_depth]
+        n2 = tree2.roots[min_reduced_depth]
 
         # sum([ (2*a) ^ i for i in ... ])
         correction_coef = sum([pow(2 * global_params.param_a, i) for i in range(min_reduced_depth)])
 
-    raw_res = visit_virtual(node1, node2, node1.get_full_addr(), node2.get_full_addr(), global_params, pattern_tree)
+    raw_res = visit_virtual(n1, n2, n1.get_full_addr(), n2.get_full_addr(), global_params, pattern_tree)
     res = raw_res / correction_coef
 
     return res
 
 
-def visit_virtual(node1, node2, full_addr_1, full_addr_2, global_params, pattern_node):
-    res = node_dist(node1, node2, full_addr_1, full_addr_2, global_params)
+def visit_virtual(n1, n2, full_addr_1, full_addr_2, global_params, pattern_node):
+    res = node_dist(n1, n2, full_addr_1, full_addr_2, global_params)
 
-    left1 = None if (node1 is None) else node1.left
-    right1 = None if (node1 is None) else node1.right
-    left2 = None if (node2 is None) else node2.left
-    right2 = None if (node2 is None) else node2.right
+    left1 = None if (n1 is None) else n1.left
+    right1 = None if (n1 is None) else n1.right
+    left2 = None if (n2 is None) else n2.left
+    right2 = None if (n2 is None) else n2.right
     pattern_left = None if (pattern_node is None) else pattern_node.left
     pattern_right = None if (pattern_node is None) else pattern_node.right
 
     if ((left1 is not None) or (left2 is not None)) and (pattern_left is not None):
-        res += visit_virtual(left1, left2, full_addr_1 + ".vL" if node1 is None else node1.get_full_addr(), full_addr_2 + ".vL" if node2 is None else node2.get_full_addr(), global_params, pattern_left)
+        res += visit_virtual(left1, left2, full_addr_1 + ".vL" if n1 is None else n1.get_full_addr(), full_addr_2 + ".vL" if n2 is None else n2.get_full_addr(), global_params, pattern_left)
     if ((right1 is not None) or (right2 is not None)) and (pattern_right is not None):
-        res += visit_virtual(right1, right2, full_addr_1 + ".vR" if node1 is None else node1.get_full_addr(), full_addr_2 + ".vR" if node2 is None else node2.get_full_addr(), global_params, pattern_right)
+        res += visit_virtual(right1, right2, full_addr_1 + ".vR" if n1 is None else n1.get_full_addr(), full_addr_2 + ".vR" if n2 is None else n2.get_full_addr(), global_params, pattern_right)
+    return res
+
+
+def high_fertility_diff_development_tree_distance(tree1, tree2, global_params, pattern_tree=pattern_tree_infinite()):
+    n1 = tree1.root
+    n2 = tree2.root
+
+    upd_global_params = copy.deepcopy(global_params)
+    upd_global_params.fertility_weight = 1.0
+    upd_global_params.axis_weight = 0.0
+    upd_global_params.g_weight = 0.0
+    upd_global_params.chain_length_weight = 0.0
+
+    raw_res = high_fertility_diff_visit_virtual(n1, n2, n1.get_full_addr(), n2.get_full_addr(), upd_global_params, pattern_tree)
+
+    return raw_res
+
+
+def high_fertility_diff_visit_virtual(n1, n2, full_addr_1, full_addr_2, global_params, pattern_node):
+    dist_ax = dist_axis(n1, n2)
+
+    if dist_ax != 0:
+        return []
+
+    assert n1.reduced_address == n2.reduced_address, f"{n1.reduced_address} - {n2.reduced_address}"
+    reduced_level = n2.reduced_level if (n1 is None) else n1.reduced_level
+    dist_fert = visit_virtual(n1, n2, n1.get_full_addr(), n2.get_full_addr(), global_params, pattern_node)
+
+    res = [[n1.reduced_address, dist_fert, reduced_level]]
+
+    left1 = None if (n1 is None) else n1.left
+    right1 = None if (n1 is None) else n1.right
+    left2 = None if (n2 is None) else n2.left
+    right2 = None if (n2 is None) else n2.right
+    pattern_left = None if (pattern_node is None) else pattern_node.left
+    pattern_right = None if (pattern_node is None) else pattern_node.right
+
+    if ((left1 is not None) or (left2 is not None)) and (pattern_left is not None):
+        res += high_fertility_diff_visit_virtual(left1, left2, full_addr_1 + ".vL" if n1 is None else n1.get_full_addr(), full_addr_2 + ".vL" if n2 is None else n2.get_full_addr(), global_params, pattern_left)
+    if ((right1 is not None) or (right2 is not None)) and (pattern_right is not None):
+        res += high_fertility_diff_visit_virtual(right1, right2, full_addr_1 + ".vR" if n1 is None else n1.get_full_addr(), full_addr_2 + ".vR" if n2 is None else n2.get_full_addr(), global_params, pattern_right)
     return res
