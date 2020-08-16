@@ -104,7 +104,7 @@ def iterate_pattern_tree(max_level, cur_level=0):
     yield TreeNode()
 
 
-def development_tree_distance(tree1, tree2, global_params, pattern_tree=pattern_tree_infinite()):
+def development_tree_distance(tree1, tree2, global_params, pattern=pattern_tree_infinite()):
     n1 = tree1.root
     n2 = tree2.root
     correction_coef = 1
@@ -118,30 +118,33 @@ def development_tree_distance(tree1, tree2, global_params, pattern_tree=pattern_
         # sum([ (2*a) ^ i for i in ... ])
         correction_coef = sum([pow(2 * global_params.param_a, i) for i in range(min_reduced_depth)])
 
-    raw_res = visit_virtual(n1, n2, n1.get_full_addr(), n2.get_full_addr(), global_params, pattern_tree)
+    raw_res = visit_virtual(n1, n2, n1.get_full_addr(), n2.get_full_addr(), global_params, pattern)
     res = raw_res / correction_coef
 
     return res
 
 
-def visit_virtual(n1, n2, full_addr_1, full_addr_2, global_params, pattern_node):
+def visit_virtual(n1, n2, full_addr_1, full_addr_2, global_params, pattern):
+    if pattern is None:
+        return 0
+
     res = node_dist(n1, n2, full_addr_1, full_addr_2, global_params)
 
     left1 = None if (n1 is None) else n1.left
     right1 = None if (n1 is None) else n1.right
     left2 = None if (n2 is None) else n2.left
     right2 = None if (n2 is None) else n2.right
-    pattern_left = None if (pattern_node is None) else pattern_node.left
-    pattern_right = None if (pattern_node is None) else pattern_node.right
+    pattern_left = pattern.left
+    pattern_right = pattern.right
 
-    if ((left1 is not None) or (left2 is not None)) and (pattern_left is not None):
+    if ((left1 is not None) or (left2 is not None)):
         res += visit_virtual(left1, left2, full_addr_1 + ".vL" if n1 is None else n1.get_full_addr(), full_addr_2 + ".vL" if n2 is None else n2.get_full_addr(), global_params, pattern_left)
-    if ((right1 is not None) or (right2 is not None)) and (pattern_right is not None):
+    if ((right1 is not None) or (right2 is not None)):
         res += visit_virtual(right1, right2, full_addr_1 + ".vR" if n1 is None else n1.get_full_addr(), full_addr_2 + ".vR" if n2 is None else n2.get_full_addr(), global_params, pattern_right)
     return res
 
 
-def high_fertility_diff_development_tree_distance(tree1, tree2, global_params, pattern_tree=pattern_tree_infinite()):
+def high_fertility_diff_development_tree_distance(tree1, tree2, global_params, pattern=pattern_tree_infinite()):
     n1 = tree1.root
     n2 = tree2.root
 
@@ -151,12 +154,15 @@ def high_fertility_diff_development_tree_distance(tree1, tree2, global_params, p
     upd_global_params.g_weight = 0.0
     upd_global_params.chain_length_weight = 0.0
 
-    raw_res = high_fertility_diff_visit_virtual(n1, n2, n1.get_full_addr(), n2.get_full_addr(), upd_global_params, pattern_tree)
+    raw_res = high_fertility_diff_visit_virtual(n1, n2, n1.get_full_addr(), n2.get_full_addr(), upd_global_params, pattern)
 
     return raw_res
 
 
-def high_fertility_diff_visit_virtual(n1, n2, full_addr_1, full_addr_2, global_params, pattern_node):
+def high_fertility_diff_visit_virtual(n1, n2, full_addr_1, full_addr_2, global_params, pattern):
+    if pattern is None:
+        return []
+
     dist_ax = dist_axis(n1, n2)
 
     if dist_ax != 0:
@@ -164,7 +170,7 @@ def high_fertility_diff_visit_virtual(n1, n2, full_addr_1, full_addr_2, global_p
 
     assert n1.reduced_address == n2.reduced_address, f"{n1.reduced_address} - {n2.reduced_address}"
     reduced_level = n2.reduced_level if (n1 is None) else n1.reduced_level
-    dist_fert = visit_virtual(n1, n2, n1.get_full_addr(), n2.get_full_addr(), global_params, pattern_node)
+    dist_fert = visit_virtual(n1, n2, n1.get_full_addr(), n2.get_full_addr(), global_params, pattern)
 
     res = [[n1.reduced_address, dist_fert, reduced_level]]
 
@@ -172,11 +178,11 @@ def high_fertility_diff_visit_virtual(n1, n2, full_addr_1, full_addr_2, global_p
     right1 = None if (n1 is None) else n1.right
     left2 = None if (n2 is None) else n2.left
     right2 = None if (n2 is None) else n2.right
-    pattern_left = None if (pattern_node is None) else pattern_node.left
-    pattern_right = None if (pattern_node is None) else pattern_node.right
+    pattern_left = pattern.left
+    pattern_right = pattern.right
 
-    if ((left1 is not None) or (left2 is not None)) and (pattern_left is not None):
+    if ((left1 is not None) or (left2 is not None)):
         res += high_fertility_diff_visit_virtual(left1, left2, full_addr_1 + ".vL" if n1 is None else n1.get_full_addr(), full_addr_2 + ".vL" if n2 is None else n2.get_full_addr(), global_params, pattern_left)
-    if ((right1 is not None) or (right2 is not None)) and (pattern_right is not None):
+    if ((right1 is not None) or (right2 is not None)):
         res += high_fertility_diff_visit_virtual(right1, right2, full_addr_1 + ".vR" if n1 is None else n1.get_full_addr(), full_addr_2 + ".vR" if n2 is None else n2.get_full_addr(), global_params, pattern_right)
     return res

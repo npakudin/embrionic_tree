@@ -2,7 +2,7 @@ import numpy
 
 from src.compare_trees.development_tree_reader import read_all_trees
 from src.view.build_morph_graph import taxon_from_xml
-from src.compare_trees.distances import development_tree_distance
+from src.compare_trees.distances import development_tree_distance, pattern_tree_infinite
 from src.compare_trees.global_params import GlobalParams
 
 
@@ -155,14 +155,14 @@ class MatrixDiff:
         left_bottom_matrix = self.make_experiment_matrix(global_params)
         return to_full_matrix(left_bottom_matrix)
 
-    def make_experiment_matrix(self, global_params):
+    def make_experiment_matrix(self, global_params, pattern=pattern_tree_infinite()):
         trees = self.vertices
 
         experiment_matrix = []
         for i in range(len(trees)):
             experiment_matrix.append([])
             for j in range(i):
-                dist = development_tree_distance(trees[i], trees[j], global_params)
+                dist = development_tree_distance(trees[i], trees[j], global_params, pattern=pattern)
                 experiment_matrix[i].append(dist)
 
         return experiment_matrix

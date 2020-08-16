@@ -56,14 +56,15 @@ for i in range(len(trees)):
         max_dist_tree = normalized_distances[-1][1]
         #print(f"{key} {normalized_distances}")
         #node_distances += [[key, median_dist, median_tree, mean, stdev, max_dist, max_dist_tree]]
-        node_distances += [[key, max_dist, max_dist_tree]]
+        #node_distances += [[key, max_dist, max_dist_tree]]
         #node_distances += [[key, median_dist, median_dist_tree]]
+        node_distances += [[key, mean, stdev]]
     node_distances = sorted(node_distances, key=lambda tuple: -tuple[1])
     res_str = ""
     for item in node_distances[:3]:
         res_str += f" {item[0]} {item[1]} {item[2]}"
-    print(f"{trees[i].name}{res_str}")
-    #print(f"{trees[i].name} {node_distances[:3]}")
+    #print(f"{trees[i].name}{res_str}")
+    print(f"{trees[i].name} {node_distances[:10]}")
 
 
 
