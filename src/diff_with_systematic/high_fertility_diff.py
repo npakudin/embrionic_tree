@@ -1,11 +1,8 @@
-import matplotlib.pyplot as plt
-import numpy as np
-from mpl_toolkits.mplot3d import Axes3D
 import statistics
 
-from src.compare_trees.distances import development_tree_distance, high_fertility_diff_development_tree_distance
+from src.compare_trees.distances import high_fertility_diff_development_tree_distance
 from src.compare_trees.global_params import GlobalParams
-from src.diff_with_systematic.matrix_diff import MatrixDiff, print_matrix, corrcoef
+from src.diff_with_systematic.matrix_diff import MatrixDiff
 
 # Build matrices and corr coef only
 
@@ -18,9 +15,7 @@ matrDiff = MatrixDiff("../../input/xtg/*.xtg", f"../../input/systematic_tree_{sy
 
 trees = matrDiff.vertices
 
-global_params = GlobalParams(max_level=max_level, param_a=0.5, g_weight=0.0,
-                             chain_length_weight=0.0, subtree_threshold=1000,
-                             subtree_multiplier=1, level_weight_multiplier=[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
+global_params = GlobalParams(max_level=max_level, param_a=0.5, g_weight=0.0, chain_length_weight=0.0)
 
 #experiment_matrix = []
 for i in range(len(trees)):

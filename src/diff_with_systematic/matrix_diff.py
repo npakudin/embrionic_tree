@@ -185,8 +185,7 @@ class MatrixDiff:
         return corrcoef(systematic_matrix, experiment_matrix)
 
     def matr_diff(self, x):
-        global_params = GlobalParams(max_level=11, param_a=x[0], g_weight=x[1],
-                                     chain_length_weight=x[2])
+        global_params = GlobalParams(max_level=11, param_a=x[0], g_weight=x[1], chain_length_weight=x[2])
 
         experiment_matrix = self.make_experiment_matrix(global_params)
         return self.corrcoef(experiment_matrix)

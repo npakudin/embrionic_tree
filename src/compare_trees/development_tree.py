@@ -59,7 +59,7 @@ class TreeNode:
             self.depth = self.left.depth
         if self.right is not None:
             self.right.internal_cut(src_level + 1, max_level)
-            #assert self.depth == self.right.depth, f"self.depth: {self.depth} self.right.depth: {self.right.depth}, right.address: {self.right.address}"
+            # assert self.depth == self.right.depth, f"self.depth: {self.depth} self.right.depth: {self.right.depth}, right.address: {self.right.address}"
             self.depth = max(self.right.depth, self.depth)
 
     def order_left_right(self):
@@ -88,7 +88,7 @@ class TreeNode:
             self.right = None
 
         if self.left is None and self.right is None:
-            self.axis = Axis.LEAVE # this is a leave
+            self.axis = Axis.LEAVE  # this is a leave
             return self
         if self.right is None:
             # if continue chain - add 1 to its' length
@@ -102,7 +102,7 @@ class TreeNode:
         return self
 
     def internal_prepare(self, reduced_level, reduced_address="Z"):
-        #assert (self.left is None) == (self.right is None)
+        # assert (self.left is None) == (self.right is None)
 
         self.reduced_level = reduced_level
         self.reduced_address = reduced_address
@@ -113,12 +113,12 @@ class TreeNode:
             self.reduced_depth = max(self.reduced_depth, 1 + self.left.reduced_depth)
 
         if self.right is not None:
-            #if self.reduced_level > 0: # skip Z.R and all it's ancestors
+            # if self.reduced_level > 0: # skip Z.R and all it's ancestors
             self.right.internal_prepare(reduced_level + 1, reduced_address + ".R")
             self.reduced_depth = max(self.reduced_depth, 1 + self.right.reduced_depth)
 
             assert self.left is not None
-            #assert self.left.depth == self.right.depth
+            # assert self.left.depth == self.right.depth
 
 
 class Tree:
@@ -126,7 +126,7 @@ class Tree:
         self.name = name
         self.embryo_type = embryo_type
         self.root = root
-        self.roots = [] # trees, which were cut to levels 0, 1, 2, 3 etc
+        self.roots = []  # trees, which were cut to levels 0, 1, 2, 3 etc
 
     def __str__(self):
         return self.get_full_addr()

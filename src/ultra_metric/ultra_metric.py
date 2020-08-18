@@ -34,7 +34,7 @@ def get_ultra_metric(src_matrix, ultra_metric_params):
         while True:
             set_to(matrix, target_value, target_value - 0.5, target_value)  # set to 1 for all items in [0.5; 1]
             _joined_count = join_triangles(matrix, target_value)
-            [clusters, row_to_cluster] = get_cluster_mapping(matrix, target_value)
+            [clusters, _row_to_cluster] = get_cluster_mapping(matrix, target_value)
 
             merge_error_matrix = cluster_merge_error(matrix, clusters, target_value)
 
@@ -72,7 +72,7 @@ def create_history_level(clusters, history_level, target_value):
     return new_history_level
 
 
-def print_matrix(matrix, name):
+def print_matrix(matrix, _name):
     print("name")
     for row in matrix:
         for item in row:

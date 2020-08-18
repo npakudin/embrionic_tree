@@ -24,8 +24,7 @@ matrDiff = MatrixDiff("../../input/xtg/*.xtg", "../../input/systematic_tree_morp
 
 init_values = [0.5, 0.1, 0.0]
 x = init_values
-global_params = GlobalParams(max_level=11, param_a=x[0], g_weight=x[1],
-                             chain_length_weight=x[2])
+global_params = GlobalParams(max_level=11, param_a=x[0], g_weight=x[1], chain_length_weight=x[2])
 
 
 experiment_matrix = matrDiff.make_full_experiment_matrix(global_params)

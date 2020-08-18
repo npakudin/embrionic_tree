@@ -5,6 +5,8 @@ class GlobalParams:
                  level_weight_multiplier=None,
                  use_min_common_depth=False
                  ):
+        if level_weight_multiplier is None:
+            level_weight_multiplier = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
         self.axis_weight = axis_weight
         self.fertility_weight = fertility_weight
         self.max_level = max_level
@@ -13,7 +15,5 @@ class GlobalParams:
         self.param_a = param_a
         self.subtree_threshold = subtree_threshold
         self.subtree_multiplier = subtree_multiplier
-        if level_weight_multiplier is None:
-            level_weight_multiplier = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
         self.level_weight_multiplier = level_weight_multiplier
         self.use_min_common_depth = use_min_common_depth

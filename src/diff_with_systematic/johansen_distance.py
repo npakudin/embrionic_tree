@@ -29,8 +29,7 @@ max_level = 11
 
 param_a=0.5
 
-global_params = GlobalParams(max_level=max_level, param_a=param_a, g_weight=0.0,
-                             level_weight_multiplier=[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
+global_params = GlobalParams(max_level=max_level, param_a=param_a, g_weight=0.0)
 
 matrDiff = MatrixDiff("../../input/xtg/*.xtg", f"../../input/systematic_tree_{systematic_tree}.xtg", ["Angiosperms"],
                       max_level=max_level, filter_by_taxon=False)

@@ -1,16 +1,14 @@
 import numpy as np
 
-from src.compare_trees.distances import development_tree_distance, node_dist
+from src.compare_trees.distances import development_tree_distance
 from src.compare_trees.global_params import GlobalParams
 from src.diff_with_systematic.matrix_diff import MatrixDiff
-
 from src.view.draw_compared_tress import draw_tree
 
 systematic_tree = "morph"
 max_level = 11
 
-global_params = GlobalParams(max_level=max_level, param_a=0.50, g_weight=0.5,
-                             level_weight_multiplier=[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
+global_params = GlobalParams(max_level=max_level, param_a=0.50, g_weight=0.5)
 
 matrDiff = MatrixDiff("../../input/xtg/*.xtg", f"../../input/systematic_tree_{systematic_tree}.xtg", ["Angiosperms"],
                       max_level=max_level)

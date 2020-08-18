@@ -1,12 +1,8 @@
+import matplotlib.pyplot as plt
 import numpy as np
 from scipy.cluster import hierarchy
-import matplotlib.pyplot as plt
-from src.compare_trees.global_params import GlobalParams
-from src.diff_with_systematic.matrix_diff import MatrixDiff, print_matrix, make_experiment_array, to_full_matrix, \
-    corrcoef
-import scipy.spatial.distance as ssd
 
-from src.ultra_metric.ultra_metric import get_ultra_metric, UltraMetricParams
+from src.diff_with_systematic.matrix_diff import corrcoef
 
 
 def draw_plot(clustered_trees, names, plot_name, filename):
@@ -19,12 +15,12 @@ def draw_plot(clustered_trees, names, plot_name, filename):
     ax1.set_xlabel("distance, Minarskys")
 
     hierarchy.dendrogram(clustered_trees,
-                         #labels=np.array([x.split('_')[0] + ' ' + x.split('_')[1][:5] for x in names], np.str),
+                         # labels=np.array([x.split('_')[0] + ' ' + x.split('_')[1][:5] for x in names], np.str),
                          labels=np.array([x for x in names], np.str),
                          orientation='right', count_sort='ascending', distance_sort='ascending')
     fig.savefig(filename)
     plt.close(fig)
-    #plt.show()
+    # plt.show()
 
 
 def corr_clustered_trees(clustered_trees, names, src_matr):
@@ -53,5 +49,5 @@ def corr_clustered_trees(clustered_trees, names, src_matr):
                 matr[row][col] = float(item[2])
 
     corr = corrcoef(matr, src_matr)
-    #print_matrix(matr, f"clustered matr", names, corr, with_headers=True)
+    # print_matrix(matr, f"clustered matr", names, corr, with_headers=True)
     return corr

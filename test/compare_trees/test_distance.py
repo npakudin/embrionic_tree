@@ -24,7 +24,6 @@ class TestDistance(TestCase):
         self.assertAlmostEqual(expected_distance, distance_matrix[0][1])
 
     def test_reduce(self):
-        global_params_copy = copy.deepcopy(global_params)
         [_trees, distance_matrix] = get_distances_by_files("../../test/test_input/test_reduce*.xtg", GlobalParams(max_level=11))
         expected_distance = 0
         self.assertAlmostEqual(expected_distance, distance_matrix[0][1])

@@ -76,8 +76,7 @@ johansenTrees = johansenMatrDiff.vertices
 
 def get_corrcoef(param_a, g_weight, chain_length_weight):
     global_params = GlobalParams(max_level=max_level, param_a=param_a, g_weight=g_weight,
-                                 chain_length_weight=chain_length_weight, subtree_threshold=1000,
-                                 subtree_multiplier=1, level_weight_multiplier=[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
+                                 chain_length_weight=chain_length_weight)
     name = f"a={param_a}_{systematic_tree}_{cluster_algorithm}_subtree_(thr,mult)=({global_params.subtree_threshold},{global_params.subtree_multiplier})_lev_mult={global_params.level_weight_multiplier}"
     experiment_matrix = matrDiff.make_experiment_matrix(global_params)
 
@@ -128,24 +127,24 @@ def create_fun(chain_length_weight):
     return fun
 
 
-a = np.linspace(0.001, 1.0, 11)
-g_weight = np.linspace(-0.1, 1.0, 12)
-chain_length = 0.0
+if True:
+    a = np.linspace(0.001, 1.0, 11)
+    g_weight = np.linspace(-0.1, 1.0, 12)
+    chain_length = 0.0
 
-X, Y = np.meshgrid(a, g_weight)
-Z = np.vectorize(create_fun(chain_length))(X, Y)
+    X, Y = np.meshgrid(a, g_weight)
+    Z = np.vectorize(create_fun(chain_length))(X, Y)
 
-fig = plt.figure()
+    fig = plt.figure()
 
-ax = Axes3D(fig)
-ax.plot_surface(X, Y, Z, rstride=1, cstride=1, cmap='viridis', edgecolor='none')
-ax.set_xlabel('param_a')
-ax.set_ylabel('g_weight')
-ax.set_zlabel('coefcorr')
-ax.set_title(f"chain_length_weight={chain_length}")
+    ax = Axes3D(fig)
+    ax.plot_surface(X, Y, Z, rstride=1, cstride=1, cmap='viridis', edgecolor='none')
+    ax.set_xlabel('param_a')
+    ax.set_ylabel('g_weight')
+    ax.set_zlabel('coefcorr')
+    ax.set_title(f"chain_length_weight={chain_length}")
 
-plt.show()
-
+    plt.show()
 
 
 # param_a: 0.35, corrcoef: 0.4430 - level_weight_multiplier=[1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2]

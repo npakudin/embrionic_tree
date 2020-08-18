@@ -1,11 +1,7 @@
-import matplotlib.pyplot as plt
 import numpy as np
-from mpl_toolkits.mplot3d import Axes3D
 
-from src.compare_trees.development_tree import TreeNode
-from src.compare_trees.distances import development_tree_distance
 from src.compare_trees.global_params import GlobalParams
-from src.diff_with_systematic.iterate_trees import get_chain, get_deepest_node, generate_bin_tree, get_subtrees
+from src.diff_with_systematic.iterate_trees import generate_bin_tree, get_subtrees
 from src.diff_with_systematic.matrix_diff import MatrixDiff, print_matrix, corrcoef
 
 # Build matrices and corr coef only
@@ -16,9 +12,7 @@ max_level = 11
 matrDiff = MatrixDiff("../../input/xtg/*.xtg", f"../../input/systematic_tree_{systematic_tree}.xtg",
                       ["Angiosperms"], max_level=max_level)
 
-global_params = GlobalParams(max_level=max_level, param_a=0.5, g_weight=0,
-                             chain_length_weight=0, subtree_threshold=1000,
-                             subtree_multiplier=1, level_weight_multiplier=[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
+global_params = GlobalParams(max_level=max_level, param_a=0.5, g_weight=0, chain_length_weight=0)
 
 trees = matrDiff.vertices
 
@@ -69,11 +63,7 @@ print_matrix(feature_matrix, "feature_matrix", matrDiff.names, 0, with_headers=T
 
 
 for param_a in np.linspace(0.5, 1.6, 12):
-    global_params = GlobalParams(g_weight=0, chain_length_weight=0,
-                                 param_a=param_a, max_level=max_level,
-                                 subtree_threshold=1000, subtree_multiplier=1,
-                                 level_weight_multiplier=[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-                                 )
+    global_params = GlobalParams(max_level=max_level, param_a=param_a, g_weight=0, chain_length_weight=0)
     res = []
 
     # iterate over subtrees

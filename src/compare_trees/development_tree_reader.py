@@ -9,7 +9,7 @@ ns = {'b': 'http://bioinfweb.info/xmlns/xtg'}
 def parse_xml_node(xml, name, src_level, address):
     data = xml.find('b:Branch', ns).find('b:TextLabel', ns).attrib['Text'].replace(",", ".").lower().split(' ')
 
-    node = TreeNode(address = address, src_level = src_level)
+    node = TreeNode(address=address, src_level=src_level)
 
     if data[0] == 'ww':
         data[0] = 'w_in_w'
@@ -19,7 +19,7 @@ def parse_xml_node(xml, name, src_level, address):
     # if data[0] != 'w' and data[0] != 'b':
     #     print(f"{name} : {data[0]}") # error message on wrong input
 
-    assert len(data) == 2, f"name: {name}, data: {data}" # error message on wrong input
+    assert len(data) == 2, f"name: {name}, data: {data}"  # error message on wrong input
 
     if data[1] == 's' or data[1] == 'e':
         # chain item, no growth
@@ -59,25 +59,24 @@ def parse_xml_node(xml, name, src_level, address):
 
 
 def read_tree_from_xml(filename):
-    def get_name_type(name_type):
-        strs = name_type.split('_') # ["Arabidopsis", "thaliana", "onagrad"]
-        if len(strs) == 1:
-            return strs[0], strs[0]
-        if len(strs) == 3:
-            [gen_name, sp_name, embryo_type] = strs
+    def parse_name_type(name_type):
+        strings = name_type.split('_')  # ["Arabidopsis", "thaliana", "onagrad"]
+        if len(strings) == 1:
+            return strings[0], strings[0]
+        if len(strings) == 3:
+            [gen_name, sp_name, embryo_type] = strings
             return f"{gen_name}_{sp_name}", embryo_type
         return name_type, name_type
 
-
-
     path = filename.split('/')
-    name_type = path[len(path) - 1][:-4]  # "../input/xtg/Arabidopsis_thaliana_onagrad.xtg" => "Arabidopsis_thaliana_onagrad"
-    (name, embryo_type) = get_name_type(name_type)
+    # "../input/xtg/Arabidopsis_thaliana_onagrad.xtg" => "Arabidopsis_thaliana_onagrad"
+    filename_type = path[len(path) - 1][:-4]
+    (name, embryo_type) = parse_name_type(filename_type)
 
     node = parse_xml_node(xml=ElementTree.parse(filename).getroot().find('b:Tree', ns).find('b:Node', ns),
                           name=name, src_level=0, address="Z")
 
-    return Tree(node, name = name, embryo_type = embryo_type)
+    return Tree(node, name=name, embryo_type=embryo_type)
 
 
 def read_all_trees(pattern, max_level):

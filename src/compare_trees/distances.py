@@ -100,10 +100,6 @@ def pattern_tree_infinite():
     return root
 
 
-def iterate_pattern_tree(max_level, cur_level=0):
-    yield TreeNode()
-
-
 def development_tree_distance(tree1, tree2, global_params, pattern=pattern_tree_infinite()):
     n1 = tree1.root
     n2 = tree2.root
@@ -138,9 +134,11 @@ def visit_virtual(n1, n2, full_addr_1, full_addr_2, global_params, pattern):
     pattern_right = pattern.right
 
     if ((left1 is not None) or (left2 is not None)):
-        res += visit_virtual(left1, left2, full_addr_1 + ".vL" if n1 is None else n1.get_full_addr(), full_addr_2 + ".vL" if n2 is None else n2.get_full_addr(), global_params, pattern_left)
+        res += visit_virtual(left1, left2, full_addr_1 + ".vL" if n1 is None else n1.get_full_addr(),
+                             full_addr_2 + ".vL" if n2 is None else n2.get_full_addr(), global_params, pattern_left)
     if ((right1 is not None) or (right2 is not None)):
-        res += visit_virtual(right1, right2, full_addr_1 + ".vR" if n1 is None else n1.get_full_addr(), full_addr_2 + ".vR" if n2 is None else n2.get_full_addr(), global_params, pattern_right)
+        res += visit_virtual(right1, right2, full_addr_1 + ".vR" if n1 is None else n1.get_full_addr(),
+                             full_addr_2 + ".vR" if n2 is None else n2.get_full_addr(), global_params, pattern_right)
     return res
 
 
@@ -154,7 +152,8 @@ def high_fertility_diff_development_tree_distance(tree1, tree2, global_params, p
     upd_global_params.g_weight = 0.0
     upd_global_params.chain_length_weight = 0.0
 
-    raw_res = high_fertility_diff_visit_virtual(n1, n2, n1.get_full_addr(), n2.get_full_addr(), upd_global_params, pattern)
+    raw_res = high_fertility_diff_visit_virtual(n1, n2, n1.get_full_addr(), n2.get_full_addr(), upd_global_params,
+                                                pattern)
 
     return raw_res
 
@@ -182,7 +181,13 @@ def high_fertility_diff_visit_virtual(n1, n2, full_addr_1, full_addr_2, global_p
     pattern_right = pattern.right
 
     if ((left1 is not None) or (left2 is not None)):
-        res += high_fertility_diff_visit_virtual(left1, left2, full_addr_1 + ".vL" if n1 is None else n1.get_full_addr(), full_addr_2 + ".vL" if n2 is None else n2.get_full_addr(), global_params, pattern_left)
+        res += high_fertility_diff_visit_virtual(left1, left2,
+                                                 full_addr_1 + ".vL" if n1 is None else n1.get_full_addr(),
+                                                 full_addr_2 + ".vL" if n2 is None else n2.get_full_addr(),
+                                                 global_params, pattern_left)
     if ((right1 is not None) or (right2 is not None)):
-        res += high_fertility_diff_visit_virtual(right1, right2, full_addr_1 + ".vR" if n1 is None else n1.get_full_addr(), full_addr_2 + ".vR" if n2 is None else n2.get_full_addr(), global_params, pattern_right)
+        res += high_fertility_diff_visit_virtual(right1, right2,
+                                                 full_addr_1 + ".vR" if n1 is None else n1.get_full_addr(),
+                                                 full_addr_2 + ".vR" if n2 is None else n2.get_full_addr(),
+                                                 global_params, pattern_right)
     return res

@@ -4,14 +4,11 @@ xml_ns = {'b': 'http://bioinfweb.info/xmlns/xtg'}
 
 
 def taxon_from_xml(filename):
-    with open(filename, "r") as f:
-        xml_tree = ElementTree.parse(filename)
-        root = xml_tree.getroot()
-        path = filename.split('/')
-        name = path[len(path) - 1][:-4]
+    xml_tree = ElementTree.parse(filename)
+    root = xml_tree.getroot()
 
-        taxon = Taxon(xml=root.find('b:Tree', xml_ns).find('b:Node', xml_ns))
-        return taxon
+    taxon = Taxon(xml=root.find('b:Tree', xml_ns).find('b:Node', xml_ns))
+    return taxon
 
 
 # work if start from the same depth only!
@@ -52,7 +49,7 @@ class Taxon:
     # remove all leaves excluding with names
     def leave_only_names(self, names):
         self.mark_names(names)
-        self.set_parents_necessarity()
+        self.set_parents_necessity()
         self.internal_leave_only_marked()
 
     def mark_names(self, names, mark_all_children=False):
@@ -60,14 +57,14 @@ class Taxon:
         for child in self.children:
             child.mark_names(names, self.necessary)
 
-    def set_parents_necessarity(self):
+    def set_parents_necessity(self):
         if self.necessary:
             self.mark_parents()
         for child in self.children:
-            child.set_parents_necessarity()
+            child.set_parents_necessity()
 
     def mark_parents(self):
-        if self.parent is not None and self.parent.necessary != True:
+        if self.parent is not None and not self.parent.necessary:
             self.parent.necessary = True
             self.parent.mark_parents()
 

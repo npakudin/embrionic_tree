@@ -33,8 +33,7 @@ for param_a in np.linspace(0.5, 1.0, 2):
                 #level_weight_multiplier[increasing_level] *= 5
 
                 global_params = GlobalParams(max_level=max_level, param_a=param_a, g_weight=0.0,
-                                             chain_length_weight=0.0, subtree_threshold=100,
-                                             subtree_multiplier=1, level_weight_multiplier=level_weight_multiplier)
+                                             chain_length_weight=0.0)
 
                 experiment_matrix = matrDiff.make_experiment_matrix(global_params)
 

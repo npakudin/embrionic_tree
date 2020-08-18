@@ -2,13 +2,6 @@ from src.compare_trees.distances import node_dist
 from src.compare_trees.global_params import GlobalParams
 from src.diff_with_systematic.matrix_diff import MatrixDiff
 
-ITEM_SIZE = 20
-ITEM_SPACE = 20
-COLOR_LEFT  = 0xff0050ff
-COLOR_RIGHT = 0xff00d0ff
-COLOR_EQ    = 'black'
-COLOR_INEQ  = 0xffe00000
-
 ALL = 0
 LEFT = 1
 RIGHT = 2
@@ -16,21 +9,17 @@ EQ = 3
 INEQ = 4
 total = []
 for i in range(11):
-    total.append([0,0,0,0,0])
+    total.append([0, 0, 0, 0, 0])
 
 
 def proceed_node(node1, node2, level):
 
-    color = COLOR_EQ
     total[level][ALL] += 1
     if node1 is None:
-        color = COLOR_LEFT
         total[level][LEFT] += 1
     elif node2 is None:
-        color = COLOR_RIGHT
         total[level][RIGHT] += 1
     elif node1.axis != node2.axis:
-        color = COLOR_INEQ
         total[level][INEQ] += 1
     else:
         total[level][EQ] += 1
@@ -54,8 +43,7 @@ def proceed_node(node1, node2, level):
 systematic_tree = "morph"
 max_level = 11
 
-global_params = GlobalParams(max_level=max_level, param_a=0.50, g_weight=0.5,
-                             level_weight_multiplier=[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
+global_params = GlobalParams(max_level=max_level, param_a=0.50, g_weight=0.5)
 
 matrDiff = MatrixDiff("../../input/xtg/*.xtg", f"../../input/systematic_tree_{systematic_tree}.xtg", ["Angiosperms"],
                       max_level=max_level)
