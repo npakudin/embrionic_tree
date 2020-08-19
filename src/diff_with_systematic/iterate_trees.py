@@ -73,13 +73,13 @@ def get_subtrees(node):
 
 
 # Generates a full bin tree of height 'max_level'
-def generate_bin_tree(max_level):
+def generate_bin_tree(max_level, address="Z", reduced_level=0):
     if max_level == 0:
         return None
 
-    node = TreeNode()
-    node.left = generate_bin_tree(max_level - 1)
-    node.right = generate_bin_tree(max_level - 1)
+    node = TreeNode(address=address, reduced_level=reduced_level)
+    node.left = generate_bin_tree(max_level - 1, address + ".L", reduced_level + 1)
+    node.right = generate_bin_tree(max_level - 1, address + ".R", reduced_level + 1)
     return node
 
 
@@ -94,6 +94,26 @@ def get_deepest_node(node):
         return get_deepest_node(node.right)
 
     return node
+
+
+def iterate_nodes(node):
+    if node.left is not None:
+        for x in iterate_nodes(node.left):
+            yield x
+    yield node
+    if node.right is not None:
+        for x in iterate_nodes(node.right):
+            yield x
+
+
+def number_by_address(node, address):
+    level = int(len(address) / 2)
+
+    nodes_at_level = [x for x in filter(lambda x: x.reduced_level == level, iterate_nodes(node))]
+    for i, item in enumerate(nodes_at_level):
+        if item.address == address:
+            return [level + 1, i + 1]
+    return [level + 1, None]
 
 
 # for i in range(16):

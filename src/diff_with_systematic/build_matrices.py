@@ -116,7 +116,7 @@ def get_corrcoef(param_a, g_weight, chain_length_weight):
 
     corr = corrcoef(specie_joh_matrix, experiment_matrix)
 
-    print_matrix(experiment_matrix, name, matrDiff.names, corr, with_headers=True)
+    # print_matrix(experiment_matrix, name, matrDiff.names, corr, with_headers=True)
 
     return corr
 
