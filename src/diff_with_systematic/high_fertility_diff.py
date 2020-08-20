@@ -8,7 +8,7 @@ from src.diff_with_systematic.matrix_diff import MatrixDiff
 
 systematic_tree = "morph"
 cluster_algorithm = "average"
-max_level = 11
+max_level = 10
 
 matrDiff = MatrixDiff("../../input/xtg/*.xtg", f"../../input/systematic_tree_{systematic_tree}.xtg",
                       ["Angiosperms"], max_level=max_level)

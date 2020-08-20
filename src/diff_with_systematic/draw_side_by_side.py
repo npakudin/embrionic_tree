@@ -6,7 +6,7 @@ from src.diff_with_systematic.matrix_diff import MatrixDiff
 from src.view.draw_compared_tress import draw_tree
 
 systematic_tree = "morph"
-max_level = 11
+max_level = 10
 
 global_params = GlobalParams(max_level=max_level, param_a=0.50, g_weight=0.5)
 

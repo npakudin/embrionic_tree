@@ -4,7 +4,7 @@ from src.diff_with_systematic.matrix_diff import MatrixDiff
 systematic_tree = "morph"
 
 globalMatrDiff = MatrixDiff("../../input/xtg/*.xtg", f"../../input/systematic_tree_{systematic_tree}.xtg",
-                            ["Angiosperms"], max_level=11)
+                            ["Angiosperms"], max_level=10)
 
 res_matrices = []
 res_corrcoef = []

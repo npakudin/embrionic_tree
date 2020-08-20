@@ -41,7 +41,7 @@ def proceed_node(node1, node2, level):
 
 
 systematic_tree = "morph"
-max_level = 11
+max_level = 10
 
 global_params = GlobalParams(max_level=max_level, param_a=0.50, g_weight=0.5)
 

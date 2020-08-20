@@ -8,7 +8,7 @@ from src.diff_with_systematic.matrix_diff import MatrixDiff, print_matrix, to_fu
 
 systematic_tree = "morph"
 cluster_algorithm = "complete"
-max_level = 11
+max_level = 10
 param_a = 0.5
 g_weight = 0.1
 chain_length_weight = 0.0

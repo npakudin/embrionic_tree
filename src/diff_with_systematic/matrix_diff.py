@@ -100,9 +100,8 @@ def corrcoef(matr1, matr2):
     return corrcoef_matrix[0][1]
 
 
-
 class MatrixDiff:
-    def __init__(self, experiment_pattern, morph_file, leave_list, max_level=11, filter_by_taxon=True,
+    def __init__(self, experiment_pattern, morph_file, leave_list, max_level=10, filter_by_taxon=True,
                  # reduce
                  is_reducing=True):
         vertices = read_all_trees(pattern=experiment_pattern, max_level=max_level)
@@ -138,16 +137,14 @@ class MatrixDiff:
         for tree in self.vertices:
             #print(f"prepare {tree.name}")
 
-            # cut all to 11 levels to ignore overlevels if we have 12 or 13 for some species
-            tree.cut(max_level=11)
+            # cut all to 11 (10, because it's 0-based) levels to ignore overlevels if we have 12 or 13 for some species
+            # notice: zygote has level=0
+            tree.cut(max_level=10)
 
             if is_reducing:
                 tree.reduce()
             tree.prepare()
             tree.cut(max_level=max_level)
-
-        # print("names")
-        # print(self.names)
 
         self.taxon_matrix = taxon.calculate()
 
@@ -185,7 +182,7 @@ class MatrixDiff:
         return corrcoef(systematic_matrix, experiment_matrix)
 
     def matr_diff(self, x):
-        global_params = GlobalParams(max_level=11, param_a=x[0], g_weight=x[1], chain_length_weight=x[2])
+        global_params = GlobalParams(max_level=10, param_a=x[0], g_weight=x[1], chain_length_weight=x[2])
 
         experiment_matrix = self.make_experiment_matrix(global_params)
         return self.corrcoef(experiment_matrix)

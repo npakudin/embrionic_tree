@@ -10,7 +10,7 @@ from src.diff_with_systematic.matrix_diff import MatrixDiff, print_matrix, corrc
 
 systematic_tree = "morph"
 cluster_algorithm = "average"
-max_level = 11
+max_level = 10
 
 johansenMatrDiff = MatrixDiff("../../input/xtg_johansen/*.xtg", f"../../input/systematic_tree_{systematic_tree}.xtg",
                               ["Angiosperms"], max_level=max_level, filter_by_taxon=False)
@@ -154,7 +154,7 @@ if True:
 
 #
 #
-# matrDiff = MatrixDiff("../../input/xtg/*.xtg", "../../input/systematic_tree_morph.xtg", ["Angiosperms"], max_level=11)
+# matrDiff = MatrixDiff("../../input/xtg/*.xtg", "../../input/systematic_tree_morph.xtg", ["Angiosperms"], max_level=10)
 # #
 # # for chain_length_weight in np.linspace(0.1, 0.7, 7):
 # #     for a in np.linspace(0.05, 1.0, 20):

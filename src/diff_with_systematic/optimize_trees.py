@@ -10,7 +10,7 @@ from src.diff_with_systematic.matrix_diff import MatrixDiff
 
 
 
-matrDiff = MatrixDiff("../../input/xtg/*.xtg", "../../input/systematic_tree_morph.xtg", ["Angiosperms"], max_level=11)
+matrDiff = MatrixDiff("../../input/xtg/*.xtg", "../../input/systematic_tree_morph.xtg", ["Angiosperms"], max_level=10)
 
 def create_fun(chain_length_weight):
     def fun(a, g_weight):

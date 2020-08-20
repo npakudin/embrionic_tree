@@ -135,6 +135,7 @@ class Tree:
         return f"{self.name} {self.root.get_full_addr()}"
 
     # cut tree to max_level if more levels exist in the source tree
+    # notice: zygote has level=0
     def cut(self, max_level):
         self.root.internal_cut(0, max_level)
 

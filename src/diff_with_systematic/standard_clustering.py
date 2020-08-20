@@ -85,7 +85,7 @@ for param_a in np.linspace(0.5, 1.0, 2):
 #
 #             global_params = GlobalParams(g_weight=0.1, chain_length_weight=0.1, param_a=param_a)
 #
-#             matrDiff = MatrixDiff("../../input/xtg/*.xtg", f"../../input/systematic_tree_{systematic_tree}.xtg", ["Angiosperms"], max_level=11)
+#             matrDiff = MatrixDiff("../../input/xtg/*.xtg", f"../../input/systematic_tree_{systematic_tree}.xtg", ["Angiosperms"], max_level=10)
 #
 #             experiment_matrix = matrDiff.make_experiment_matrix(global_params)
 #

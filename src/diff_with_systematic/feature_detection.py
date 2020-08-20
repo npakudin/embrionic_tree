@@ -7,7 +7,7 @@ from src.diff_with_systematic.matrix_diff import MatrixDiff, print_matrix, corrc
 # Build matrices and corr coef only
 
 systematic_tree = "morph"
-max_level = 11
+max_level = 10
 
 matrDiff = MatrixDiff("../../input/xtg/*.xtg", f"../../input/systematic_tree_{systematic_tree}.xtg",
                       ["Angiosperms"], max_level=max_level)
