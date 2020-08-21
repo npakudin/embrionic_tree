@@ -2,6 +2,7 @@ import statistics
 
 from src.compare_trees.distances import high_fertility_diff_development_tree_distance
 from src.compare_trees.global_params import GlobalParams
+from src.diff_with_systematic.iterate_trees import number_by_address
 from src.diff_with_systematic.matrix_diff import MatrixDiff
 
 # Build matrices and corr coef only
@@ -9,69 +10,66 @@ from src.diff_with_systematic.matrix_diff import MatrixDiff
 systematic_tree = "morph"
 cluster_algorithm = "average"
 max_level = 10
+is_reducing = False
 
 matrDiff = MatrixDiff("../../input/xtg/*.xtg", f"../../input/systematic_tree_{systematic_tree}.xtg",
-                      ["Angiosperms"], max_level=max_level)
+                      ["Angiosperms"], max_level=max_level, is_reducing=is_reducing)
 
 trees = matrDiff.vertices
 
 global_params = GlobalParams(max_level=max_level, param_a=0.5, g_weight=0.0, chain_length_weight=0.0)
 
-#experiment_matrix = []
+level2count = {0:0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0, 10:0, 11:0}
+
+print(f"Fertility_distance Level_of_the_difference Number_of_the_node_from_left_to_right_on_the_level Is_zero_fertility_in_the_one_of_trees Specie_with_zero_fertility Specie Compare_with_the_tree_of")
 for i in range(len(trees)):
-    #experiment_matrix.append([])
-    sp_node2dist = {}
+    is_first_tree1 = True
     for j in range(len(trees)):
-        #if i == j or trees[j].name != 'Chenopodium_bonus-henricus':
         if i == j:
             continue
+        sp_fert_dist = []
         distances = high_fertility_diff_development_tree_distance(trees[i], trees[j], global_params)
-        for [addr, dist, reduced_level] in distances:
-            #print(f"INSERT INTO diff_nodes(tree1, tree2, addr, dist, reduced_level) VALUES('{trees[i].name}', '{trees[j].name}', '{addr}', {dist}, {reduced_level});")
-            #key = f"{trees[i].name} - {addr}"
-            key = f"{addr}"
-            sp_node2dist.setdefault(key, [])
+        for [addr, dist, reduced_level, node1, node2] in distances:
+
+            # ignore cases when at the last level history is completely equal
+            if dist == 0:
+                continue
+
+            level2count[reduced_level + 1] += 1
+
+            # ignore zygote and the next level
+            if reduced_level < 5:
+                continue
 
             weight = pow(2.0 / global_params.param_a, reduced_level)
             normalized_dist = dist * weight
 
-            #sp_node2dist[key] += [[normalized_dist, trees[j].name, dist, reduced_level]]
-            sp_node2dist[key] += [[normalized_dist, trees[j].name]]
-            #sp_node2dist[key] += [normalized_dist]
+            left_right_number = number_by_address(trees[i].root, addr, is_reducing=is_reducing)
 
-    #print(f"{trees[i].name}")
-    node_distances = []
-    for key in sorted(sp_node2dist):
-        normalized_distances = sorted(sp_node2dist[key], key=lambda tuple: tuple[0])
-        median_dist = normalized_distances[int(len(normalized_distances) / 2)][0]
-        median_dist_tree = normalized_distances[int(len(normalized_distances) / 2)][1]
-        mean = statistics.mean([item[0] for item in normalized_distances])
-        stdev = None if len(normalized_distances) < 2 else statistics.stdev([item[0] for item in normalized_distances])
-        max_dist = normalized_distances[-1][0]
-        max_dist_tree = normalized_distances[-1][1]
-        #print(f"{key} {normalized_distances}")
-        #node_distances += [[key, median_dist, median_tree, mean, stdev, max_dist, max_dist_tree]]
-        #node_distances += [[key, max_dist, max_dist_tree]]
-        #node_distances += [[key, median_dist, median_dist_tree]]
-        node_distances += [[key, mean, stdev]]
-    node_distances = sorted(node_distances, key=lambda tuple: -tuple[1])
-    res_str = ""
-    for item in node_distances[:3]:
-        res_str += f" {item[0]} {item[1]} {item[2]}"
-    #print(f"{trees[i].name}{res_str}")
-    print(f"{trees[i].name} {node_distances[:10]}")
+            is_left_0_descendants = (node1.left is None) and (node1.right is None)
+            is_right_0_descendants = (node2.left is None) and (node2.right is None)
+            l_or_r = "-"
+            if is_left_0_descendants:
+                l_or_r = trees[i].name
+            elif is_right_0_descendants:
+                l_or_r = trees[j].name
 
+            res = [normalized_dist, reduced_level + 1, left_right_number,
+                   is_left_0_descendants or is_right_0_descendants,
+                   l_or_r, trees[i].name, trees[j].name,
+                   addr, node1.address, node2.address]
+            sp_fert_dist.append(res)
 
+        # [normalized_dist, level, left_right_number, is_0_descendants, which_0_descendants, tree1_name, tree2_name, reduced_addr, node1_addr, node2_addr]
+        # print(f"{trees[i].name} {trees[j].name} {len(sp_fert_dist)}")
+        is_first_tree2 = True
+        for [normalized_dist, level, left_right_number, is_0_descendants, which_0_descendants, tree1_name, tree2_name, reduced_addr, node1_addr, node2_addr] in sorted(sp_fert_dist, key=lambda x: (-x[1], -x[0])):
+            if not is_first_tree1:
+                tree1_name = '-"-'
+            if not is_first_tree2:
+                tree2_name = '-"-'
+            is_first_tree1 = False
+            is_first_tree2 = False
+            print(f"{normalized_dist:0.3f} {level} {left_right_number} {is_0_descendants} {which_0_descendants} {tree1_name} {tree2_name}")
 
-
-# CREATE DATABASE embrionic_tree;
-# CREATE TABLE diff_nodes(id INTEGER PRIMARY KEY, tree1 varchar(255), tree2 varchar(255), addr varchar(255), dist FLOAT, reduced_level INTEGER);
-# SELECT tree1, addr, COUNT(*) as cnt,  FROM diff_nodes GROUP BY tree1, addr
-
-# 'Z', 0.578125
-# 'Z.R', 0.6875
-# 'Z.L', 0.46875
-
-
-# 'Z', 0.734375, 'Chenopodium_bonus-henricus'
-# 'Z.R', 0.5625, 'Chenopodium_bonus-henricus'
+#print(f"{level2count}")

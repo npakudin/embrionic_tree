@@ -171,7 +171,7 @@ def high_fertility_diff_visit_virtual(n1, n2, full_addr_1, full_addr_2, global_p
     reduced_level = n2.reduced_level if (n1 is None) else n1.reduced_level
     dist_fert = visit_virtual(n1, n2, n1.get_full_addr(), n2.get_full_addr(), global_params, pattern)
 
-    res = [[n1.reduced_address, dist_fert, reduced_level]]
+    res = [[n1.reduced_address, dist_fert, reduced_level, n1, n2]]
 
     left1 = None if (n1 is None) else n1.left
     right1 = None if (n1 is None) else n1.right

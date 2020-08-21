@@ -19,7 +19,8 @@ def get_axis(node):
 
 
 class TreeNode:
-    def __init__(self, address="unknown", axis=Axis.NONE, left=None, right=None, src_level=0, reduced_level=0):
+    def __init__(self, address="unknown", axis=Axis.NONE, left=None, right=None, src_level=0, reduced_level=0,
+                 reduced_address=None):
         self.address = address
         self.axis = axis
         self.left = left
@@ -29,7 +30,7 @@ class TreeNode:
         self.src_level = src_level
         self.reduced_level = reduced_level
         self.reduced_depth = None
-        self.reduced_address = None
+        self.reduced_address = reduced_address
         self.chain_length = 1
         self.order_index = None
 

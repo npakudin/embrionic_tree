@@ -58,7 +58,7 @@ def get_chain(number):
 
 # Iterates over all subtrees of the binary tree 'node'
 def get_subtrees(node):
-    yield None # no node
+    yield None  # no node
     if node is not None:
         left_nodes = [x for x in get_subtrees(node.left)]
         right_nodes = [x for x in get_subtrees(node.right)]
@@ -77,7 +77,7 @@ def generate_bin_tree(max_level, address="Z", reduced_level=0):
     if max_level == 0:
         return None
 
-    node = TreeNode(address=address, reduced_level=reduced_level)
+    node = TreeNode(address=address, reduced_address=address, reduced_level=reduced_level)
     node.left = generate_bin_tree(max_level - 1, address + ".L", reduced_level + 1)
     node.right = generate_bin_tree(max_level - 1, address + ".R", reduced_level + 1)
     return node
@@ -106,20 +106,29 @@ def iterate_nodes(node):
             yield x
 
 
-def number_by_address(node, address):
+# Returns number of the node at the level
+# left to right direction
+#
+# root - the root of the tree
+# address - address of the node
+# is_reduced - True to use reduced tree attributes, False to use "raw" tree attributes
+def number_by_address(root, address, is_reducing):
     level = int(len(address) / 2)
 
-    nodes_at_level = [x for x in filter(lambda x: x.reduced_level == level, iterate_nodes(node))]
+    nodes_at_level = [x for x in filter(lambda x: x.reduced_level == level if is_reducing else x.src_level == level,
+                                        iterate_nodes(root))]
     for i, item in enumerate(nodes_at_level):
-        if item.address == address:
-            return [level + 1, i + 1]
-    return [level + 1, None]
-
+        if is_reducing:
+            if item.reduced_address == address:
+                return i + 1
+        else:
+            if item.address == address:
+                return i + 1
+    return None  # not found
 
 # for i in range(16):
 #     subtree = get_chain(i)
 #     print(f"{i} - {get_address(i)} - {'()' if subtree is None else get_deepest_node(subtree)}")
-
 
 
 # for level in range(6):

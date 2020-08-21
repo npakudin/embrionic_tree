@@ -121,26 +121,28 @@ def get_corrcoef(param_a, g_weight, chain_length_weight):
     return corr
 
 
-def create_fun(chain_length_weight):
-    def fun(a, g_weight):
-        return get_corrcoef(a, g_weight, chain_length_weight)
+def create_fun(param_a):
+    def fun(g_weight, chain_length_weight):
+        return get_corrcoef(param_a, g_weight, chain_length_weight)
     return fun
 
 
 if True:
-    a = np.linspace(0.001, 1.0, 11)
-    g_weight = np.linspace(-0.1, 1.0, 12)
-    chain_length = 0.0
+    #param_a = np.linspace(0.1, 1.0, 10)
+    param_a = 0.5
+    g_weight = np.linspace(0.0, 10.0, 21)
+    chain_length = np.linspace(0.0, 10.0, 21)
+    #chain_length = 0.0
 
-    X, Y = np.meshgrid(a, g_weight)
-    Z = np.vectorize(create_fun(chain_length))(X, Y)
+    X, Y = np.meshgrid(g_weight, chain_length)
+    Z = np.vectorize(create_fun(param_a))(X, Y)
 
     fig = plt.figure()
 
     ax = Axes3D(fig)
     ax.plot_surface(X, Y, Z, rstride=1, cstride=1, cmap='viridis', edgecolor='none')
-    ax.set_xlabel('param_a')
-    ax.set_ylabel('g_weight')
+    ax.set_xlabel('g_weight')
+    ax.set_ylabel('chain_length')
     ax.set_zlabel('coefcorr')
     ax.set_title(f"chain_length_weight={chain_length}")
 
