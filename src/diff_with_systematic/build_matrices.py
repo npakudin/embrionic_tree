@@ -21,6 +21,20 @@ matrDiff = MatrixDiff("../../input/xtg/*.xtg", f"../../input/systematic_tree_{sy
 trees = matrDiff.vertices
 johansenTrees = johansenMatrDiff.vertices
 
+
+# for g_weight in np.linspace(0.0, 1.00, 11):
+#     for chain_length_weight in np.linspace(0.0, 1.0, 11):
+#         param_a = 0.5
+#         global_params = GlobalParams(g_weight=g_weight, chain_length_weight=chain_length_weight,
+#                                      param_a=0.5, max_level=max_level,
+#                                      )
+#         name = f"param_a={param_a}_g_weight={g_weight}_chain_length_weight={chain_length_weight}_{systematic_tree}_{cluster_algorithm}"
+#         experiment_matrix = matrDiff.make_experiment_matrix(global_params)
+#         corr = matrDiff.corrcoef(experiment_matrix)
+#
+#         print(f"{param_a:0.2f} {g_weight:0.2f} {chain_length_weight:0.2f} {corr:0.4f}")
+
+
 # for g_weight in np.linspace(0.0, 1.00, 11):
 #     for param_a in np.linspace(0.1, 1.0, 10):
 #         global_params = GlobalParams(g_weight=g_weight, chain_length_weight=0,
@@ -77,48 +91,49 @@ johansenTrees = johansenMatrDiff.vertices
 def get_corrcoef(param_a, g_weight, chain_length_weight):
     global_params = GlobalParams(max_level=max_level, param_a=param_a, g_weight=g_weight,
                                  chain_length_weight=chain_length_weight)
-    name = f"a={param_a}_{systematic_tree}_{cluster_algorithm}_subtree_(thr,mult)=({global_params.subtree_threshold},{global_params.subtree_multiplier})_lev_mult={global_params.level_weight_multiplier}"
+    #name = f"a={param_a}_{systematic_tree}_{cluster_algorithm}_subtree_(thr,mult)=({global_params.subtree_threshold},{global_params.subtree_multiplier})_lev_mult={global_params.level_weight_multiplier}"
     experiment_matrix = matrDiff.make_experiment_matrix(global_params)
+    return matrDiff.corrcoef(experiment_matrix)
 
-    # dictionary - nearest joh tree to specie tree
-    specie_to_joh = []
-    for i in range(len(trees)):
-        specie_distances = []
-        for j in range(len(johansenTrees)):
-            dist = development_tree_distance(trees[i], johansenTrees[j], global_params)
-            specie_distances.append((j, dist, johansenMatrDiff.names[j]))
-
-        specie_distances = sorted(specie_distances, key=lambda dist_name: dist_name[1])
-        specie_to_joh.append(specie_distances[0][0])
-        # for (j, dist, name) in specie_distances:
-        #     print(f"{name} {dist:0.4f} ", end='')
-        # print(f"")
-
-    # for (i, joh_i) in enumerate(specie_to_joh):
-    #     print(f"{trees[i].name} {johansenTrees[joh_i].name} ", end='\n')
-    # print(f"")
-
-    # distance between joh trees
-    joh_matrix = []
-    for i in range(len(johansenTrees)):
-        joh_matrix.append([])
-        for j in range(len(johansenTrees)):
-            dist = development_tree_distance(johansenTrees[i], johansenTrees[j], global_params)
-            joh_matrix[i].append(dist)
-
-    # matrix of species, where all distances replaced with joh trees
-    specie_joh_matrix = []
-    for i in range(len(trees)):
-        specie_joh_matrix.append([])
-        for j in range(i):
-            dist = joh_matrix[specie_to_joh[i]][specie_to_joh[j]]
-            specie_joh_matrix[i].append(dist)
-
-    corr = corrcoef(specie_joh_matrix, experiment_matrix)
-
-    # print_matrix(experiment_matrix, name, matrDiff.names, corr, with_headers=True)
-
-    return corr
+    # # dictionary - nearest joh tree to specie tree
+    # specie_to_joh = []
+    # for i in range(len(trees)):
+    #     specie_distances = []
+    #     for j in range(len(johansenTrees)):
+    #         dist = development_tree_distance(trees[i], johansenTrees[j], global_params)
+    #         specie_distances.append((j, dist, johansenMatrDiff.names[j]))
+    #
+    #     specie_distances = sorted(specie_distances, key=lambda dist_name: dist_name[1])
+    #     specie_to_joh.append(specie_distances[0][0])
+    #     # for (j, dist, name) in specie_distances:
+    #     #     print(f"{name} {dist:0.4f} ", end='')
+    #     # print(f"")
+    #
+    # # for (i, joh_i) in enumerate(specie_to_joh):
+    # #     print(f"{trees[i].name} {johansenTrees[joh_i].name} ", end='\n')
+    # # print(f"")
+    #
+    # # distance between joh trees
+    # joh_matrix = []
+    # for i in range(len(johansenTrees)):
+    #     joh_matrix.append([])
+    #     for j in range(len(johansenTrees)):
+    #         dist = development_tree_distance(johansenTrees[i], johansenTrees[j], global_params)
+    #         joh_matrix[i].append(dist)
+    #
+    # # matrix of species, where all distances replaced with joh trees
+    # specie_joh_matrix = []
+    # for i in range(len(trees)):
+    #     specie_joh_matrix.append([])
+    #     for j in range(i):
+    #         dist = joh_matrix[specie_to_joh[i]][specie_to_joh[j]]
+    #         specie_joh_matrix[i].append(dist)
+    #
+    # corr = corrcoef(specie_joh_matrix, experiment_matrix)
+    #
+    # # print_matrix(experiment_matrix, name, matrDiff.names, corr, with_headers=True)
+    #
+    # return corr
 
 
 def create_fun(param_a):
@@ -130,8 +145,8 @@ def create_fun(param_a):
 if True:
     #param_a = np.linspace(0.1, 1.0, 10)
     param_a = 0.5
-    g_weight = np.linspace(0.0, 10.0, 21)
-    chain_length = np.linspace(0.0, 10.0, 21)
+    g_weight = np.linspace(0.0, 1.0, 11)
+    chain_length = np.linspace(0.0, 1.0, 11)
     #chain_length = 0.0
 
     X, Y = np.meshgrid(g_weight, chain_length)

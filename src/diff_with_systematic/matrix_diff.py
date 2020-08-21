@@ -41,7 +41,7 @@ def print_matrix(matr, name, tree_names, corrcoef=None, with_headers=False):
     print(f"")
     print(f"{name}")
     if with_headers:
-        print(f"names ", end='')
+        print(f"Sp. ", end='')
     for tree_name in tree_names:
         print(f"{tree_name.replace(' ', '_')} ", end='')
     print(f"")
@@ -53,7 +53,7 @@ def print_matrix(matr, name, tree_names, corrcoef=None, with_headers=False):
     maxx = 0
     for i, row in enumerate(plot_matr):
         if with_headers:
-            print(f"{tree_names[i]} ", end='')
+            print(f"{tree_names[i].replace(' ', '_')} ", end='')
         for index, item in enumerate(row):
             if index == i:
                 print("- ", end='')
