@@ -3,7 +3,8 @@ class GlobalParams:
                  axis_weight=1.0, fertility_weight=1.0, g_weight=0.0, chain_length_weight=0.0,
                  subtree_threshold=1.0E+100, subtree_multiplier=1.0,
                  level_weight_multiplier=None,
-                 use_min_common_depth=False
+                 use_min_common_depth=False,
+                 is_swap_left_right=False
                  ):
         if level_weight_multiplier is None:
             level_weight_multiplier = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
@@ -17,3 +18,4 @@ class GlobalParams:
         self.subtree_multiplier = subtree_multiplier
         self.level_weight_multiplier = level_weight_multiplier
         self.use_min_common_depth = use_min_common_depth
+        self.is_swap_left_right = is_swap_left_right

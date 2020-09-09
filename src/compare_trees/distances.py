@@ -101,6 +101,10 @@ def pattern_tree_infinite():
 
 
 def development_tree_distance(tree1, tree2, global_params, pattern=pattern_tree_infinite()):
+    if global_params.is_swap_left_right:
+        tree1.root.calculate_fertility(global_params.param_a)
+        tree2.root.calculate_fertility(global_params.param_a)
+
     n1 = tree1.root
     n2 = tree2.root
     correction_coef = 1
@@ -133,12 +137,25 @@ def visit_virtual(n1, n2, full_addr_1, full_addr_2, global_params, pattern):
     pattern_left = pattern.left
     pattern_right = pattern.right
 
-    if ((left1 is not None) or (left2 is not None)):
+    # swap left2 and right2 if reverse order fit better than direct order
+    if global_params.is_swap_left_right:
+        if all(x is not None for x in [left1, left2, right1, right2]):
+            direct_order_fertility = min(left1.fertility, left2.fertility) + min(right1.fertility, right2.fertility)
+            reverse_order_fertility = min(left1.fertility, right2.fertility) + min(right1.fertility, left2.fertility)
+            if reverse_order_fertility > direct_order_fertility:
+                # swap
+                tmp = left2
+                left2 = right2
+                right2 = tmp
+                #print(f"swap {direct_order_fertility} {reverse_order_fertility} {n1.reduced_level} {n2.reduced_level} {n1.address} {n2.address} {n1.axis} {n2.axis}")
+
+    if (left1 is not None) or (left2 is not None):
         res += visit_virtual(left1, left2, full_addr_1 + ".vL" if n1 is None else n1.get_full_addr(),
                              full_addr_2 + ".vL" if n2 is None else n2.get_full_addr(), global_params, pattern_left)
-    if ((right1 is not None) or (right2 is not None)):
+    if (right1 is not None) or (right2 is not None):
         res += visit_virtual(right1, right2, full_addr_1 + ".vR" if n1 is None else n1.get_full_addr(),
                              full_addr_2 + ".vR" if n2 is None else n2.get_full_addr(), global_params, pattern_right)
+
     return res
 
 

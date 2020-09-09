@@ -33,6 +33,7 @@ class TreeNode:
         self.reduced_address = reduced_address
         self.chain_length = 1
         self.order_index = None
+        self.fertility = None
 
     def __str__(self):
         return self.get_full_addr()
@@ -120,6 +121,14 @@ class TreeNode:
 
             assert self.left is not None
             # assert self.left.depth == self.right.depth
+
+    def calculate_fertility(self, param_a):
+        self.fertility = 1 * pow(param_a, self.reduced_level)
+        if self.left is not None:
+            self.fertility += self.left.calculate_fertility(param_a)
+        if self.right is not None:
+            self.fertility += self.right.calculate_fertility(param_a)
+        return self.fertility
 
 
 class Tree:
