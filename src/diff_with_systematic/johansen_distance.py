@@ -13,16 +13,23 @@ def first_vowel(str, from_index=1):
     return len(str)
 
 
-# 'Arabidopsis_thaliana' => 'Arab. t.'
+# # 'Arabidopsis_thaliana' => 'Arab. t.'
+# def short_sp_name(name):
+#     genus_index = first_vowel(name, from_index=3)
+#     underscore_index = name.find('_')
+#     dot = "." if genus_index < underscore_index else ""
+#     genus_index = min(genus_index, underscore_index)
+#
+#     personal_name = name[underscore_index + 1:]
+#     personal_index = first_vowel(personal_name)
+#     return f"{name[:genus_index]}{dot} {personal_name[:personal_index]}."
+
+# 'Arabidopsis_thaliana' => 'A. thaliana'
 def short_sp_name(name):
-    genus_index = first_vowel(name, from_index=3)
     underscore_index = name.find('_')
-    dot = "." if genus_index < underscore_index else ""
-    genus_index = min(genus_index, underscore_index)
 
     personal_name = name[underscore_index + 1:]
-    personal_index = first_vowel(personal_name)
-    return f"{name[:genus_index]}{dot} {personal_name[:personal_index]}."
+    return f"{name[0]}._{personal_name}"
 
 
 def short_embryo_name(name):

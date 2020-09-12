@@ -124,11 +124,14 @@ def development_tree_distance(tree1, tree2, global_params, pattern=pattern_tree_
     return res
 
 
-def visit_virtual(n1, n2, full_addr_1, full_addr_2, global_params, pattern):
+def visit_virtual(n1, n2, addr_1, addr_2, global_params, pattern):
     if pattern is None:
         return 0
 
-    res = node_dist(n1, n2, full_addr_1, full_addr_2, global_params)
+    if (n1 is None) and (n2 is None):
+        return 0
+
+    res = node_dist(n1, n2, addr_1, addr_2, global_params)
 
     left1 = None if (n1 is None) else n1.left
     right1 = None if (n1 is None) else n1.right
@@ -149,12 +152,12 @@ def visit_virtual(n1, n2, full_addr_1, full_addr_2, global_params, pattern):
                 right2 = tmp
                 #print(f"swap {direct_order_fertility} {reverse_order_fertility} {n1.reduced_level} {n2.reduced_level} {n1.address} {n2.address} {n1.axis} {n2.axis}")
 
-    if (left1 is not None) or (left2 is not None):
-        res += visit_virtual(left1, left2, full_addr_1 + ".vL" if n1 is None else n1.get_full_addr(),
-                             full_addr_2 + ".vL" if n2 is None else n2.get_full_addr(), global_params, pattern_left)
-    if (right1 is not None) or (right2 is not None):
-        res += visit_virtual(right1, right2, full_addr_1 + ".vR" if n1 is None else n1.get_full_addr(),
-                             full_addr_2 + ".vR" if n2 is None else n2.get_full_addr(), global_params, pattern_right)
+    res += visit_virtual(left1, left2,
+                         addr(n1, addr_1 + ".vL"), addr(n2, addr_2 + ".vL"),
+                         global_params, pattern_left)
+    res += visit_virtual(right1, right2,
+                         addr(n1, addr_1 + ".vR"), addr(n2, addr_2 + ".vR"),
+                         global_params, pattern_right)
 
     return res
 
@@ -175,20 +178,28 @@ def high_fertility_diff_development_tree_distance(tree1, tree2, global_params, p
     return raw_res
 
 
-def high_fertility_diff_visit_virtual(n1, n2, full_addr_1, full_addr_2, global_params, pattern):
+def high_fertility_diff_visit_virtual(n1, n2, addr_1, addr_2, global_params, pattern):
     if pattern is None:
+        return []
+
+    if (n1 is None) or (n2 is None): # note: OR here, not AND
         return []
 
     dist_ax = dist_axis(n1, n2)
 
-    if dist_ax != 0:
+    if (dist_ax != 0) and (n1.axis != Axis.LEAVE) and (n2.axis != Axis.LEAVE):
         return []
 
-    assert n1.reduced_address == n2.reduced_address, f"{n1.reduced_address} - {n2.reduced_address}"
+    if n1 is not None and n2 is not None:
+        assert n1.reduced_address == n2.reduced_address, f"{n1.reduced_address} - {n2.reduced_address}"
     reduced_level = n2.reduced_level if (n1 is None) else n1.reduced_level
-    dist_fert = visit_virtual(n1, n2, n1.get_full_addr(), n2.get_full_addr(), global_params, pattern)
+    reduced_address = n2.reduced_address if (n1 is None) else n1.reduced_address
+    dist_fert = visit_virtual(n1, n2,
+                              addr_1 + ".vL" if n1 is None else n1.get_full_addr(),
+                              addr_2 + ".vL" if n2 is None else n2.get_full_addr(),
+                              global_params, pattern)
 
-    res = [[n1.reduced_address, dist_fert, reduced_level, n1, n2]]
+    res = [[reduced_address, dist_fert, reduced_level, n1, n2]]
 
     left1 = None if (n1 is None) else n1.left
     right1 = None if (n1 is None) else n1.right
@@ -197,14 +208,10 @@ def high_fertility_diff_visit_virtual(n1, n2, full_addr_1, full_addr_2, global_p
     pattern_left = pattern.left
     pattern_right = pattern.right
 
-    if ((left1 is not None) or (left2 is not None)):
-        res += high_fertility_diff_visit_virtual(left1, left2,
-                                                 full_addr_1 + ".vL" if n1 is None else n1.get_full_addr(),
-                                                 full_addr_2 + ".vL" if n2 is None else n2.get_full_addr(),
-                                                 global_params, pattern_left)
-    if ((right1 is not None) or (right2 is not None)):
-        res += high_fertility_diff_visit_virtual(right1, right2,
-                                                 full_addr_1 + ".vR" if n1 is None else n1.get_full_addr(),
-                                                 full_addr_2 + ".vR" if n2 is None else n2.get_full_addr(),
-                                                 global_params, pattern_right)
+    res += high_fertility_diff_visit_virtual(left1, left2,
+                                             addr(n1, addr_1 + ".vL"), addr(n2, addr_2 + ".vL"),
+                                             global_params, pattern_left)
+    res += high_fertility_diff_visit_virtual(right1, right2,
+                                             addr(n1, addr_1 + ".vR"), addr(n2, addr_2 + ".vR"),
+                                             global_params, pattern_right)
     return res
