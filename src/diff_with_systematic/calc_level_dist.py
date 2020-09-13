@@ -24,7 +24,7 @@ def proceed_node(node1, node2, level):
     else:
         total[level][EQ] += 1
 
-    node_distance = node_dist(node1, node2, "", "", global_params)
+    node_distance = node_dist(node1, node2, global_params)
 
     left1 = None if (node1 is None) else node1.left
     right1 = None if (node1 is None) else node1.right

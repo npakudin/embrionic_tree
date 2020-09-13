@@ -16,8 +16,7 @@ def parse_xml_node(xml, name, src_level, address):
     if data[0] == 'wb':
         data[0] = 'b_in_w'
 
-    # if data[0] != 'w' and data[0] != 'b':
-    #     print(f"{name} : {data[0]}") # error message on wrong input
+    assert data[0] == 'w' or data[0] == 'b', f"{name} : {data[0]}"  # wrong input
 
     assert len(data) == 2, f"name: {name}, data: {data}"  # error message on wrong input
 
@@ -79,7 +78,7 @@ def read_tree_from_xml(filename):
     return Tree(node, name=name, embryo_type=embryo_type)
 
 
-def read_all_trees(pattern, max_level):
+def read_all_trees(pattern):
     # read source files
     filenames = glob.glob(pattern)
     filenames.sort()

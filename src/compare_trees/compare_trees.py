@@ -5,7 +5,7 @@ from src.compare_trees.distances import development_tree_distance
 
 def get_distances_by_files(pattern, global_params, is_reducing=True):
     # read trees from *.xtg files in xtg folder
-    src_trees = read_all_trees(pattern=pattern, max_level=global_params.max_level)
+    src_trees = read_all_trees(pattern=pattern)
 
     # create a copy of trees to modify
     trees = [copy.deepcopy(src_tree) for src_tree in src_trees]

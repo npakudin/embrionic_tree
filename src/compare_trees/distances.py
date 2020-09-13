@@ -9,7 +9,8 @@ def addr(node, reduced_addr):
     return node.get_full_addr()
 
 
-def node_dist(n1, n2, full_addr_1, full_addr_2, global_params):
+# Calculates distance between nodes n1 and n2
+def node_dist(n1, n2, global_params):
     assert not (n1 is None and n2 is None)
 
     raw_distance = global_params.fertility_weight * dist_fertility(n1, n2) + \
@@ -23,7 +24,7 @@ def node_dist(n1, n2, full_addr_1, full_addr_2, global_params):
 
     # increase subtree weight
     if raw_distance > global_params.subtree_threshold:
-        print(f"subtree_raw_distance: {'%0.2f' % raw_distance} n1: {addr(n1, full_addr_1)} n2: {addr(n2, full_addr_2)}")
+        # print(f"subtree_raw_distance: {'%0.2f' % raw_distance} n1: {addr(n1, 'full_addr_1')} n2: {addr(n2, 'full_addr_2')}")
         weight *= global_params.subtree_multiplier
 
     # increase some levels weight
@@ -131,7 +132,7 @@ def visit_virtual(n1, n2, addr_1, addr_2, global_params, pattern):
     if (n1 is None) and (n2 is None):
         return 0
 
-    res = node_dist(n1, n2, addr_1, addr_2, global_params)
+    res = node_dist(n1, n2, global_params)
 
     left1 = None if (n1 is None) else n1.left
     right1 = None if (n1 is None) else n1.right
@@ -150,7 +151,7 @@ def visit_virtual(n1, n2, addr_1, addr_2, global_params, pattern):
                 tmp = left2
                 left2 = right2
                 right2 = tmp
-                #print(f"swap {direct_order_fertility} {reverse_order_fertility} {n1.reduced_level} {n2.reduced_level} {n1.address} {n2.address} {n1.axis} {n2.axis}")
+                # print(f"swap {direct_order_fertility} {reverse_order_fertility} {n1.reduced_level} {n2.reduced_level} {n1.address} {n2.address} {n1.axis} {n2.axis}")
 
     res += visit_virtual(left1, left2,
                          addr(n1, addr_1 + ".vL"), addr(n2, addr_2 + ".vL"),

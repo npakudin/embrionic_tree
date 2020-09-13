@@ -11,14 +11,12 @@ def taxon_from_xml(filename):
     return taxon
 
 
-# work if start from the same depth only!
+# t1 and t2 should be at the same level
 def find_common_ancestor_level(t1, t2):
-    # print(f"find_common_ancestor_level {t1.name} / {t1.parent} =?= {t2.name} / {t2.parent}")
     if t1 == t2:
         return 0
     else:
-        if t1.parent is None or t2.parent is None:
-            print(f"No parent for one of {t1.name} and {t2.name}")
+        assert t1.parent is not None or t2.parent is not None, f"No parent for one of {t1.name} and {t2.name}"
         return 1 + find_common_ancestor_level(t1.parent, t2.parent)
 
 

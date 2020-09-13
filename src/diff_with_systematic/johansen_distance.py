@@ -24,13 +24,6 @@ def first_vowel(str, from_index=1):
 #     personal_index = first_vowel(personal_name)
 #     return f"{name[:genus_index]}{dot} {personal_name[:personal_index]}."
 
-# 'Arabidopsis_thaliana' => 'A. thaliana'
-def short_sp_name(name):
-    underscore_index = name.find('_')
-
-    personal_name = name[underscore_index + 1:]
-    return f"{name[0]}._{personal_name}"
-
 
 def short_embryo_name(name):
     return name.replace("caryophyllad", "caryophyll.").replace("chenopodiad", "chenopod.")

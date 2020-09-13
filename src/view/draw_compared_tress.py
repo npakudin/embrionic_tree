@@ -19,7 +19,7 @@ def draw_node(draw, node1, node2, global_params, border_left, border_top, border
     elif node1.axis != node2.axis:
         color = COLOR_INEQ
 
-    cur_node_distance = node_dist(node1, node2, "", "", global_params)
+    cur_node_distance = node_dist(node1, node2, global_params)
 
     center_x = (border_right + border_left) / 2
     item_left = center_x - ITEM_SIZE / 2

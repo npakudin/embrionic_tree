@@ -1,6 +1,7 @@
 import numpy
 
 from src.compare_trees.development_tree_reader import read_all_trees
+from src.compare_trees.development_tree_utils import prepare_trees
 from src.view.build_morph_graph import taxon_from_xml
 from src.compare_trees.distances import development_tree_distance, pattern_tree_infinite
 from src.compare_trees.global_params import GlobalParams
@@ -102,9 +103,8 @@ def corrcoef(matr1, matr2):
 
 class MatrixDiff:
     def __init__(self, experiment_pattern, morph_file, leave_list, max_level=10, filter_by_taxon=True,
-                 # reduce
                  is_reducing=True):
-        vertices = read_all_trees(pattern=experiment_pattern, max_level=max_level)
+        vertices = read_all_trees(pattern=experiment_pattern)
 
         # morph matrix
         taxon = taxon_from_xml(morph_file)
@@ -134,17 +134,7 @@ class MatrixDiff:
         self.vertices = sorted(list(vertices), key=lambda x: x.name)
         self.names = [v.name for v in self.vertices]
 
-        for tree in self.vertices:
-            #print(f"prepare {tree.name}")
-
-            # cut all to 11 (10, because it's 0-based) levels to ignore overlevels if we have 12 or 13 for some species
-            # notice: zygote has level=0
-            tree.cut(max_level=10)
-
-            if is_reducing:
-                tree.reduce()
-            tree.prepare()
-            tree.cut(max_level=max_level)
+        prepare_trees(self.vertices, max_level, is_reducing)
 
         self.taxon_matrix = taxon.calculate()
 

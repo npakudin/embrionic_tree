@@ -1,20 +1,16 @@
+from src.compare_trees.development_tree_reader import read_all_trees
+from src.compare_trees.development_tree_utils import prepare_trees, short_sp_name
 from src.compare_trees.distances import high_fertility_diff_development_tree_distance
 from src.compare_trees.global_params import GlobalParams
 from src.diff_with_systematic.iterate_trees import number_by_address
-from src.diff_with_systematic.johansen_distance import short_sp_name
-from src.diff_with_systematic.matrix_diff import MatrixDiff
 
 # Build matrices and corr coef only
 
-systematic_tree = "morph"
-cluster_algorithm = "average"
 max_level = 10
 is_reducing = True
 
-matrDiff = MatrixDiff("../../input/xtg/*.xtg", f"../../input/systematic_tree_{systematic_tree}.xtg",
-                      ["Angiosperms"], max_level=max_level, is_reducing=is_reducing)
-
-trees = matrDiff.vertices
+trees = read_all_trees(pattern="../../input/xtg/*.xtg")
+prepare_trees(trees, max_level, is_reducing)
 
 global_params = GlobalParams(max_level=max_level, param_a=0.5, g_weight=0.0, chain_length_weight=0.0)
 
@@ -23,6 +19,8 @@ level2count = {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0
 sp_fert_dist = []
 for i in range(len(trees)):
     for j in range(i + 1, len(trees)):  # skip repeating pairs
+
+        # get array of tuples (node1, node2, distance, ...)
         distances = high_fertility_diff_development_tree_distance(trees[i], trees[j], global_params)
         for [addr, dist, reduced_level, node1, node2] in distances:
 
