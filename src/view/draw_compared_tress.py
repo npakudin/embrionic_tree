@@ -1,10 +1,11 @@
+from pathlib import Path
 from PIL import Image, ImageDraw
 from src.single_tree.distances import node_dist
 
 ITEM_SIZE = 20
 ITEM_SPACE = 20
 COLOR_LEFT  = 0xff0050ff
-COLOR_RIGHT = 0xff00d0ff
+COLOR_RIGHT = 'purple' #0xff00d0ff
 COLOR_EQ    = 'black'
 COLOR_INEQ  = 0xffe00000
 
@@ -34,11 +35,17 @@ def draw_node(draw, node1, node2, global_params, border_left, border_top, border
     total_max_distance = cur_node_distance
     total_min_distance = cur_node_distance
     if left1 is not None or left2 is not None:
-        [add_max_dist, add_min_dist] = draw_node(draw, left1, left2, global_params, border_left, border_top, center_x, item_top, level+1, min_reduced_depth, parent=(center_x, center_y))
+        is_right_exists = right1 is not None or right2 is not None
+        right = center_x if is_right_exists else border_right
+        
+        [add_max_dist, add_min_dist] = draw_node(draw, left1, left2, global_params, border_left, border_top, right, item_top, level+1, min_reduced_depth, parent=(center_x, center_y))
         total_max_distance += add_max_dist
         total_min_distance += add_min_dist
     if right1 is not None or right2 is not None:
-        [add_max_dist, add_min_dist] = draw_node(draw, right1, right2, global_params, center_x, border_top, border_right, item_top, level+1, min_reduced_depth, parent=(center_x, center_y))
+        is_left_exists = left1 is not None or left2 is not None
+        left = center_x if is_left_exists else border_left
+        
+        [add_max_dist, add_min_dist] = draw_node(draw, right1, right2, global_params, left, border_top, border_right, item_top, level+1, min_reduced_depth, parent=(center_x, center_y))
         total_max_distance += add_max_dist
         total_min_distance += add_min_dist
 
@@ -57,7 +64,7 @@ def draw_legend(draw, item_left, item_top, color, text):
 
 def draw_tree(tree1, tree2, global_params, dist, taxon_dist, folder):
 
-    im = Image.new('RGBA', [1000, 400], (255, 255, 255, 255))
+    im = Image.new('RGBA', [1500, 700], (255, 255, 255, 255))
     draw = ImageDraw.Draw(im)
 
     min_reduced_depth = min(tree1.root.reduced_depth, tree2.root.reduced_depth)
@@ -73,15 +80,17 @@ def draw_tree(tree1, tree2, global_params, dist, taxon_dist, folder):
     correction_coef = sum([pow(2 * global_params.param_a, i) for i in range(min_reduced_depth)])
     draw.text((200, 10), f"{tree1.name[:15]} reduced_depth: {tree1.root.reduced_depth}", fill=COLOR_LEFT)
     draw.text((200, 30), f"{tree2.name[:15]} reduced_depth: {tree2.root.reduced_depth}", fill=COLOR_RIGHT)
-    draw.text((10, 10), f"taxon_dist   = {taxon_dist:0.4f}", fill='black')
+    #draw.text((10, 10), f"taxon_dist   = {taxon_dist:0.4f}", fill='black')
     draw.text((10, 30), f"raw_max_dist = {raw_max_dist:0.4f}", fill='black')
     draw.text((10, 50), f"raw_min_dist = {raw_min_dist:0.4f}", fill='black')
     draw.text((10, 70), f"corr_min_dist= {dist:0.4f}", fill='black')
     draw.text((10, 90), f"corr_coef    = {correction_coef:0.4f}", fill='black')
 
-    for i in range(0, 9):
+    for i in range(1, 11):
         draw.text((im.size[0] - 20, im.size[1] - (i + 1)*(ITEM_SIZE + ITEM_SPACE)), f"{i}", fill='black')
 
     del draw
 
-    im.save(f"../../output/{folder}/{tree1.name}-{tree2.name}.png")
+    path = f"../../output/{folder}"
+    Path(path).mkdir(parents=True, exist_ok=True)
+    im.save(f"{path}/{tree1.name}-{tree2.name}.png")
