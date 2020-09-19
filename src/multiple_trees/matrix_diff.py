@@ -1,10 +1,10 @@
 import numpy
 
-from src.compare_trees.development_tree_reader import read_all_trees
-from src.compare_trees.development_tree_utils import prepare_trees
+from src.single_tree.development_tree_reader import read_all_trees
+from src.single_tree.development_tree_utils import prepare_trees
 from src.view.build_morph_graph import taxon_from_xml
-from src.compare_trees.distances import development_tree_distance, pattern_tree_infinite
-from src.compare_trees.global_params import GlobalParams
+from src.single_tree.distances import development_tree_distance, pattern_tree_infinite
+from src.single_tree.global_params import GlobalParams
 
 
 def apply_each(matr, fun):

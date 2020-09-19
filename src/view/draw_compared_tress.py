@@ -1,5 +1,5 @@
 from PIL import Image, ImageDraw
-from src.compare_trees.distances import node_dist
+from src.single_tree.distances import node_dist
 
 ITEM_SIZE = 20
 ITEM_SPACE = 20

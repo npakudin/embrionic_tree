@@ -3,8 +3,8 @@ import numpy as np
 import scipy.spatial.distance as ssd
 from scipy.cluster import hierarchy
 
-from src.compare_trees.global_params import GlobalParams
-from src.diff_with_systematic.matrix_diff import MatrixDiff, print_matrix, to_full_matrix
+from src.single_tree.global_params import GlobalParams
+from src.multiple_trees.matrix_diff import MatrixDiff, print_matrix, to_full_matrix
 
 systematic_tree = "morph"
 cluster_algorithm = "complete"

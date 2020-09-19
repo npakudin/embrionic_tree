@@ -1,9 +1,9 @@
 import numpy as np
 from scipy.cluster import hierarchy
 
-from src.compare_trees.global_params import GlobalParams
-from src.diff_with_systematic.matrix_diff import MatrixDiff, make_experiment_array, print_matrix
-from src.diff_with_systematic.standard_clustering import draw_plot
+from src.single_tree.global_params import GlobalParams
+from src.multiple_trees.matrix_diff import MatrixDiff, make_experiment_array, print_matrix
+from src.clustering.standard_clustering import draw_plot
 from src.ultra_metric.ultra_metric import UltraMetricParams, get_ultra_metric
 
 

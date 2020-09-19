@@ -1,8 +1,8 @@
 import numpy as np
 
-from src.compare_trees.global_params import GlobalParams
-from src.diff_with_systematic.iterate_trees import generate_bin_tree, get_subtrees
-from src.diff_with_systematic.matrix_diff import MatrixDiff, print_matrix, corrcoef
+from src.single_tree.global_params import GlobalParams
+from src.multiple_trees.iterate_trees import generate_bin_tree, get_subtrees
+from src.multiple_trees.matrix_diff import MatrixDiff, print_matrix, corrcoef
 
 # Build matrices and corr coef only
 

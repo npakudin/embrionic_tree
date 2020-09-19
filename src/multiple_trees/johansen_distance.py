@@ -1,7 +1,7 @@
-from src.compare_trees.distances import development_tree_distance
-from src.compare_trees.global_params import GlobalParams
-from src.diff_with_systematic.matrix_diff import MatrixDiff
-from src.diff_with_systematic.matrix_diff import print_matrix
+from src.single_tree.distances import development_tree_distance
+from src.single_tree.global_params import GlobalParams
+from src.multiple_trees.matrix_diff import MatrixDiff
+from src.multiple_trees.matrix_diff import print_matrix
 from src.view.draw_compared_tress import draw_tree
 
 

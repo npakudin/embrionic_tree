@@ -1,8 +1,8 @@
 from unittest import TestCase
 
-from src.compare_trees.development_tree import TreeNode
-from src.diff_with_systematic.iterate_trees import generate_bin_tree, get_chain, get_deepest_node, get_address
-from src.diff_with_systematic.iterate_trees import number_by_address
+from src.single_tree.development_tree import TreeNode
+from src.multiple_trees.iterate_trees import generate_bin_tree, get_chain, get_deepest_node, get_address
+from src.multiple_trees.iterate_trees import number_by_address
 
 
 class TestUtils(TestCase):

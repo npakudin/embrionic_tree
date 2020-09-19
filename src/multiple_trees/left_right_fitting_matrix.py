@@ -1,13 +1,11 @@
-import matplotlib.pyplot as plt
 import numpy as np
-from mpl_toolkits.mplot3d import Axes3D
 
-from src.compare_trees.distances import development_tree_distance
-from src.compare_trees.global_params import GlobalParams
-from src.diff_with_systematic.johansen_distance import short_sp_name
-from src.diff_with_systematic.matrix_diff import MatrixDiff, print_matrix, corrcoef
+from src.single_tree.global_params import GlobalParams
+from src.multiple_trees.matrix_diff import MatrixDiff, corrcoef
 
-# Build matrices and corr coef only
+# Finds max correlation between experiment matrix with and without swap_left_right
+# varying params param_a, g_weight, chain_length_weight
+# Also builds the table of the corr(param_a, g_weight, chain_length_weight)
 
 systematic_tree = "morph"
 max_level = 10
@@ -21,8 +19,9 @@ trees = matrDiff.vertices
 # g_weight = 0.5
 # chain_length_weight = 0.1
 
-min_corr = 1000
+print(f"param_a g_weight chain_length_weight corr")
 
+max_corr = 1000
 for param_a in np.linspace(0.4, 0.6, 3):
     for g_weight in np.linspace(0.0, 0.3, 4):
         for chain_length_weight in np.linspace(0.0, 0.3, 4):
@@ -36,9 +35,9 @@ for param_a in np.linspace(0.4, 0.6, 3):
 
             corr = corrcoef(swap_experiment_matrix, experiment_matrix)
             print(f"{param_a:0.2f} {g_weight:0.2f} {chain_length_weight:0.2f} {corr:0.3f}")
-            if corr < min_corr:
-                min_corr = corr
-print(f"mincorr: {min_corr}")
+            if corr < max_corr:
+                max_corr = corr
+print(f"max_corr: {max_corr}")
 
 #corr = matrDiff.corrcoef(experiment_matrix)
 #name = f"param_a = {param_a}, g_weight = {g_weight}, chain_length_weight = {chain_length_weight}"

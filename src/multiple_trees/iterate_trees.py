@@ -1,6 +1,6 @@
 import copy
 
-from src.compare_trees.development_tree import Axis, TreeNode
+from src.single_tree.development_tree import Axis, TreeNode
 
 
 # Returns the number with the highest bit only

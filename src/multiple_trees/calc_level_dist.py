@@ -1,12 +1,17 @@
-from src.compare_trees.distances import node_dist
-from src.compare_trees.global_params import GlobalParams
-from src.diff_with_systematic.matrix_diff import MatrixDiff
+from src.single_tree.distances import node_dist
+from src.single_tree.global_params import GlobalParams
+from src.multiple_trees.matrix_diff import MatrixDiff
 
-ALL = 0
-LEFT = 1
-RIGHT = 2
-EQ = 3
-INEQ = 4
+# Calculates number of types of distances between nodes on each level
+# Get all tree pairs, and for each pair impose one REDUCED tree to another
+#   get all nodes - sometimes both, sometimes one node existing and the 2nd "virtual"
+#   for each node pair increment variable in the table (level - type_of_node)
+
+ALL = 0  # total number of nodes
+LEFT = 1  # left only node exists
+RIGHT = 2  # right only node exists
+EQ = 3  # both nodes exist, axes are equal
+INEQ = 4  # both nodes exist, axes are NOT equal
 total = []
 for i in range(11):
     total.append([0, 0, 0, 0, 0])

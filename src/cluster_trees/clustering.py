@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.cluster import hierarchy
 
-from src.diff_with_systematic.matrix_diff import corrcoef
+from src.multiple_trees.matrix_diff import corrcoef
 
 
 def draw_plot(clustered_trees, names, plot_name, filename):

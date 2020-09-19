@@ -2,9 +2,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 from mpl_toolkits.mplot3d import Axes3D
 
-from src.compare_trees.distances import development_tree_distance
-from src.compare_trees.global_params import GlobalParams
-from src.diff_with_systematic.matrix_diff import MatrixDiff, print_matrix, corrcoef
+from src.single_tree.distances import development_tree_distance
+from src.single_tree.global_params import GlobalParams
+from src.multiple_trees.matrix_diff import MatrixDiff, print_matrix, corrcoef
 
 # Build matrices and corr coef only
 

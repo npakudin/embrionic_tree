@@ -1,6 +1,6 @@
 import copy
 
-from src.compare_trees.development_tree import get_axis, Axis, TreeNode
+from src.single_tree.development_tree import get_axis, Axis, TreeNode
 
 
 def addr(node, reduced_addr):

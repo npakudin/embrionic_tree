@@ -1,5 +1,7 @@
-from src.compare_trees.global_params import GlobalParams
-from src.diff_with_systematic.matrix_diff import MatrixDiff
+from src.single_tree.global_params import GlobalParams
+from src.multiple_trees.matrix_diff import MatrixDiff
+
+# calculates distance between species if cut all trees at level 2, 3, 4, ..., 11
 
 systematic_tree = "morph"
 
@@ -24,6 +26,11 @@ for cur_max_level in range(2, 12):
     res_matrices.append(experiment_matrix)
     res_corrcoef.append(corrcoef)
 
+
+print(f"specie_1 specie_2", end='')
+for cur_max_level in range(len(res_matrices)):
+    print(f" dist_if_cut_at_level_{cur_max_level + 2}", end='')
+print("")
 
 trees = globalMatrDiff.vertices
 for i in range(len(res_matrices[0])):

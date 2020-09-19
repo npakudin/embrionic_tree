@@ -1,5 +1,5 @@
 import glob
-from src.compare_trees.development_tree import TreeNode, Axis, Tree
+from src.single_tree.development_tree import TreeNode, Axis, Tree
 import xml.etree.ElementTree as ElementTree
 
 ns = {'b': 'http://bioinfweb.info/xmlns/xtg'}
@@ -16,7 +16,7 @@ def parse_xml_node(xml, name, src_level, address):
     if data[0] == 'wb':
         data[0] = 'b_in_w'
 
-    assert data[0] == 'w' or data[0] == 'b', f"{name} : {data[0]}"  # wrong input
+    assert data[0] == 'w' or data[0] == 'w_in_w' or data[0] == 'b', f"{name} : {data[0]}"  # wrong input
 
     assert len(data) == 2, f"name: {name}, data: {data}"  # error message on wrong input
 

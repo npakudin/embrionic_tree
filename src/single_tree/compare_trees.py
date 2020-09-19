@@ -1,6 +1,6 @@
 import copy
-from src.compare_trees.development_tree_reader import read_all_trees
-from src.compare_trees.distances import development_tree_distance
+from src.single_tree.development_tree_reader import read_all_trees
+from src.single_tree.distances import development_tree_distance
 
 
 def get_distances_by_files(pattern, global_params, is_reducing=True):
