@@ -25,5 +25,5 @@ def draw_trees(param_a, is_reducing, folder):
             draw_tree(trees[i], trees[j], global_params, dist, param_a, folder)
 
 
-#draw_trees(param_a=0.5, is_reducing=True, folder="side_by_side_reduced")
+draw_trees(param_a=0.5, is_reducing=True, folder="side_by_side_reduced")
 draw_trees(param_a=0.5, is_reducing=False, folder="side_by_side_unreduced")
