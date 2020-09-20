@@ -70,7 +70,7 @@ for param_a in np.linspace(0.5, 1.6, 12):
     for level in range(5):
         root = generate_bin_tree(level)
         for pattern in get_subtrees(root):
-            if pattern is None:
+            if pattern.is_none():
                 continue
 
             # node = TreeNode()

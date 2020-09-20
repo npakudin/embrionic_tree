@@ -1,3 +1,4 @@
+# Reduces trees and then calculates reduced_level etc
 def prepare_trees(trees, max_level=10, is_reducing=True):
     for tree in trees:
         # print(f"prepare {tree.name}")
@@ -18,3 +19,42 @@ def short_sp_name(name):
 
     personal_name = name[underscore_index + 1:]
     return f"{name[0]}._{personal_name}"
+
+
+# Set number_on_level for each node on each level trees with roots n1 and n2
+# If node exists at 1 of trees only - this number is used on the 2nd "virtually"
+#
+# L3.1 L3.2  L3.3   R3.1       R3.3
+#  \   /      \       \         \
+#   L2.1     L2.2     R2.1     R2.2
+#      \    /            \    /
+#       L1.1              R1.1
+#
+# note, that R3.2 doesn't exist, but number is taken
+def calculate_number_on_level_2_trees(node1, node2, start_numbers):
+    if node1.is_none() and node2.is_none():
+        return
+
+    reduced_level = node2.reduced_level if node1.is_none() else node1.reduced_level
+
+    node1.number_on_level = start_numbers[reduced_level]
+    node2.number_on_level = start_numbers[reduced_level]
+
+    start_numbers[reduced_level] += 1
+
+    calculate_number_on_level_2_trees(node1.left, node2.left, start_numbers)
+    calculate_number_on_level_2_trees(node1.right, node2.right, start_numbers)
+
+    # left1 = None if (node1 is None) else node1.left
+    # right1 = None if (node1 is None) else node1.right
+    # left2 = None if (node2 is None) else node2.left
+    # right2 = None if (node2 is None) else node2.right
+    #
+    # existing_nodes = 1
+    # if left1 is not None or left2 is not None:
+    #     existing_nodes += calculate_number_on_level_2_trees(left1, left2, 1)
+    #
+    # if right1 is not None or right2 is not None:
+    #     existing_nodes += calculate_number_on_level_2_trees(right1, right2, existing_nodes)
+    #
+    # return existing_nodes

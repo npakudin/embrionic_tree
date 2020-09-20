@@ -1,13 +1,13 @@
 from unittest import TestCase
 
-from src.single_tree.development_tree import TreeNode
+from src.single_tree.development_tree import TreeNode, NONE_NODE, Axis
 from src.multiple_trees.iterate_trees import generate_bin_tree, get_chain, get_deepest_node, get_address
 from src.multiple_trees.iterate_trees import number_by_address
 
 
 class TestUtils(TestCase):
     def test_get_chain(self):
-        self.assertEqual(None, get_deepest_node(get_chain(0)))
+        self.assertEqual("unknown", get_deepest_node(get_chain(0)).address)
         self.assertEqual("Z", get_deepest_node(get_chain(1)).address)
 
         self.assertEqual("Z.L", get_deepest_node(get_chain(2)).address)
@@ -47,17 +47,17 @@ class TestUtils(TestCase):
         self.assertEqual(8, number_by_address(node, "Z.R.R.R", is_reducing=True))
 
     def test_number_of_node_full_random_tree(self):
-        node = TreeNode(reduced_level=0, address="Z", reduced_address="Z")
+        node = TreeNode(reduced_level=0, address="Z", reduced_address="Z", axis=Axis.X, left=NONE_NODE, right=NONE_NODE)
 
-        node.left = TreeNode(reduced_level=1, address="Z.L", reduced_address="Z.L")
-        node.left.left = TreeNode(reduced_level=2, address="Z.L.L", reduced_address="Z.L.L")
-        node.left.left.left = TreeNode(reduced_level=3, address="Z.L.L.L", reduced_address="Z.L.L.L")
-        node.left.left.right = TreeNode(reduced_level=3, address="Z.L.L.R", reduced_address="Z.L.L.R")
+        node.left = TreeNode(reduced_level=1, address="Z.L", reduced_address="Z.L", axis=Axis.X, left=NONE_NODE, right=NONE_NODE)
+        node.left.left = TreeNode(reduced_level=2, address="Z.L.L", reduced_address="Z.L.L", axis=Axis.X, left=NONE_NODE, right=NONE_NODE)
+        node.left.left.left = TreeNode(reduced_level=3, address="Z.L.L.L", reduced_address="Z.L.L.L", axis=Axis.X, left=NONE_NODE, right=NONE_NODE)
+        node.left.left.right = TreeNode(reduced_level=3, address="Z.L.L.R", reduced_address="Z.L.L.R", axis=Axis.X, left=NONE_NODE, right=NONE_NODE)
 
-        node.right = TreeNode(reduced_level=1, address="Z.R", reduced_address="Z.R")
-        node.right.left = TreeNode(reduced_level=2, address="Z.R.L", reduced_address="Z.R.L")
-        node.right.left.left = TreeNode(reduced_level=3, address="Z.R.L.L", reduced_address="Z.R.L.L")
-        node.right.left.right = TreeNode(reduced_level=3, address="Z.R.L.R", reduced_address="Z.R.L.R")
+        node.right = TreeNode(reduced_level=1, address="Z.R", reduced_address="Z.R", axis=Axis.X, left=NONE_NODE, right=NONE_NODE)
+        node.right.left = TreeNode(reduced_level=2, address="Z.R.L", reduced_address="Z.R.L", axis=Axis.X, left=NONE_NODE, right=NONE_NODE)
+        node.right.left.left = TreeNode(reduced_level=3, address="Z.R.L.L", reduced_address="Z.R.L.L", axis=Axis.X, left=NONE_NODE, right=NONE_NODE)
+        node.right.left.right = TreeNode(reduced_level=3, address="Z.R.L.R", reduced_address="Z.R.L.R", axis=Axis.X, left=NONE_NODE, right=NONE_NODE)
 
         self.assertEqual(1, number_by_address(node, "Z", is_reducing=True))
 

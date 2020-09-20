@@ -1,5 +1,5 @@
 import glob
-from src.single_tree.development_tree import TreeNode, Axis, Tree
+from src.single_tree.development_tree import TreeNode, Axis, Tree, NONE_NODE
 import xml.etree.ElementTree as ElementTree
 
 ns = {'b': 'http://bioinfweb.info/xmlns/xtg'}
@@ -9,7 +9,7 @@ ns = {'b': 'http://bioinfweb.info/xmlns/xtg'}
 def parse_xml_node(xml, name, src_level, address):
     data = xml.find('b:Branch', ns).find('b:TextLabel', ns).attrib['Text'].replace(",", ".").lower().split(' ')
 
-    node = TreeNode(address=address, src_level=src_level)
+    node = TreeNode(address=address, src_level=src_level, left=NONE_NODE, right=NONE_NODE)
 
     if data[0] == 'ww':
         data[0] = 'w_in_w'
@@ -22,12 +22,12 @@ def parse_xml_node(xml, name, src_level, address):
 
     if data[1] == 's' or data[1] == 'e':
         # chain item, no growth
-        node.axis = Axis.NONE
+        node.axis = Axis.GROWTH
         node.growth = 1
     else:
         try:
             # chain item, there is growth
-            node.axis = Axis.NONE
+            node.axis = Axis.GROWTH
             node.growth = float(data[1])
             assert node.growth >= 1
         except:

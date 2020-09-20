@@ -13,9 +13,9 @@ COLOR_INEQ  = 0xffe00000
 def draw_node(draw, node1, node2, global_params, border_left, border_top, border_right, border_bottom, level, min_reduced_depth, parent=None):
 
     color = COLOR_EQ
-    if node1 is None:
+    if node1.is_none():
         color = COLOR_LEFT
-    elif node2 is None:
+    elif node2.is_none():
         color = COLOR_RIGHT
     elif node1.axis != node2.axis:
         color = COLOR_INEQ
@@ -27,15 +27,15 @@ def draw_node(draw, node1, node2, global_params, border_left, border_top, border
     item_top = border_bottom - ITEM_SIZE - ITEM_SPACE
     center_y = item_top + ITEM_SIZE / 2
 
-    left1 = None if (node1 is None) else node1.left
-    right1 = None if (node1 is None) else node1.right
-    left2 = None if (node2 is None) else node2.left
-    right2 = None if (node2 is None) else node2.right
+    left1 = node1.left
+    right1 = node1.right
+    left2 = node2.left
+    right2 = node2.right
 
     total_max_distance = cur_node_distance
     total_min_distance = cur_node_distance
-    if left1 is not None or left2 is not None:
-        is_right_exists = right1 is not None or right2 is not None
+    if not left1.is_none() or not left2.is_none():
+        is_right_exists = not right1.is_none() or not right2.is_none()
         right = center_x if is_right_exists else border_right
         
         [add_max_dist, add_min_dist] = draw_node(draw, left1, left2, global_params, border_left, border_top, right, item_top, level+1, min_reduced_depth, parent=(center_x, center_y))
@@ -50,7 +50,7 @@ def draw_node(draw, node1, node2, global_params, border_left, border_top, border
         total_min_distance += add_min_dist
 
     draw.ellipse((item_left, item_top, item_left + ITEM_SIZE, item_top + ITEM_SIZE), fill=color, outline=color)
-    draw.text((item_left, item_top+ITEM_SIZE), f"{cur_node_distance:0.4f}", fill='purple')
+    draw.text((item_left, item_top+ITEM_SIZE), f"{cur_node_distance:0.4f}", fill=0xff008000)
     if parent is not None:
         draw.line([parent, (center_x, center_y)], width=1, fill=color)
 
@@ -84,7 +84,7 @@ def draw_tree(tree1, tree2, global_params, dist, taxon_dist, folder):
     draw.text((10, 30), f"raw_max_dist = {raw_max_dist:0.4f}", fill='black')
     draw.text((10, 50), f"raw_min_dist = {raw_min_dist:0.4f}", fill='black')
     draw.text((10, 70), f"corr_min_dist= {dist:0.4f}", fill='black')
-    draw.text((10, 90), f"corr_coef    = {correction_coef:0.4f}", fill='black')
+    #draw.text((10, 90), f"corr_coef    = {correction_coef:0.4f}", fill='black')
 
     for i in range(1, 11):
         draw.text((im.size[0] - 20, im.size[1] - (i + 1)*(ITEM_SIZE + ITEM_SPACE)), f"{i}", fill='black')

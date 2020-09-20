@@ -2,14 +2,15 @@ import copy
 
 
 # order should be: x < d < у < z < L < N
-# to provide it, use lexicographic order of: x < xd < у < z < zLeave < zNone
+# to provide it, use lexicographic order of: x < xd < у < z < zLeave < zzGrowth
 class Axis():
     X = 'x'
     DIAGONAL = 'xd'
     Y = 'y'
     Z = 'z'
-    NONE = 'zNone'
+    GROWTH = 'zzGrowth'
     LEAVE = 'zLeave'
+    NONE = 'zNone' # for really not existing node
 
 
 def get_axis(node):
@@ -32,8 +33,8 @@ class TreeNode:
         self.reduced_depth = None
         self.reduced_address = reduced_address
         self.chain_length = 1
-        self.order_index = None
         self.fertility = None
+        self.number_on_level = None
 
     def __str__(self):
         return self.get_full_addr()
@@ -42,8 +43,8 @@ class TreeNode:
         return f"{self.address}"
 
     def full_tree_str(self):
-        left_str = "" if self.left is None else self.left.full_tree_str()
-        right_str = "" if self.right is None else self.right.full_tree_str()
+        left_str = "" if self.left.is_none() else self.left.full_tree_str()
+        right_str = "" if self.right.is_none() else self.right.full_tree_str()
         return f"({left_str}, {right_str})"
 
     # cut tree to max_level if more levels exist in the source tree
@@ -51,18 +52,18 @@ class TreeNode:
         self.internal_cut(0, max_level)
 
     def internal_cut(self, src_level, max_level):
+        if self.is_none():
+            return
+
         self.depth = src_level
         if src_level >= max_level:
-            self.left = None
-            self.right = None
-            self.axis = Axis.NONE
-        if self.left is not None:
-            self.left.internal_cut(src_level + 1, max_level)
-            self.depth = self.left.depth
-        if self.right is not None:
-            self.right.internal_cut(src_level + 1, max_level)
-            # assert self.depth == self.right.depth, f"self.depth: {self.depth} self.right.depth: {self.right.depth}, right.address: {self.right.address}"
-            self.depth = max(self.right.depth, self.depth)
+            self.left = NONE_NODE
+            self.right = NONE_NODE
+            self.axis = Axis.LEAVE
+        self.left.internal_cut(src_level + 1, max_level)
+        self.right.internal_cut(src_level + 1, max_level)
+
+        self.depth = max(self.right.depth, self.left.depth)
 
     def order_left_right(self):
         left_axis = get_axis(self.left)
@@ -78,6 +79,8 @@ class TreeNode:
         self.internal_reduce(parent_growth=1, chain_length=1)
 
     def internal_reduce(self, parent_growth, chain_length):
+        if self.is_none():
+            return self
 
         self.chain_length = chain_length
 
@@ -86,16 +89,16 @@ class TreeNode:
 
         # HACK to remove axis Z
         if self.axis == Axis.Z:
-            self.axis = Axis.NONE
-            self.right = None
+            self.axis = Axis.GROWTH
+            self.right = NONE_NODE
 
-        if self.left is None and self.right is None:
+        if self.left.is_none() and self.right.is_none():
             self.axis = Axis.LEAVE  # this is a leave
             return self
-        if self.right is None:
+        if self.right.is_none():
             # if continue chain - add 1 to its' length
             return self.left.internal_reduce(parent_growth=self.growth, chain_length=chain_length + 1)
-        assert self.left is not None
+        #assert self.left is not None
 
         # if there is a division - set length to 1
         self.left = self.left.internal_reduce(parent_growth=1, chain_length=1)
@@ -104,31 +107,33 @@ class TreeNode:
         return self
 
     def internal_prepare(self, reduced_level, reduced_address="Z"):
+        if self.is_none():
+            return
+
         # assert (self.left is None) == (self.right is None)
 
         self.reduced_level = reduced_level
         self.reduced_address = reduced_address
-        self.reduced_depth = 0
 
-        if self.left is not None:
-            self.left.internal_prepare(reduced_level + 1, reduced_address + ".L")
-            self.reduced_depth = max(self.reduced_depth, 1 + self.left.reduced_depth)
+        self.left.internal_prepare(reduced_level + 1, reduced_address + ".L")
+        self.right.internal_prepare(reduced_level + 1, reduced_address + ".R")
 
-        if self.right is not None:
-            # if self.reduced_level > 0: # skip Z.R and all it's ancestors
-            self.right.internal_prepare(reduced_level + 1, reduced_address + ".R")
-            self.reduced_depth = max(self.reduced_depth, 1 + self.right.reduced_depth)
-
-            assert self.left is not None
-            # assert self.left.depth == self.right.depth
+        self.reduced_depth = 1 + max(self.left.reduced_depth, self.right.reduced_depth)
 
     def calculate_fertility(self, param_a):
+        if self.is_none():
+            return 0
+
         self.fertility = 1 * pow(param_a, self.reduced_level)
-        if self.left is not None:
-            self.fertility += self.left.calculate_fertility(param_a)
-        if self.right is not None:
-            self.fertility += self.right.calculate_fertility(param_a)
+        self.fertility += self.left.calculate_fertility(param_a)
+        self.fertility += self.right.calculate_fertility(param_a)
         return self.fertility
+
+    def is_none(self):
+        return self.axis == Axis.NONE
+
+    def is_exist(self):
+        return self.axis != Axis.NONE
 
 
 class Tree:
@@ -137,6 +142,7 @@ class Tree:
         self.embryo_type = embryo_type
         self.root = root
         self.roots = []  # trees, which were cut to levels 0, 1, 2, 3 etc
+        self.order_index = None
 
     def __str__(self):
         return self.get_full_addr()
@@ -159,3 +165,9 @@ class Tree:
             cur_node = copy.deepcopy(self.root)
             cur_node.internal_cut(0, i)
             self.roots.append(cur_node)
+
+
+NONE_NODE = TreeNode()
+NONE_NODE.left = NONE_NODE
+NONE_NODE.right = NONE_NODE
+NONE_NODE.reduced_depth = 0

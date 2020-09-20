@@ -13,7 +13,7 @@ from src.single_tree.global_params import GlobalParams
 from src.multiple_trees.iterate_trees import number_by_address
 
 
-def specie_fertility_distance(max_level = 10, is_reducing = True):
+def specie_fertility_distance(max_level=10, is_reducing=True):
     trees = read_all_trees(pattern="../../input/xtg/*.xtg")
     prepare_trees(trees, max_level, is_reducing)
 
@@ -44,8 +44,8 @@ def specie_fertility_distance(max_level = 10, is_reducing = True):
 
                 left_right_number = number_by_address(trees[i].root, addr, is_reducing=is_reducing)
 
-                is_left_0_descendants = (node1.left is None) and (node1.right is None)
-                is_right_0_descendants = (node2.left is None) and (node2.right is None)
+                is_left_0_descendants = (node1.left.is_none()) and (node1.right.is_none())
+                is_right_0_descendants = (node2.left.is_none()) and (node2.right.is_none())
                 l_or_r = "-"
                 if is_left_0_descendants:
                     l_or_r = trees[i].name
@@ -58,37 +58,3 @@ def specie_fertility_distance(max_level = 10, is_reducing = True):
                 sp_fert_dist.append(res)
 
     return sp_fert_dist
-
-sp_fert_dist = specie_fertility_distance(max_level=10, is_reducing=True)
-
-# print in alphabet sort
-print(
-    f"Fertility_distance Level_of_the_difference Number_of_the_node_from_left_to_right_on_the_level "
-    f"Is_zero_fertility_in_the_one_of_trees Specie_with_zero_fertility Specie Compare_with_the_tree_of")
-prev_tree1 = None
-prev_tree2 = None
-for item in sorted(sp_fert_dist, key=lambda x: (x[0], x[1], -x[2], -x[3])):
-    [tree1_name, tree2_name, normalized_dist, level, left_right_number, is_0_descendants, which_0_descendants,
-     reduced_addr, node1_addr, node2_addr] = item
-    if prev_tree1 == tree1_name:
-        tree1_name = '-"-'
-    else:
-        prev_tree1 = tree1_name
-
-    if prev_tree2 == tree2_name:
-        tree2_name = '-"-'
-    else:
-        prev_tree2 = tree2_name
-
-    # print(
-    #     f"{normalized_dist:0.1f} {level} {left_right_number} {is_0_descendants} {short_sp_name(which_0_descendants)} {short_sp_name(tree1_name)} {short_sp_name(tree2_name)}")
-
-# print top 10
-for item in sorted(sp_fert_dist, key=lambda x: (-x[2], -x[3], x[0], x[1])):
-    [tree1_name, tree2_name, normalized_dist, level, left_right_number, is_0_descendants, which_0_descendants,
-     reduced_addr, node1_addr, node2_addr] = item
-
-    print(
-        f"{normalized_dist:0.1f} {level} {left_right_number} {is_0_descendants} {short_sp_name(which_0_descendants)} {short_sp_name(tree1_name)} {short_sp_name(tree2_name)}")
-
-# print(f"{level2count}")

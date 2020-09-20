@@ -1,6 +1,6 @@
 import copy
 
-from src.single_tree.development_tree import Axis, TreeNode
+from src.single_tree.development_tree import Axis, TreeNode, NONE_NODE
 
 
 # Returns the number with the highest bit only
@@ -39,18 +39,20 @@ def get_address(number):
 # (There is a bijection between numbers 0..inf and chains)
 def get_chain(number):
     if number == 0:
-        return None
-    root = TreeNode(address="Z")
+        return NONE_NODE
+    root = TreeNode(address="Z", axis=Axis.X)
+    root.left = NONE_NODE
+    root.right = NONE_NODE
 
     # iterate over bits from the highest to the 0th
     cur_node = root
     cur_mask = hi_bit(number) >> 1
     while cur_mask > 0:
         if cur_mask & number == 0:
-            cur_node.left = TreeNode(address=cur_node.address + ".L")
+            cur_node.left = TreeNode(address=cur_node.address + ".L", axis=Axis.X, left=NONE_NODE, right=NONE_NODE)
             cur_node = cur_node.left
         else:
-            cur_node.right = TreeNode(address=cur_node.address + ".R")
+            cur_node.right = TreeNode(address=cur_node.address + ".R", axis=Axis.X, left=NONE_NODE, right=NONE_NODE)
             cur_node = cur_node.right
         cur_mask >>= 1
     return root
@@ -58,8 +60,8 @@ def get_chain(number):
 
 # Iterates over all subtrees of the binary tree 'node'
 def get_subtrees(node):
-    yield None  # no node
-    if node is not None:
+    yield NONE_NODE  # no node
+    if not node.is_none():
         left_nodes = [x for x in get_subtrees(node.left)]
         right_nodes = [x for x in get_subtrees(node.right)]
         for left_node in left_nodes:
@@ -67,7 +69,7 @@ def get_subtrees(node):
                 copy_node = copy.copy(node)
                 copy_node.left = left_node
                 copy_node.right = right_node
-                if copy_node.left is None and copy_node.right is None:
+                if copy_node.left.is_none() and copy_node.right.is_none():
                     copy_node.axis = Axis.NONE
                 yield copy_node
 
@@ -75,33 +77,33 @@ def get_subtrees(node):
 # Generates a full bin tree of height 'max_level'
 def generate_bin_tree(max_level, address="Z", reduced_level=0):
     if max_level == 0:
-        return None
+        return NONE_NODE
 
-    node = TreeNode(address=address, reduced_address=address, reduced_level=reduced_level)
+    node = TreeNode(axis=Axis.X, address=address, reduced_address=address, reduced_level=reduced_level, left=NONE_NODE, right=NONE_NODE)
     node.left = generate_bin_tree(max_level - 1, address + ".L", reduced_level + 1)
     node.right = generate_bin_tree(max_level - 1, address + ".R", reduced_level + 1)
     return node
 
 
 def get_deepest_node(node):
-    if node is None:
+    if node.is_none():
         return node
 
-    if node.left is not None:
+    if not node.left.is_none():
         return get_deepest_node(node.left)
 
-    if node.right is not None:
+    if not node.right.is_none():
         return get_deepest_node(node.right)
 
     return node
 
 
 def iterate_nodes(node):
-    if node.left is not None:
+    if not node.left.is_none():
         for x in iterate_nodes(node.left):
             yield x
     yield node
-    if node.right is not None:
+    if not node.right.is_none():
         for x in iterate_nodes(node.right):
             yield x
 

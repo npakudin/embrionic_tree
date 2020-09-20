@@ -18,11 +18,13 @@ for i in range(11):
 
 
 def proceed_node(node1, node2, level):
+    if node1.is_none() and node2.is_none():
+        return 0
 
     total[level][ALL] += 1
-    if node1 is None:
+    if node1.is_none():
         total[level][LEFT] += 1
-    elif node2 is None:
+    elif node2.is_none():
         total[level][RIGHT] += 1
     elif node1.axis != node2.axis:
         total[level][INEQ] += 1
@@ -31,16 +33,9 @@ def proceed_node(node1, node2, level):
 
     node_distance = node_dist(node1, node2, global_params)
 
-    left1 = None if (node1 is None) else node1.left
-    right1 = None if (node1 is None) else node1.right
-    left2 = None if (node2 is None) else node2.left
-    right2 = None if (node2 is None) else node2.right
-
     total_distance = node_distance
-    if left1 is not None or left2 is not None:
-        total_distance += proceed_node(left1, left2, level+1)
-    if right1 is not None or right2 is not None:
-        total_distance += proceed_node(right1, right2, level+1)
+    total_distance += proceed_node(node1.left, node2.left, level + 1)
+    total_distance += proceed_node(node1.right, node2.right, level + 1)
 
     return total_distance
 

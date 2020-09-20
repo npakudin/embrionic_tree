@@ -4,14 +4,14 @@ from src.single_tree.development_tree import get_axis, Axis, TreeNode
 
 
 def addr(node, reduced_addr):
-    if node is None:
+    if node.is_none():
         return f"reduced_addr {reduced_addr}"
     return node.get_full_addr()
 
 
 # Calculates distance between nodes n1 and n2
 def node_dist(n1, n2, global_params):
-    assert not (n1 is None and n2 is None)
+    assert not (n1.is_none() and n2.is_none())
 
     raw_distance = global_params.fertility_weight * dist_fertility(n1, n2) + \
                    global_params.axis_weight * dist_axis(n1, n2) + \
@@ -19,7 +19,7 @@ def node_dist(n1, n2, global_params):
                    global_params.chain_length_weight * dist_chain_length(n1, n2)
 
     # get weight from level
-    reduced_level = n2.reduced_level if (n1 is None) else n1.reduced_level
+    reduced_level = n2.reduced_level if (n1.is_none()) else n1.reduced_level
     weight = pow(global_params.param_a, reduced_level)
 
     # increase subtree weight
@@ -36,7 +36,7 @@ def node_dist(n1, n2, global_params):
 # distance is 1 if one of nodes exists and the 2nd does not
 # don't care about axis
 def dist_fertility(n1, n2):
-    if n1 is None or n2 is None:
+    if n1.is_none() or n2.is_none():
         return 1
     return 0
 
@@ -44,7 +44,7 @@ def dist_fertility(n1, n2):
 # distance is 0 if one of nodes is None, it's calculated in fertility_dist()
 # calculate difference in axis only
 def dist_axis(n1, n2):
-    if n1 is None or n2 is None:
+    if n1.is_none() or n2.is_none():
         return 0
 
     axis1 = get_axis(n1)
@@ -67,7 +67,7 @@ def dist_axis(n1, n2):
         # return 1 * weight
 
         # different for leave, D, Z etc
-        if axis2 == Axis.NONE:
+        if axis2 == Axis.GROWTH:
             return 1
         if axis1 == 'L':
             if axis2 == 'z':
@@ -81,21 +81,21 @@ def dist_axis(n1, n2):
 
 
 def dist_gr(n1, n2):
-    g1 = 0 if (n1 is None) or (n1.growth is None) else n1.growth - 1
-    g2 = 0 if (n2 is None) or (n2.growth is None) else n2.growth - 1
+    g1 = 0 if (n1.is_none()) or (n1.growth is None) else n1.growth - 1
+    g2 = 0 if (n2.is_none()) or (n2.growth is None) else n2.growth - 1
 
     return abs(g1 - g2)
 
 
 def dist_chain_length(n1, n2):
-    chain_length1 = 1 if (n1 is None) else n1.chain_length
-    chain_length2 = 1 if (n2 is None) else n2.chain_length
+    chain_length1 = 1 if (n1.is_none()) else n1.chain_length
+    chain_length2 = 1 if (n2.is_none()) else n2.chain_length
 
     return abs(chain_length1 - chain_length2)
 
 
 def pattern_tree_infinite():
-    root = TreeNode()
+    root = TreeNode(axis=Axis.X)
     root.left = root
     root.right = root
     return root
@@ -126,24 +126,22 @@ def development_tree_distance(tree1, tree2, global_params, pattern=pattern_tree_
 
 
 def visit_virtual(n1, n2, addr_1, addr_2, global_params, pattern):
-    if pattern is None:
+    if pattern.is_none():
         return 0
 
-    if (n1 is None) and (n2 is None):
+    if (n1.is_none()) and (n2.is_none()):
         return 0
 
     res = node_dist(n1, n2, global_params)
 
-    left1 = None if (n1 is None) else n1.left
-    right1 = None if (n1 is None) else n1.right
-    left2 = None if (n2 is None) else n2.left
-    right2 = None if (n2 is None) else n2.right
-    pattern_left = pattern.left
-    pattern_right = pattern.right
+    left1 = n1.left
+    right1 = n1.right
+    left2 = n2.left
+    right2 = n2.right
 
     # swap left2 and right2 if reverse order fit better than direct order
     if global_params.is_swap_left_right:
-        if all(x is not None for x in [left1, left2, right1, right2]):
+        if all(not x.is_none() for x in [left1, left2, right1, right2]):
             direct_order_fertility = min(left1.fertility, left2.fertility) + min(right1.fertility, right2.fertility)
             reverse_order_fertility = min(left1.fertility, right2.fertility) + min(right1.fertility, left2.fertility)
             if reverse_order_fertility > direct_order_fertility:
@@ -155,10 +153,10 @@ def visit_virtual(n1, n2, addr_1, addr_2, global_params, pattern):
 
     res += visit_virtual(left1, left2,
                          addr(n1, addr_1 + ".vL"), addr(n2, addr_2 + ".vL"),
-                         global_params, pattern_left)
+                         global_params, pattern.left)
     res += visit_virtual(right1, right2,
                          addr(n1, addr_1 + ".vR"), addr(n2, addr_2 + ".vR"),
-                         global_params, pattern_right)
+                         global_params, pattern.right)
 
     return res
 
@@ -180,10 +178,10 @@ def high_fertility_diff_development_tree_distance(tree1, tree2, global_params, p
 
 
 def high_fertility_diff_visit_virtual(n1, n2, addr_1, addr_2, global_params, pattern):
-    if pattern is None:
+    if pattern.is_none():
         return []
 
-    if (n1 is None) or (n2 is None): # note: OR here, not AND
+    if (n1.is_none()) or (n2.is_none()): # note: OR here, not AND
         return []
 
     dist_ax = dist_axis(n1, n2)
@@ -191,28 +189,21 @@ def high_fertility_diff_visit_virtual(n1, n2, addr_1, addr_2, global_params, pat
     if (dist_ax != 0) and (n1.axis != Axis.LEAVE) and (n2.axis != Axis.LEAVE):
         return []
 
-    if n1 is not None and n2 is not None:
+    if not n1.is_none() and not n2.is_none():
         assert n1.reduced_address == n2.reduced_address, f"{n1.reduced_address} - {n2.reduced_address}"
-    reduced_level = n2.reduced_level if (n1 is None) else n1.reduced_level
-    reduced_address = n2.reduced_address if (n1 is None) else n1.reduced_address
+    reduced_level = n2.reduced_level if (n1.is_none()) else n1.reduced_level
+    reduced_address = n2.reduced_address if (n1.is_none()) else n1.reduced_address
     dist_fert = visit_virtual(n1, n2,
-                              addr_1 + ".vL" if n1 is None else n1.get_full_addr(),
-                              addr_2 + ".vL" if n2 is None else n2.get_full_addr(),
+                              addr_1 + ".vL" if n1.is_none() else n1.get_full_addr(),
+                              addr_2 + ".vL" if n2.is_none() else n2.get_full_addr(),
                               global_params, pattern)
 
     res = [[reduced_address, dist_fert, reduced_level, n1, n2]]
 
-    left1 = None if (n1 is None) else n1.left
-    right1 = None if (n1 is None) else n1.right
-    left2 = None if (n2 is None) else n2.left
-    right2 = None if (n2 is None) else n2.right
-    pattern_left = pattern.left
-    pattern_right = pattern.right
-
-    res += high_fertility_diff_visit_virtual(left1, left2,
+    res += high_fertility_diff_visit_virtual(n1.left, n2.left,
                                              addr(n1, addr_1 + ".vL"), addr(n2, addr_2 + ".vL"),
-                                             global_params, pattern_left)
-    res += high_fertility_diff_visit_virtual(right1, right2,
+                                             global_params, pattern.left)
+    res += high_fertility_diff_visit_virtual(n1.right, n2.right,
                                              addr(n1, addr_1 + ".vR"), addr(n2, addr_2 + ".vR"),
-                                             global_params, pattern_right)
+                                             global_params, pattern.right)
     return res

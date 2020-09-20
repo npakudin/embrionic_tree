@@ -46,9 +46,9 @@ class PhyloTree:
         res = ""
         pad = "\n" + ("  " * level)
         res += pad + "name: " + str(self.name)
-        if not (self.l is None):
+        if not (self.l.is_none()):
             res += pad + "l: " + self.l.to_str(level + 1)
-        if not (self.r is None):
+        if not (self.r.is_none()):
             res += pad + "r: " + self.r.to_str(level + 1)
         return res
 
