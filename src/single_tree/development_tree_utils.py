@@ -58,3 +58,19 @@ def calculate_number_on_level_2_trees(node1, node2, start_numbers):
     #     existing_nodes += calculate_number_on_level_2_trees(right1, right2, existing_nodes)
     #
     # return existing_nodes
+
+
+def calculate_number_of_leaves(node1, node2):
+    if node1.is_none() and node2.is_none():
+        return
+
+    calculate_number_of_leaves(node1.left, node2.left)
+    calculate_number_of_leaves(node1.right, node2.right)
+
+    left_leaves = max(node1.left.number_of_leaves, node2.left.number_of_leaves)
+    right_leaves = max(node1.right.number_of_leaves, node2.right.number_of_leaves)
+    number_of_leaves = max(1, left_leaves + right_leaves)
+
+    node1.number_of_leaves = number_of_leaves
+    node2.number_of_leaves = number_of_leaves
+

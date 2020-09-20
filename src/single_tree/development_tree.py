@@ -35,6 +35,7 @@ class TreeNode:
         self.chain_length = 1
         self.fertility = None
         self.number_on_level = None
+        self.number_of_leaves = None
 
     def __str__(self):
         return self.get_full_addr()
@@ -171,3 +172,4 @@ NONE_NODE = TreeNode()
 NONE_NODE.left = NONE_NODE
 NONE_NODE.right = NONE_NODE
 NONE_NODE.reduced_depth = 0
+NONE_NODE.number_of_leaves = 0
