@@ -58,3 +58,33 @@ def specie_fertility_distance(max_level=10, is_reducing=True):
                 sp_fert_dist.append(res)
 
     return sp_fert_dist
+
+
+unreduced_sp_fert_dist = specie_fertility_distance(max_level=10, is_reducing=False)
+print(f"NOT reduced")
+print(
+    f"Fertility_distance Level_of_the_difference Number_of_the_node_from_left_to_right_on_the_level "
+    f"Specie Compare_with_the_tree_of")
+# print top 25
+for item in sorted(unreduced_sp_fert_dist, key=lambda x: (-x[2], -x[3], x[0], x[1]))[:25]:
+    [tree1_name, tree2_name, normalized_dist, level, left_right_number, is_0_descendants, which_0_descendants,
+     reduced_addr, node1_addr, node2_addr] = item
+
+    print(
+        f"{normalized_dist:0.1f} {level} {left_right_number} {short_sp_name(tree1_name)} {short_sp_name(tree2_name)}")
+
+print(f"")
+print(f"")
+
+reduced_sp_fert_dist = specie_fertility_distance(max_level=10, is_reducing=True)
+print(f"REDUCED")
+print(
+    f"Fertility_distance Level_of_the_difference Number_of_the_node_from_left_to_right_on_the_level "
+    f"Is_zero_fertility_in_the_one_of_trees Specie_with_zero_fertility Specie Compare_with_the_tree_of")
+# print top 25
+for item in sorted(reduced_sp_fert_dist, key=lambda x: (-x[2], -x[3], x[0], x[1]))[:25]:
+    [tree1_name, tree2_name, normalized_dist, level, left_right_number, is_0_descendants, which_0_descendants,
+     reduced_addr, node1_addr, node2_addr] = item
+
+    print(
+        f"{normalized_dist:0.1f} {level} {left_right_number} {is_0_descendants} {short_sp_name(which_0_descendants)} {short_sp_name(tree1_name)} {short_sp_name(tree2_name)}")
