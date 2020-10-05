@@ -98,13 +98,13 @@ def get_deepest_node(node):
     return node
 
 
-def iterate_nodes(node):
-    if not node.left.is_none():
-        for x in iterate_nodes(node.left):
+def iterate_nodes(node1, node2):
+    if not (node1.left.is_none() and node2.left.is_none()):
+        for x in iterate_nodes(node1.left, node2.left):
             yield x
-    yield node
-    if not node.right.is_none():
-        for x in iterate_nodes(node.right):
+    yield [node1, node2]
+    if not (node1.right.is_none() and node2.right.is_none()):
+        for x in iterate_nodes(node1.right, node2.right):
             yield x
 
 
@@ -114,18 +114,15 @@ def iterate_nodes(node):
 # root - the root of the tree
 # address - address of the node
 # is_reduced - True to use reduced tree attributes, False to use "raw" tree attributes
-def number_by_address(root, address, is_reducing):
+def number_by_address(root1, root2, address, is_reducing):
     level = int(len(address) / 2)
 
-    nodes_at_level = [x for x in filter(lambda x: x.reduced_level == level if is_reducing else x.src_level == level,
-                                        iterate_nodes(root))]
-    for i, item in enumerate(nodes_at_level):
-        if is_reducing:
-            if item.reduced_address == address:
-                return i + 1
-        else:
-            if item.address == address:
-                return i + 1
+    nodes_at_level = [x for x in filter(lambda x: (x[0].reduced_level == level and not x[0].is_none()) or (x[1].reduced_level == level and not x[1].is_none()),
+                                        iterate_nodes(root1, root2))]
+
+    for i, [item1, item2] in enumerate(nodes_at_level):
+        if (item1.reduced_address == address and not item1.is_none()) or (item2.reduced_address == address and not item2.is_none()):
+            return i + 1
     return None  # not found
 
 # for i in range(16):

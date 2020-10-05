@@ -35,7 +35,7 @@ class TreeNode:
         self.chain_length = 1
         self.fertility = None
         self.number_on_level = None
-        self.number_of_leaves = None
+        self.leaves_number = None
 
     def __str__(self):
         return self.get_full_addr()
@@ -130,6 +130,17 @@ class TreeNode:
         self.fertility += self.right.calculate_fertility(param_a)
         return self.fertility
 
+    def get_leaves_number(self):
+        if self.is_none():
+            return 0
+
+        if self.axis == Axis.LEAVE:
+            return 1
+
+        leaves_left = self.left.get_leaves_number()
+        leaves_right = self.right.get_leaves_number()
+        return leaves_left + leaves_right
+
     def is_none(self):
         return self.axis == Axis.NONE
 
@@ -172,4 +183,4 @@ NONE_NODE = TreeNode()
 NONE_NODE.left = NONE_NODE
 NONE_NODE.right = NONE_NODE
 NONE_NODE.reduced_depth = 0
-NONE_NODE.number_of_leaves = 0
+NONE_NODE.leaves_number = 0

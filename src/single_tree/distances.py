@@ -94,6 +94,15 @@ def dist_chain_length(n1, n2):
     return abs(chain_length1 - chain_length2)
 
 
+def dist_leaves_number(n1, n2):
+    if n1 is None:
+        print("n1 is None")
+
+    desc1 = n1.get_leaves_number()
+    desc2 = n2.get_leaves_number()
+    return abs(desc2 - desc1)
+
+
 def pattern_tree_infinite():
     root = TreeNode(axis=Axis.X)
     root.left = root
@@ -181,7 +190,7 @@ def high_fertility_diff_visit_virtual(n1, n2, addr_1, addr_2, global_params, pat
     if pattern.is_none():
         return []
 
-    if (n1.is_none()) or (n2.is_none()): # note: OR here, not AND
+    if (n1.is_none()) or (n2.is_none()):  # note: OR here, not AND
         return []
 
     dist_ax = dist_axis(n1, n2)
@@ -193,10 +202,7 @@ def high_fertility_diff_visit_virtual(n1, n2, addr_1, addr_2, global_params, pat
         assert n1.reduced_address == n2.reduced_address, f"{n1.reduced_address} - {n2.reduced_address}"
     reduced_level = n2.reduced_level if (n1.is_none()) else n1.reduced_level
     reduced_address = n2.reduced_address if (n1.is_none()) else n1.reduced_address
-    dist_fert = visit_virtual(n1, n2,
-                              addr_1 + ".vL" if n1.is_none() else n1.get_full_addr(),
-                              addr_2 + ".vL" if n2.is_none() else n2.get_full_addr(),
-                              global_params, pattern)
+    dist_fert = dist_leaves_number(n1, n2)
 
     res = [[reduced_address, dist_fert, reduced_level, n1, n2]]
 

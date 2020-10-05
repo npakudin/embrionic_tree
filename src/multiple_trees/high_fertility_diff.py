@@ -39,10 +39,26 @@ def specie_fertility_distance(max_level=10, is_reducing=True):
                 if reduced_level < 5:
                     continue
 
-                weight = pow(2.0 / global_params.param_a, reduced_level)
-                normalized_dist = dist * weight
+                leaves1 = node1.get_leaves_number()
+                leaves2 = node2.get_leaves_number()
 
-                left_right_number = number_by_address(trees[i].root, addr, is_reducing=is_reducing)
+                tree1 = trees[i]
+                tree2 = trees[j]
+
+                # switch order
+                if leaves1 < leaves2:
+                    tree1 = trees[j]
+                    tree2 = trees[i]
+
+                    tmp_node = node1
+                    node1 = node2
+                    node2 = tmp_node
+
+                    tmp_leaves = leaves1
+                    leaves1 = leaves2
+                    leaves2 = tmp_leaves
+
+                left_right_number = number_by_address(tree1.root, tree2.root, addr, is_reducing=is_reducing)
 
                 is_left_0_descendants = (node1.left.is_none()) and (node1.right.is_none())
                 is_right_0_descendants = (node2.left.is_none()) and (node2.right.is_none())
@@ -52,39 +68,42 @@ def specie_fertility_distance(max_level=10, is_reducing=True):
                 elif is_right_0_descendants:
                     l_or_r = trees[j].name
 
-                res = [trees[i].name, trees[j].name, normalized_dist, reduced_level + 1, left_right_number,
+                res = [tree1.name, tree2.name, dist, reduced_level + 1, left_right_number,
                        is_left_0_descendants or is_right_0_descendants,
-                       l_or_r, addr, node1.address, node2.address]
+                       l_or_r, addr, node1.address, node2.address, leaves1, leaves2]
                 sp_fert_dist.append(res)
 
     return sp_fert_dist
 
 
-unreduced_sp_fert_dist = specie_fertility_distance(max_level=10, is_reducing=False)
-print(f"NOT reduced")
-print(
-    f"Fertility_distance Level_of_the_difference Number_of_the_node_from_left_to_right_on_the_level "
-    f"Specie Compare_with_the_tree_of")
-# print top 25
-for item in sorted(unreduced_sp_fert_dist, key=lambda x: (-x[2], -x[3], x[0], x[1]))[:25]:
-    [tree1_name, tree2_name, normalized_dist, level, left_right_number, is_0_descendants, which_0_descendants,
-     reduced_addr, node1_addr, node2_addr] = item
+if True:
+    top_n = 60
 
+    unreduced_sp_fert_dist = specie_fertility_distance(max_level=10, is_reducing=False)
+    print(f"NOT reduced")
     print(
-        f"{normalized_dist:0.1f} {level} {left_right_number} {short_sp_name(tree1_name)} {short_sp_name(tree2_name)}")
+        f"Fertility_distance Level_of_the_difference Number_of_the_node_from_left_to_right_on_the_level "
+        f"Specie Compare_with_the_tree_of leaves_number_1st leaves_number_2nd")
+    # print top_n
+    for item in sorted(unreduced_sp_fert_dist, key=lambda x: (-x[3], -x[2], x[0], x[1]))[:top_n]:
+        [tree1_name, tree2_name, normalized_dist, level, left_right_number, is_0_descendants, which_0_descendants,
+         reduced_addr, node1_addr, node2_addr, leaves1, leaves2] = item
 
-print(f"")
-print(f"")
+        print(
+            f"{normalized_dist:0.1f} {level} {left_right_number} {short_sp_name(tree1_name)} {short_sp_name(tree2_name)} {leaves1} {leaves2}")
 
-reduced_sp_fert_dist = specie_fertility_distance(max_level=10, is_reducing=True)
-print(f"REDUCED")
-print(
-    f"Fertility_distance Level_of_the_difference Number_of_the_node_from_left_to_right_on_the_level "
-    f"Is_zero_fertility_in_the_one_of_trees Specie_with_zero_fertility Specie Compare_with_the_tree_of")
-# print top 25
-for item in sorted(reduced_sp_fert_dist, key=lambda x: (-x[2], -x[3], x[0], x[1]))[:25]:
-    [tree1_name, tree2_name, normalized_dist, level, left_right_number, is_0_descendants, which_0_descendants,
-     reduced_addr, node1_addr, node2_addr] = item
+    print(f"")
+    print(f"")
 
+    reduced_sp_fert_dist = specie_fertility_distance(max_level=10, is_reducing=True)
+    print(f"REDUCED")
     print(
-        f"{normalized_dist:0.1f} {level} {left_right_number} {is_0_descendants} {short_sp_name(which_0_descendants)} {short_sp_name(tree1_name)} {short_sp_name(tree2_name)}")
+        f"Fertility_distance Level_of_the_difference Number_of_the_node_from_left_to_right_on_the_level "
+        f"Is_zero_fertility_in_the_one_of_trees Specie_with_zero_fertility Specie Compare_with_the_tree_of leaves_number_1st leaves_number_2nd")
+    # print top_n
+    for item in sorted(reduced_sp_fert_dist, key=lambda x: (-x[3], -x[2], x[0], x[1]))[:top_n]:
+        [tree1_name, tree2_name, normalized_dist, level, left_right_number, is_0_descendants, which_0_descendants,
+         reduced_addr, node1_addr, node2_addr, leaves1, leaves2] = item
+
+        print(
+            f"{normalized_dist:0.1f} {level} {left_right_number} {is_0_descendants} {short_sp_name(which_0_descendants)} {short_sp_name(tree1_name)} {short_sp_name(tree2_name)} {leaves1} {leaves2}")
