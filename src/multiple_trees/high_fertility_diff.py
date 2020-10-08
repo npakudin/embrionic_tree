@@ -36,7 +36,7 @@ def specie_fertility_distance(max_level=10, is_reducing=True):
                 level2count[reduced_level + 1] += 1
 
                 # ignore zygote and the next level
-                if reduced_level < 5:
+                if reduced_level < 0:
                     continue
 
                 leaves1 = node1.get_leaves_number()
@@ -77,7 +77,7 @@ def specie_fertility_distance(max_level=10, is_reducing=True):
 
 
 if True:
-    top_n = 60
+    top_n = 6000
 
     unreduced_sp_fert_dist = specie_fertility_distance(max_level=10, is_reducing=False)
     print(f"NOT reduced")

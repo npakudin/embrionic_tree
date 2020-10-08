@@ -1,7 +1,7 @@
 from src.single_tree.distances import development_tree_distance
 from src.single_tree.global_params import GlobalParams
 from src.multiple_trees.matrix_diff import MatrixDiff
-from src.view.draw_compared_tress import draw_tree
+from src.view.draw_compared_trees import draw_tree
 
 
 def draw_trees(param_a, is_reducing, folder):

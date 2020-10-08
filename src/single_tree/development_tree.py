@@ -130,6 +130,20 @@ class TreeNode:
         self.fertility += self.right.calculate_fertility(param_a)
         return self.fertility
 
+    def calculate_leaves_number(self):
+        if self.is_none():
+            return 0
+
+        assert (self.left.is_none() and self.right.is_none) == (self.axis == Axis.LEAVE)
+
+        if self.axis == Axis.LEAVE:
+            self.leaves_number = 1
+        else:
+            leaves_left = self.left.get_leaves_number()
+            leaves_right = self.right.get_leaves_number()
+            self.leaves_number = leaves_left + leaves_right
+        return self.leaves_number
+
     def get_leaves_number(self):
         if self.is_none():
             return 0
@@ -177,6 +191,8 @@ class Tree:
             cur_node = copy.deepcopy(self.root)
             cur_node.internal_cut(0, i)
             self.roots.append(cur_node)
+
+        self.root.calculate_leaves_number()
 
 
 NONE_NODE = TreeNode()

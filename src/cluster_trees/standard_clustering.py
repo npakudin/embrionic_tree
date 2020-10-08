@@ -2,8 +2,8 @@ import numpy as np
 import scipy.spatial.distance as ssd
 from scipy.cluster import hierarchy
 
+from src.cluster_trees.clustering import corr_clustered_trees, draw_plot
 from src.single_tree.global_params import GlobalParams
-from src.clustering.clustering import corr_clustered_trees, draw_plot
 from src.multiple_trees.matrix_diff import MatrixDiff, to_full_matrix
 from src.ultra_metric.ultra_metric import get_ultra_metric, UltraMetricParams
 

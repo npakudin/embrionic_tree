@@ -2,7 +2,7 @@ from src.single_tree.distances import development_tree_distance
 from src.single_tree.global_params import GlobalParams
 from src.multiple_trees.matrix_diff import MatrixDiff
 from src.multiple_trees.matrix_diff import print_matrix
-from src.view.draw_compared_tress import draw_tree
+from src.view.draw_compared_trees import draw_tree
 
 
 def first_vowel(str, from_index=1):

@@ -3,6 +3,7 @@ from PIL import Image, ImageDraw
 
 from src.single_tree.development_tree_utils import calculate_number_on_level_2_trees
 from src.single_tree.distances import node_dist
+from src.single_tree.superimposed_tree import SuperimposedNode
 
 ITEM_SIZE = 20
 ITEM_SPACE = 20
@@ -71,6 +72,60 @@ def draw_node(draw, node1, node2, global_params, border_left, border_top, border
     return [total_max_distance, total_min_distance if level < min_reduced_depth else 0]
 
 
+def draw_superimposed_node(draw, superimposed_node, global_params, border_left, border_top, border_right, border_bottom, level,
+              min_reduced_depth, start_numbers, parent=None):
+
+    if superimposed_node.is_none():
+        return [0, 0]
+
+    color = COLOR_EQ
+    if superimposed_node.n1.is_none():
+        color = COLOR_LEFT
+    elif superimposed_node.n2.is_none():
+        color = COLOR_RIGHT
+    elif superimposed_node.n1.axis != superimposed_node.n2.axis:
+        color = COLOR_INEQ
+
+    cur_node_distance = superimposed_node.node_dist(global_params)
+
+    # reduced_level = node2.reduced_level if node1.is_none() else node1.reduced_level
+    # number_on_level = node2.number_on_level if node1.is_none() else node1.number_on_level
+    # nodes_on_level = start_numbers[reduced_level]
+    # center_x = ((border_right + border_left)) * (number_on_level + 0.5) / nodes_on_level
+
+    center_x = (border_right + border_left) / 2
+
+    item_left = center_x - ITEM_SIZE / 2
+    item_top = border_bottom - ITEM_SIZE - ITEM_SPACE
+    center_y = item_top + ITEM_SIZE / 2
+
+    total_max_distance = cur_node_distance
+    total_min_distance = cur_node_distance
+    if not superimposed_node.left.is_none():
+        is_right_exists = not superimposed_node.right.is_none()
+        right = center_x if is_right_exists else border_right
+        #right = border_right
+
+        [add_max_dist, add_min_dist] = draw_superimposed_node(draw, superimposed_node.left, global_params, border_left, border_top, right, item_top, level+1, min_reduced_depth, start_numbers, parent=(center_x, center_y))
+        total_max_distance += add_max_dist
+        total_min_distance += add_min_dist
+    if not superimposed_node.right.is_none():
+        is_left_exists = not superimposed_node.left.is_none()
+        left = center_x if is_left_exists else border_left
+        #left = border_left
+
+        [add_max_dist, add_min_dist] = draw_superimposed_node(draw, superimposed_node.right, global_params, left, border_top, border_right, item_top, level+1, min_reduced_depth, start_numbers, parent=(center_x, center_y))
+        total_max_distance += add_max_dist
+        total_min_distance += add_min_dist
+
+    draw.ellipse((item_left, item_top, item_left + ITEM_SIZE, item_top + ITEM_SIZE), fill=color, outline=color)
+    draw.text((item_left, item_top+ITEM_SIZE), f"{cur_node_distance:0.4f}", fill=0xff008000)
+    if parent is not None:
+        draw.line([parent, (center_x, center_y)], width=1, fill=color)
+
+    return [total_max_distance, total_min_distance if level < min_reduced_depth else 0]
+
+
 def draw_legend(draw, item_left, item_top, color, text):
     draw.ellipse((item_left, item_top, item_left + ITEM_SIZE, item_top + ITEM_SIZE), fill=color, outline=color)
     draw.text((item_left + ITEM_SIZE + ITEM_SPACE, item_top), text, fill=color)
@@ -87,7 +142,10 @@ def draw_tree(tree1, tree2, global_params, dist, param_a, folder):
     start_numbers = [0] * max_reduced_depth
     calculate_number_on_level_2_trees(tree1.root, tree2.root, start_numbers)
 
-    [raw_max_dist, raw_min_dist] = draw_node(draw, tree1.root, tree2.root, global_params, 0, 0, im.size[0] - ITEM_SIZE - ITEM_SPACE, im.size[1], 0, min_reduced_depth, start_numbers)
+    superimposed_node = SuperimposedNode(tree1.root, tree2.root)
+
+    [raw_max_dist, raw_min_dist] = draw_superimposed_node(draw, superimposed_node, global_params, 0, 0, im.size[0] - ITEM_SIZE - ITEM_SPACE, im.size[1], 0, min_reduced_depth, start_numbers)
+    #[raw_max_dist, raw_min_dist] = draw_node(draw, tree1.root, tree2.root, global_params, 0, 0, im.size[0] - ITEM_SIZE - ITEM_SPACE, im.size[1], 0, min_reduced_depth, start_numbers)
 
     # legend
     draw_legend(draw, 500, 10, COLOR_LEFT, 'Node exists in the left tree only')
@@ -96,7 +154,7 @@ def draw_tree(tree1, tree2, global_params, dist, param_a, folder):
     draw_legend(draw, 500, 70, COLOR_INEQ, 'Node exists in both trees and axis are NOT equal, e.g. X and Y')
 
     # distances
-    correction_coef = sum([pow(2 * global_params.param_a, i) for i in range(min_reduced_depth)])
+    #correction_coef = sum([pow(2 * global_params.param_a, i) for i in range(min_reduced_depth)])
     draw.text((200, 10), f"{tree1.name[:15]} reduced_depth: {tree1.root.reduced_depth}", fill=COLOR_LEFT)
     draw.text((200, 30), f"{tree2.name[:15]} reduced_depth: {tree2.root.reduced_depth}", fill=COLOR_RIGHT)
     draw.text((10, 10), f"param_a      = {param_a:0.2f}", fill='black')
