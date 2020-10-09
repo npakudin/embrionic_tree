@@ -31,8 +31,8 @@ class TreeDrawSettings:
 FERTILITY_DRAW_SETTINGS = TreeDrawSettings(color_left=0xFF285EDD, color_right=0xFFFC7074,
                                            color_eq=0xFFE8E4DE, color_ineq=0xFFE8E4DE)
 
-debugDrawSettings = TreeDrawSettings(color_left=0xff0050ff, color_right=0xff00c0ff,
-                                     color_eq=0xFF000000, color_ineq=0xffe00000)
+DEBUG_DRAW_SETTINGS = TreeDrawSettings(color_left=0xFF285EDD, color_right=0xFFFC7074,
+                                     color_eq=0xFFE8E4DE, color_ineq=0xff808080)
 
 
 class TreeDrawer:
@@ -107,12 +107,12 @@ class TreeDrawer:
         leaves2 = superimposed_node.n2.get_leaves_number()
         leaves_diff = abs(leaves1 - leaves2)
 
-        if is_equal_history and ((level == 4 and leaves_diff >= 10) or (level > 4 and leaves_diff >= 5)):
+        if is_equal_history and ((level == 3 and leaves_diff >= 10) or (level > 3 and leaves_diff >= 5)):
             selection_color = 0xFF52A710
             self.draw.rounded_rectangle(((border_left, border_top), (border_right, border_bottom - ITEM_SPACE)), 1, selection_color, selection_color)
-            self.draw.text((border_left + 00, border_top - 20), f"leaves #", fill=selection_color)
-            self.draw.text((border_left + 50, border_top - 20), f"{leaves1}", fill=self.draw_settings.color_right)
-            self.draw.text((border_left + 65, border_top - 20), f"{leaves2}", fill=self.draw_settings.color_left)
+            self.draw.text((border_left + 00, border_top - 20), f"leaves #:", fill=selection_color)
+            self.draw.text((border_left + 55, border_top - 20), f"{leaves1}", fill=self.draw_settings.color_right)
+            self.draw.text((border_left + 70, border_top - 20), f"{leaves2}", fill=self.draw_settings.color_left)
 
 
         return [total_max_distance, total_min_distance if level < self.min_reduced_depth else 0]
