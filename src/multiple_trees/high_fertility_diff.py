@@ -39,8 +39,8 @@ def specie_fertility_distance(max_level=10, is_reducing=True):
                 if reduced_level < 0:
                     continue
 
-                leaves1 = node1.get_leaves_number()
-                leaves2 = node2.get_leaves_number()
+                leaves1 = node1.leaves_number
+                leaves2 = node2.leaves_number
 
                 tree1 = trees[i]
                 tree2 = trees[j]

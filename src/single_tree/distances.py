@@ -98,9 +98,9 @@ def dist_leaves_number(n1, n2):
     if n1 is None:
         print("n1 is None")
 
-    desc1 = n1.get_leaves_number()
-    desc2 = n2.get_leaves_number()
-    return abs(desc2 - desc1)
+    leaves1 = n1.leaves_number
+    leaves2 = n2.leaves_number
+    return abs(leaves2 - leaves1)
 
 
 def pattern_tree_infinite():

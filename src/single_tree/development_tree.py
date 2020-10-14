@@ -130,30 +130,19 @@ class TreeNode:
         self.fertility += self.right.calculate_fertility(param_a)
         return self.fertility
 
+    # leaves number in the single tree
     def calculate_leaves_number(self):
         if self.is_none():
-            return 0
+            return
 
-        assert (self.left.is_none() and self.right.is_none) == (self.axis == Axis.LEAVE)
+        #assert (self.left.is_none() and self.right.is_none) == (self.axis == Axis.LEAVE), f"{self.axis}, {self.left.is_none()}, {self.right.is_none()}"
 
         if self.axis == Axis.LEAVE:
             self.leaves_number = 1
         else:
-            leaves_left = self.left.get_leaves_number()
-            leaves_right = self.right.get_leaves_number()
-            self.leaves_number = leaves_left + leaves_right
-        return self.leaves_number
-
-    def get_leaves_number(self):
-        if self.is_none():
-            return 0
-
-        if self.axis == Axis.LEAVE:
-            return 1
-
-        leaves_left = self.left.get_leaves_number()
-        leaves_right = self.right.get_leaves_number()
-        return leaves_left + leaves_right
+            self.left.calculate_leaves_number()
+            self.right.calculate_leaves_number()
+            self.leaves_number = self.left.leaves_number + self.right.leaves_number
 
     def is_none(self):
         return self.axis == Axis.NONE
