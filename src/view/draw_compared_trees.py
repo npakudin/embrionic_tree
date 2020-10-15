@@ -1,50 +1,113 @@
 from pathlib import Path
+
 from PIL import Image, ImageDraw
-from PIL.ImageFont import ImageFont, load_path, truetype
+from PIL.ImageFont import truetype
 
-from src.view.rounded_rect import rounded_rectangle
-
-from src.single_tree.development_tree_utils import calculate_number_on_level_2_trees
-from src.single_tree.distances import node_dist
+from src.multiple_trees.matrix_diff import MatrixDiff
+from src.single_tree.development_tree import Axis
 from src.single_tree.superimposed_tree import SuperimposedNode
 
-ITEM_SIZE = 20
+ITEM_SIZE = 32
 ITEM_SPACE = 20
-COLOR_LEFT = 0xff0050ff
-COLOR_RIGHT = 0xff00c0ff
-COLOR_EQ = 'black'
-COLOR_INEQ = 0xffe00000
+FONT_SIZE = 19
+LEGEND_FONT_SIZE = 30
+FONT_PATH = "/Library/Fonts/Arial.ttf"
+
+
+def load_font(font_path=FONT_PATH, font_size=FONT_SIZE):
+    try:
+        arial_font = truetype(font_path, font_size)
+    except OSError:
+        print(f"Cannot load font {font_path}")
+        arial_font = None
+    return arial_font
+
+
+def axis_node_caption(n1, n2):
+    if n1.axis == Axis.X or n1.axis == Axis.Y or n1.axis == Axis.Z:
+        return f"{n1.axis.upper()}"
+    elif n1.axis == Axis.DIAGONAL:
+        return "D"
+    return ""
+
+
+def unreduced_node_caption_1(n1, n2):
+    res = axis_node_caption(n1, n2)
+
+    if n1.growth is not None and n1.growth != 1.0:
+        res = f"{n1.growth:.1f}"
+
+    return res.strip()
+
+
+def reduced_node_caption_1(n1, n2):
+    return axis_node_caption(n1, n2)
+
+
+def reduced_node_caption_2(n1, n2):
+    if n1.growth is not None and n1.growth != 1.0:
+        res = f"{n1.growth:.1f}; "
+    else:
+        res = f"-; "
+
+    if n1.chain_length is not None and n1.chain_length != 1:
+        res += f"{n1.chain_length}"
+    else:
+        res += "-"
+
+    return res
+    #return f"{n1.growth:.1f}; {n1.chain_length}"
 
 
 class TreeDrawSettings:
-    def __init__(self, color_left=0, color_right=0, color_eq=0, color_ineq=0, get_node_caption=None, font=None):
+    def __init__(self, color_left=0, color_right=0, color_eq=0, color_ineq=0,
+                 get_node_caption_1=None, get_node_caption_2=None,
+                 font=load_font(), legend_font=load_font(FONT_PATH, LEGEND_FONT_SIZE),
+                 is_full_legend=True, width=1500, height=700):
         self.color_left = color_left
         self.color_right = color_right
         self.color_eq = color_eq
         self.color_ineq = color_ineq
-        self.get_node_caption = get_node_caption
+        self.get_node_caption_1 = get_node_caption_1
+        self.get_node_caption_2 = get_node_caption_2
         self.font = font
+        self.legend_font = legend_font
+        self.is_full_legend = is_full_legend
+        self.width = width
+        self.height = height
 
-    def node_caption(self, n1, n2):
-        if self.get_node_caption is None:
+    def node_caption_1(self, n1, n2):
+        if self.get_node_caption_1 is None:
             return ""
-        return self.get_node_caption()
+        return self.get_node_caption_1(n1, n2)
 
+    def node_caption_2(self, n1, n2):
+        if self.get_node_caption_2 is None:
+            return ""
+        return self.get_node_caption_2(n1, n2)
 
-font_path = "/Library/Fonts/Arial.ttf"
-font_size = 16
+    @staticmethod
+    def fertility_unreduced():
+        return TreeDrawSettings(color_left=0xFF285EDD, color_right=0xFFFC7074,
+                                color_eq=0xFFE8E4DE, color_ineq=0xFFE8E4DE,
+                                width=2000, height=720)
 
-try:
-    font = truetype(font_path, font_size)
-except OSError:
-    print(f"Cannot load font {font_path}")
-    font = None
+    @staticmethod
+    def fertility_reduced():
+        return TreeDrawSettings(color_left=0xFF285EDD, color_right=0xFFFC7074,
+                                color_eq=0xFFE8E4DE, color_ineq=0xFFE8E4DE,
+                                width=2000, height=570)
 
-FERTILITY_DRAW_SETTINGS = TreeDrawSettings(color_left=0xFF285EDD, color_right=0xFFFC7074,
-                                           color_eq=0xFFE8E4DE, color_ineq=0xFFE8E4DE, font=font)
+    @staticmethod
+    def single_tree_unreduced():
+        return TreeDrawSettings(color_eq=0xFFE8E4DE, get_node_caption_1=unreduced_node_caption_1,
+                                is_full_legend=False, width=1500, height=650)
 
-DEBUG_DRAW_SETTINGS = TreeDrawSettings(color_left=0xFF285EDD, color_right=0xFFFC7074,
-                                       color_eq=0xFFE8E4DE, color_ineq=0xff808080, font=font)
+    @staticmethod
+    def single_tree_reduced():
+        return TreeDrawSettings(color_eq=0xFFE8E4DE, get_node_caption_1=reduced_node_caption_1,
+                                get_node_caption_2=reduced_node_caption_2,
+                                is_full_legend=False, width=1500, height=470)
 
 
 class TreeDrawer:
@@ -54,6 +117,11 @@ class TreeDrawer:
         self.min_reduced_depth = 0
         self.max_reduced_depth = 0
         self.global_params = global_params
+
+    def draw_caption(self, node_caption, center_x, top):
+        text_width = self.draw_settings.font.getsize(node_caption)[0]
+        self.draw.text((center_x + (ITEM_SIZE - text_width) / 2, top), node_caption, fill=0xff000000, font=self.draw_settings.font)
+
 
     def draw_superimposed_node(self, superimposed_node, border_left, border_top, border_right, border_bottom, level,
                                parent=None, is_equal_history=True):
@@ -72,9 +140,6 @@ class TreeDrawer:
         cur_node_dist_axis = superimposed_node.dist_axis()
         is_equal_history = is_equal_history and cur_node_dist_axis == 0
 
-        leftest_leave_number = superimposed_node.leftest_leave_number
-        leaves_number = superimposed_node.leaves_number
-
         center_x = (border_right + border_left) / 2
 
         item_left = center_x - ITEM_SIZE / 2
@@ -87,7 +152,7 @@ class TreeDrawer:
             # is_right_exists = not superimposed_node.right.is_none()
             # right = center_x if is_right_exists else border_right
             right = border_left + (
-                        border_right - border_left) * superimposed_node.left.leaves_number / superimposed_node.leaves_number
+                    border_right - border_left) * superimposed_node.left.leaves_number / superimposed_node.leaves_number
 
             [add_max_dist, add_min_dist] = self.draw_superimposed_node(superimposed_node.left,
                                                                        border_left, border_top, right, item_top,
@@ -99,7 +164,7 @@ class TreeDrawer:
             # is_left_exists = not superimposed_node.left.is_none()
             # left = center_x if is_left_exists else border_left
             left = border_left + (
-                        border_right - border_left) * superimposed_node.left.leaves_number / superimposed_node.leaves_number
+                    border_right - border_left) * superimposed_node.left.leaves_number / superimposed_node.leaves_number
 
             [add_max_dist, add_min_dist] = self.draw_superimposed_node(superimposed_node.right,
                                                                        left, border_top, border_right, item_top,
@@ -114,16 +179,19 @@ class TreeDrawer:
         self.draw.ellipse((item_left, item_top, item_left + ITEM_SIZE, item_top + ITEM_SIZE), fill=color,
                           outline='black')
 
-        node_caption = self.draw_settings.node_caption(superimposed_node.n1, superimposed_node.n2)
-        self.draw.text((item_left, item_top + ITEM_SIZE), node_caption, fill=0xff000000, font=self.draw_settings.font)
+        node_caption_1 = self.draw_settings.node_caption_1(superimposed_node.n1, superimposed_node.n2)
+        self.draw_caption(node_caption_1, item_left, item_top + 4)
 
-        leaves1 = superimposed_node.n1.leaves_number
-        leaves2 = superimposed_node.n2.leaves_number
-        leaves_diff = abs(leaves1 - leaves2)
+        node_caption_2 = self.draw_settings.node_caption_2(superimposed_node.n1, superimposed_node.n2)
+        self.draw_caption(node_caption_2, item_left, item_top + 30)
 
+        # leaves1 = superimposed_node.n1.leaves_number
+        # leaves2 = superimposed_node.n2.leaves_number
+        # leaves_diff = abs(leaves1 - leaves2)
         # if is_equal_history and ((level == 3 and leaves_diff >= 10) or (level > 3 and leaves_diff >= 5)):
         #     selection_color = 0xFF52A710
-        #     self.draw.rounded_rectangle(((border_left, border_top), (border_right, border_bottom - ITEM_SPACE)), 1, selection_color, selection_color)
+        #     self.draw.rounded_rectangle(((border_left, border_top), (border_right, border_bottom - ITEM_SPACE)), 1,
+        #       selection_color, selection_color)
         #     self.draw.text((border_left + 00, border_top - 20), f"leaves #:", fill=selection_color)
         #     self.draw.text((border_left + 55, border_top - 20), f"{leaves1}", fill=self.draw_settings.color_right)
         #     self.draw.text((border_left + 70, border_top - 20), f"{leaves2}", fill=self.draw_settings.color_left)
@@ -133,11 +201,12 @@ class TreeDrawer:
     def draw_legend(self, item_left, item_top, color, text):
         self.draw.ellipse((item_left, item_top, item_left + ITEM_SIZE, item_top + ITEM_SIZE), fill=color,
                           outline='black')
-        self.draw.text((item_left + ITEM_SIZE + ITEM_SPACE, item_top), text, fill='black', font=self.draw_settings.font)
+        self.draw.text((item_left + ITEM_SIZE + ITEM_SPACE, item_top), text, fill='black',
+                       font=self.draw_settings.legend_font)
 
     def draw_tree(self, tree1, tree2, folder):
 
-        im = Image.new('RGBA', [1500, 600], (255, 255, 255, 255))
+        im = Image.new('RGBA', [self.draw_settings.width, self.draw_settings.height], (255, 255, 255, 255))
         self.draw = ImageDraw.Draw(im)
 
         self.min_reduced_depth = min(tree1.root.reduced_depth, tree2.root.reduced_depth)
@@ -147,35 +216,43 @@ class TreeDrawer:
         superimposed_node.calculate_leaves_number([0] * self.max_reduced_depth)
 
         [raw_max_dist, raw_min_dist] = self.draw_superimposed_node(superimposed_node,
-                                                                   0, im.size[1] - (ITEM_SIZE + ITEM_SPACE) * (
-                                                                               self.max_reduced_depth + 0),
-                                                                   im.size[0] - ITEM_SIZE - ITEM_SPACE, im.size[1], 0,
-                                                                   is_equal_history=True)
+                                                                   10, im.size[1] - (ITEM_SIZE + ITEM_SPACE) * (self.max_reduced_depth + 0),
+                                                                   im.size[0] - ITEM_SIZE - ITEM_SPACE, im.size[1],
+                                                                   0, is_equal_history=True)
 
         # legend
-        self.draw_legend(400, 10, self.draw_settings.color_left, 'Node exists in the 1st tree only')
-        self.draw_legend(400, 35, self.draw_settings.color_right, 'Node exists in the 2nd tree only')
-        self.draw_legend(400, 60, self.draw_settings.color_eq, 'Node exists in both trees')
-        # self.draw_legend(300, 50, self.draw_settings.color_eq, 'Node exists in both trees and axis are equal, e.g. X and X')
-        # self.draw_legend(300, 70, self.draw_settings.color_ineq, 'Node exists in both trees and axis are NOT equal, e.g. X and Y')
+        if self.draw_settings.is_full_legend:
+            self.draw_legend(500, 10, self.draw_settings.color_left, 'Node exists in the 1st tree only')
+            self.draw_legend(500, 48, self.draw_settings.color_right, 'Node exists in the 2nd tree only')
+            self.draw_legend(500, 86, self.draw_settings.color_eq, 'Node exists in both trees')
 
-        # distances
-        # correction_coef = sum([pow(2 * global_params.param_a, i) for i in range(min_reduced_depth)])
-        self.draw.text((100, 10), f"1st tree: {tree1.name.replace('_', ' ')}",
-                       fill=self.draw_settings.color_left, font=self.draw_settings.font)
-        self.draw.text((100, 30), f"2nd tree: {tree2.name.replace('_', ' ')}",
-                       fill=self.draw_settings.color_right, font=self.draw_settings.font)
-        # draw.text((10, 10), f"param_a      = {param_a:0.2f}", fill='black')
-        # draw.text((10, 30), f"raw_max_dist = {raw_max_dist:0.4f}", fill='black')
-        # draw.text((10, 50), f"raw_min_dist = {raw_min_dist:0.4f}", fill='black')
-        # draw.text((10, 70), f"corr_min_dist= {dist:0.4f}", fill='black')
-        # draw.text((10, 90), f"corr_coef    = {correction_coef:0.4f}", fill='black')
+            self.draw.text((10, 10), f"1st tree: {tree1.name.replace('_', ' ')}",
+                           fill=self.draw_settings.color_left, font=self.draw_settings.legend_font)
+            self.draw.text((10, 48), f"2nd tree: {tree2.name.replace('_', ' ')}",
+                           fill=self.draw_settings.color_right, font=self.draw_settings.legend_font)
+        else:
+            self.draw.text((10, 10), f"{tree1.name.replace('_', ' ')}",
+                           fill='black', font=self.draw_settings.legend_font)
 
         for i in range(0, 11):
-            self.draw.text((im.size[0] - 20, im.size[1] - (i + 1) * (ITEM_SIZE + ITEM_SPACE)), f"{i + 1}", fill='black', font=self.draw_settings.font)
+            self.draw.text((im.size[0] - 40, im.size[1] - (i + 1) * (ITEM_SIZE + ITEM_SPACE)), f"{i + 1}", fill='black',
+                           font=self.draw_settings.legend_font)
 
         del self.draw
 
         path = f"../../output/{folder}"
         Path(path).mkdir(parents=True, exist_ok=True)
-        im.save(f"{path}/{tree1.name}-{tree2.name}.png")
+        name = tree1.name if tree1.name == tree2.name else f"{tree1.name}-{tree2.name}"
+        im.save(f"{path}/{name}.png")
+
+
+def get_prepared_trees(is_reducing, max_level):
+    systematic_tree = "morph"
+
+    matr_diff = MatrixDiff("../../input/xtg/*.xtg", f"../../input/systematic_tree_{systematic_tree}.xtg",
+                           ["Angiosperms"], max_level=max_level, is_reducing=is_reducing)
+    trees = matr_diff.vertices
+    for tree in trees:
+        tree.prepare()
+
+    return trees

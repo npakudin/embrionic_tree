@@ -61,6 +61,8 @@ class TreeNode:
             self.left = NONE_NODE
             self.right = NONE_NODE
             self.axis = Axis.LEAVE
+            self.growth = 1.0
+            self.chain_length = 1.0
         self.left.internal_cut(src_level + 1, max_level)
         self.right.internal_cut(src_level + 1, max_level)
 
