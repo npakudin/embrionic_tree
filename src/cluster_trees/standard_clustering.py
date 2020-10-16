@@ -27,13 +27,13 @@ matrDiff = MatrixDiff("../../input/xtg/*.xtg", f"../../input/systematic_tree_{sy
 for param_a in np.linspace(0.5, 1.0, 2):
     for systematic_tree in systematic_trees:
         for cluster_algorithm in cluster_algorithms:
-            #for increasing_level in range(8):
-            for increasing_level in range(1):
+            for increasing_level in range(-1, 8):
                 level_weight_multiplier = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-                #level_weight_multiplier[increasing_level] *= 5
+                if increasing_level >= 0:
+                    level_weight_multiplier[increasing_level] *= 5
 
                 global_params = GlobalParams(max_level=max_level, param_a=param_a, g_weight=0.0,
-                                             chain_length_weight=0.0)
+                                             chain_length_weight=0.0, level_weight_multiplier=level_weight_multiplier)
 
                 experiment_matrix = matrDiff.make_experiment_matrix(global_params)
 

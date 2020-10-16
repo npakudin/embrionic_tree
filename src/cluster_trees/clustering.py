@@ -11,8 +11,8 @@ def draw_plot(clustered_trees, names, plot_name, filename):
     fig = plt.figure()
 
     ax1 = fig.add_axes((0.13, 0.1, 0.84, 0.85))
-    ax1.set_title(plot_name)
-    ax1.set_xlabel("distance, Minarskys")
+    #ax1.set_title(plot_name)
+    ax1.set_xlabel("Distance between clusters")
 
     hierarchy.dendrogram(clustered_trees,
                          # labels=np.array([x.split('_')[0] + ' ' + x.split('_')[1][:5] for x in names], np.str),
