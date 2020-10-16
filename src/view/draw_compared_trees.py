@@ -101,13 +101,18 @@ class TreeDrawSettings:
     @staticmethod
     def single_tree_unreduced():
         return TreeDrawSettings(color_eq=0xFFE8E4DE, get_node_caption_1=unreduced_node_caption_1,
-                                is_full_legend=False, width=1500, height=650)
+                                is_full_legend=False, width=1500, height=590)
 
     @staticmethod
     def single_tree_reduced():
         return TreeDrawSettings(color_eq=0xFFE8E4DE, get_node_caption_1=reduced_node_caption_1,
                                 get_node_caption_2=reduced_node_caption_2,
                                 is_full_legend=False, width=1500, height=470)
+
+    @staticmethod
+    def johansen():
+        return TreeDrawSettings(color_eq=0xFFE8E4DE, get_node_caption_1=unreduced_node_caption_1,
+                                is_full_legend=False, width=800, height=390)
 
 
 class TreeDrawer:
@@ -121,7 +126,6 @@ class TreeDrawer:
     def draw_caption(self, node_caption, center_x, top):
         text_width = self.draw_settings.font.getsize(node_caption)[0]
         self.draw.text((center_x + (ITEM_SIZE - text_width) / 2, top), node_caption, fill=0xff000000, font=self.draw_settings.font)
-
 
     def draw_superimposed_node(self, superimposed_node, border_left, border_top, border_right, border_bottom, level,
                                parent=None, is_equal_history=True):
@@ -206,14 +210,21 @@ class TreeDrawer:
 
     def draw_tree(self, tree1, tree2, folder):
 
-        im = Image.new('RGBA', [self.draw_settings.width, self.draw_settings.height], (255, 255, 255, 255))
-        self.draw = ImageDraw.Draw(im)
-
         self.min_reduced_depth = min(tree1.root.reduced_depth, tree2.root.reduced_depth)
         self.max_reduced_depth = max(tree1.root.reduced_depth, tree2.root.reduced_depth)
 
         superimposed_node = SuperimposedNode(tree1.root, tree2.root)
         superimposed_node.calculate_leaves_number([0] * self.max_reduced_depth)
+
+        image_height = (ITEM_SIZE + ITEM_SPACE) * (self.max_reduced_depth + 0)
+        image_width = (ITEM_SIZE + 7) * (superimposed_node.leaves_number + 0) + 60
+        if self.draw_settings.is_full_legend:
+            image_height += 140
+        else:
+            image_height += 60
+
+        im = Image.new('RGBA', [image_width, image_height], (255, 255, 255, 255))
+        self.draw = ImageDraw.Draw(im)
 
         [raw_max_dist, raw_min_dist] = self.draw_superimposed_node(superimposed_node,
                                                                    10, im.size[1] - (ITEM_SIZE + ITEM_SPACE) * (self.max_reduced_depth + 0),
@@ -222,19 +233,21 @@ class TreeDrawer:
 
         # legend
         if self.draw_settings.is_full_legend:
-            self.draw_legend(500, 10, self.draw_settings.color_left, 'Node exists in the 1st tree only')
-            self.draw_legend(500, 48, self.draw_settings.color_right, 'Node exists in the 2nd tree only')
-            self.draw_legend(500, 86, self.draw_settings.color_eq, 'Node exists in both trees')
+            self.draw_legend(600, 10, self.draw_settings.color_left, 'Node exists in the 1st tree only')
+            self.draw_legend(600, 48, self.draw_settings.color_right, 'Node exists in the 2nd tree only')
+            self.draw_legend(600, 86, self.draw_settings.color_eq, 'Node exists in both trees')
 
             self.draw.text((10, 10), f"1st tree: {tree1.name.replace('_', ' ')}",
                            fill=self.draw_settings.color_left, font=self.draw_settings.legend_font)
             self.draw.text((10, 48), f"2nd tree: {tree2.name.replace('_', ' ')}",
                            fill=self.draw_settings.color_right, font=self.draw_settings.legend_font)
         else:
-            self.draw.text((10, 10), f"{tree1.name.replace('_', ' ')}",
-                           fill='black', font=self.draw_settings.legend_font)
+            name = tree1.name.replace('_', ' ') # for 'Chenopodium_bonus-henricus' to 'Chenopodium bonus-henricus'
+            if 'a' <= name[0] <= 'z':
+                name = name.capitalize().replace('-', ' ') # for 'asterad-1' to 'Asterad 1'
+            self.draw.text((10, 10), f"{name}", fill='black', font=self.draw_settings.legend_font)
 
-        for i in range(0, 11):
+        for i in range(0, self.max_reduced_depth):
             self.draw.text((im.size[0] - 40, im.size[1] - (i + 1) * (ITEM_SIZE + ITEM_SPACE)), f"{i + 1}", fill='black',
                            font=self.draw_settings.legend_font)
 

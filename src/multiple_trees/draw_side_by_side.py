@@ -9,7 +9,7 @@ def draw_trees(folder, draw_settings, is_reducing, max_level=10, param_a=0.5):
 
     tree_drawer = TreeDrawer(draw_settings, global_params)
     for i in range(0, len(trees)):
-        for j in range(len(trees)):
+        for j in range(0, len(trees)):
             tree_drawer.draw_tree(trees[i], trees[j], folder)
 
 
