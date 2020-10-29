@@ -7,7 +7,7 @@ class GlobalParams:
                  is_swap_left_right=False
                  ):
         if level_weight_multiplier is None:
-            level_weight_multiplier = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+            level_weight_multiplier = [1] * 11
         self.axis_weight = axis_weight
         self.fertility_weight = fertility_weight
         self.max_level = max_level

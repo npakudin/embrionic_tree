@@ -27,8 +27,8 @@ matrDiff = MatrixDiff("../../input/xtg/*.xtg", f"../../input/systematic_tree_{sy
 for param_a in np.linspace(0.5, 1.0, 2):
     for systematic_tree in systematic_trees:
         for cluster_algorithm in cluster_algorithms:
-            for increasing_level in range(-1, 8):
-                level_weight_multiplier = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+            for increasing_level in [-1, 3 - 1, 7 - 1]: #range(-1, 8):
+                level_weight_multiplier = [1] * 11
                 if increasing_level >= 0:
                     level_weight_multiplier[increasing_level] *= 5
 
@@ -57,7 +57,7 @@ for param_a in np.linspace(0.5, 1.0, 2):
                 clustered_trees = hierarchy.linkage(dist_array, effective_cluster_algorithm)
 
                 corr = corr_clustered_trees(clustered_trees, matrDiff.names, matrDiff.make_systematic_matrix())
-                print(f"{global_params.g_weight:0.2f} {param_a:0.2f} {cluster_algorithm} {corr:0.2f}")
+                print(f"{global_params.g_weight:0.2f} {param_a:0.2f} {cluster_algorithm} {corr:0.8f}")
 
                 if cluster_algorithm not in alg_to_corr.keys():
                     alg_to_corr[cluster_algorithm] = []

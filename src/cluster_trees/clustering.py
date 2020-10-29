@@ -10,13 +10,13 @@ def draw_plot(clustered_trees, names, plot_name, filename):
     plt.rcParams["figure.dpi"] = 80
     fig = plt.figure()
 
-    ax1 = fig.add_axes((0.13, 0.1, 0.84, 0.85))
+    ax1 = fig.add_axes((0.18, 0.10, 0.79, 0.88))
     #ax1.set_title(plot_name)
-    ax1.set_xlabel("Distance between clusters")
+    ax1.set_xlabel("Distance")
 
     hierarchy.dendrogram(clustered_trees,
-                         # labels=np.array([x.split('_')[0] + ' ' + x.split('_')[1][:5] for x in names], np.str),
-                         labels=np.array([x for x in names], np.str),
+                         labels=np.array([x.replace('_', ' ') for x in names], np.str),
+                         #labels=np.array([x for x in names], np.str),
                          orientation='right', count_sort='ascending', distance_sort='ascending')
     fig.savefig(filename)
     plt.close(fig)

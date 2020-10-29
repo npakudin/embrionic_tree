@@ -50,7 +50,7 @@ class SuperimposedNode:
     # distance is 1 if one of nodes exists and the 2nd does not
     # don't care about axis
     def dist_fertility(self):
-        if self.n1.is_none() or self.n2.is_none():
+        if self.n1.is_none() != self.n2.is_none():
             return 1
         return 0
 
@@ -93,8 +93,8 @@ class SuperimposedNode:
             return 1
 
     def dist_gr(self):
-        g1 = 0 if (self.n1.is_none()) or (self.n1.growth is None) else self.n1.growth - 1
-        g2 = 0 if (self.n2.is_none()) or (self.n2.growth is None) else self.n2.growth - 1
+        g1 = 1 if (self.n1.is_none()) or (self.n1.growth is None) else self.n1.growth
+        g2 = 1 if (self.n2.is_none()) or (self.n2.growth is None) else self.n2.growth
 
         return abs(g1 - g2)
 

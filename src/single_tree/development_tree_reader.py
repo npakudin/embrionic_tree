@@ -37,8 +37,10 @@ def parse_xml_node(xml, name, src_level, address):
                 node.axis = Axis.Y
             elif data[1] == "z":
                 node.axis = Axis.Z
+                # print(f"Axis Z {name}")
             elif data[1] == "d" or data[1] == "xy":
                 node.axis = Axis.DIAGONAL
+                # print(f"diagonal {name}")
             else:
                 assert False, f"wrong node description: '{data[0]} {data[1]}' in file: {name}, address: {address}"
 
