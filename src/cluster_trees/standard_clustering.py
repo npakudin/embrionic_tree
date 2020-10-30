@@ -19,7 +19,7 @@ alg_to_corr = {}
 
 
 matrDiff = MatrixDiff("../../input/xtg/*.xtg", f"../../input/systematic_tree_{systematic_tree}.xtg", ["Angiosperms"],
-                      max_level=max_level)
+                      max_level=max_level, is_reducing=True)
 
 # for tree in matrDiff.vertices:
 #     print(f"{tree.name} : {tree.node.depth}")

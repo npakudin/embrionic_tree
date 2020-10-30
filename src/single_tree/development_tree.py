@@ -21,7 +21,7 @@ def get_axis(node):
 
 class TreeNode:
     def __init__(self, address="unknown", axis=Axis.NONE, left=None, right=None, src_level=0, reduced_level=0,
-                 reduced_address=None):
+                 reduced_address=None, tree=None):
         self.address = address
         self.axis = axis
         self.left = left
@@ -36,6 +36,7 @@ class TreeNode:
         self.fertility = None
         self.number_on_level = None
         self.leaves_number = None
+        self.tree = tree
 
     def __str__(self):
         return self.get_full_addr()
