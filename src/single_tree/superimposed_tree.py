@@ -1,6 +1,7 @@
 import copy
 
 from src.single_tree.development_tree import Axis, NONE_NODE
+from src.single_tree.distances import pattern_tree_infinite
 
 
 class SuperimposedNode:
@@ -148,7 +149,7 @@ class SuperimposedNode:
     def is_none(self):
         return self.n1.is_none() and self.n2.is_none()
 
-    def full_distance(self, global_params, pattern):
+    def full_distance(self, global_params, pattern=pattern_tree_infinite()):
         if pattern.is_none():
             return 0
 

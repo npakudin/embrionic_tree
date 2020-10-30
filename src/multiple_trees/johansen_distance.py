@@ -1,8 +1,6 @@
-from src.single_tree.distances import development_tree_distance
-from src.single_tree.global_params import GlobalParams
 from src.multiple_trees.matrix_diff import MatrixDiff
-from src.multiple_trees.matrix_diff import print_matrix
-from src.view.draw_compared_trees import draw_tree
+from src.single_tree.global_params import GlobalParams
+from src.single_tree.superimposed_tree import SuperimposedNode
 
 
 def first_vowel(str, from_index=1):
@@ -47,14 +45,16 @@ for [param_a, is_reducing] in params:
     global_params = GlobalParams(max_level=max_level, param_a=param_a)
     gp = global_params
 
-    print(f"Johanson-Batygina types to species distance, is_reducing: True, param_a: 0.5, axis_weight: 1.0, fertility_weight: 1.0, g_weight: 0.0, chain_length_weight: 0.0")
+    print(f"Johansen-Batygina types to species distance, is_reducing: True, param_a: 0.5, axis_weight: 1.0, fertility_weight: 1.0, g_weight: 0.0, chain_length_weight: 0.0")
     print(f"Specie Reference_type 1st_type 1st_type_distance 2nd_type 2nd_type_distance")
     for i in range(len(trees)):
         print(f"{matrDiff.names[i]} {short_embryo_name(trees[i].embryo_type)} ", end='')
         res = []
         min_dist = (-1, 1.0E+100)
         for j in range(len(johansenTrees)):
-            dist = development_tree_distance(trees[i], johansenTrees[j], global_params)
+            superimposed_node = SuperimposedNode(trees[i].root, johansenTrees[j].root)
+            dist = superimposed_node.full_distance(global_params)
+            #dist = development_tree_distance(trees[i], johansenTrees[j], global_params)
             res.append((dist, johansenMatrDiff.names[j]))
             # draw_tree(trees[i], johansenTrees[j], global_params, dist, 0, "johansen")
 

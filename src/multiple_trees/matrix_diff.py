@@ -2,9 +2,10 @@ import numpy
 
 from src.single_tree.development_tree_reader import read_all_trees
 from src.single_tree.development_tree_utils import prepare_trees
-from src.view.build_morph_graph import taxon_from_xml
-from src.single_tree.distances import development_tree_distance, pattern_tree_infinite
+from src.single_tree.distances import pattern_tree_infinite
 from src.single_tree.global_params import GlobalParams
+from src.single_tree.superimposed_tree import SuperimposedNode
+from src.view.build_morph_graph import taxon_from_xml
 
 
 def apply_each(matr, fun):
@@ -149,7 +150,8 @@ class MatrixDiff:
         for i in range(len(trees)):
             experiment_matrix.append([])
             for j in range(i):
-                dist = development_tree_distance(trees[i], trees[j], global_params, pattern=pattern)
+                superimposed_node = SuperimposedNode(trees[i].root, trees[j].root)
+                dist = superimposed_node.full_distance(global_params, pattern=pattern)
                 experiment_matrix[i].append(dist)
 
         return experiment_matrix
