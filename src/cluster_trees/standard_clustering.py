@@ -8,7 +8,6 @@ from src.multiple_trees.matrix_diff import MatrixDiff, to_full_matrix
 from src.ultra_metric.ultra_metric import get_ultra_metric, UltraMetricParams
 
 systematic_tree = "morph"
-cluster_algorithm = "complete"
 max_level = 11
 
 systematic_trees = ["morph"]
