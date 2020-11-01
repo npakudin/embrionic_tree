@@ -21,7 +21,7 @@ def get_axis(node):
 
 class TreeNode:
     def __init__(self, address="unknown", axis=Axis.NONE, left=None, right=None, src_level=0, reduced_level=0,
-                 reduced_address=None, tree=None):
+                 reduced_address=None):
         self.address = address
         self.axis = axis
         self.left = left
@@ -36,7 +36,7 @@ class TreeNode:
         self.fertility = None
         self.number_on_level = None
         self.leaves_number = None
-        self.tree = tree
+        self.tree = None
 
     def __str__(self):
         return self.get_full_addr()
@@ -147,6 +147,18 @@ class TreeNode:
             self.right.calculate_leaves_number()
             self.leaves_number = self.left.leaves_number + self.right.leaves_number
 
+    def recursive(self, params, handler, params_getter):
+        if self.is_none():
+            return 0
+
+        left_params = params_getter(self, params)
+        left_res = self.recursive(left_params, handler, params_getter)
+        right_params = params_getter(self, params)
+        right_params = self.recursive(right_params, handler, params_getter)
+
+        cur_res = handler(self, params)
+        return cur_res
+
     def is_none(self):
         return self.axis == Axis.NONE
 
@@ -179,10 +191,10 @@ class Tree:
     def prepare(self):
         self.root.internal_prepare(0)
 
-        # for i in range(self.root.reduced_depth + 1):
-        #     cur_node = copy.deepcopy(self.root)
-        #     cur_node.internal_cut(0, i)
-        #     self.roots.append(cur_node)
+        for i in range(self.root.reduced_depth + 1):
+            cur_node = copy.deepcopy(self.root)
+            cur_node.internal_cut(0, i)
+            self.roots.append(cur_node)
 
         self.root.calculate_leaves_number()
 

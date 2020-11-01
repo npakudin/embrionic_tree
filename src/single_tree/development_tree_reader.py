@@ -6,10 +6,10 @@ ns = {'b': 'http://bioinfweb.info/xmlns/xtg'}
 
 
 # name is necessary for debug and input control
-def parse_xml_node(xml, name, src_level, address, tree=None):
+def parse_xml_node(xml, name, src_level, address):
     data = xml.find('b:Branch', ns).find('b:TextLabel', ns).attrib['Text'].replace(",", ".").lower().split(' ')
 
-    node = TreeNode(address=address, src_level=src_level, left=NONE_NODE, right=NONE_NODE, tree=tree)
+    node = TreeNode(address=address, src_level=src_level, left=NONE_NODE, right=NONE_NODE)
 
     if data[0] == 'ww':
         data[0] = 'w_in_w'
@@ -52,9 +52,9 @@ def parse_xml_node(xml, name, src_level, address, tree=None):
         node.axis = Axis.LEAVE
 
     if len(children) > 0:
-        node.left = parse_xml_node(xml=children[0], name=name, src_level=src_level + 1, address=address + ".L", tree=tree)
+        node.left = parse_xml_node(xml=children[0], name=name, src_level=src_level + 1, address=address + ".L")
     if len(children) > 1:
-        node.right = parse_xml_node(xml=children[1], name=name, src_level=src_level + 1, address=address + ".R", tree=tree)
+        node.right = parse_xml_node(xml=children[1], name=name, src_level=src_level + 1, address=address + ".R")
 
     return node
 
@@ -74,13 +74,10 @@ def read_tree_from_xml(filename):
     filename_type = path[len(path) - 1][:-4]
     (name, embryo_type) = parse_name_type(filename_type)
 
-    tree = Tree(None, name=name, embryo_type=embryo_type)
+    root = parse_xml_node(xml=ElementTree.parse(filename).getroot().find('b:Tree', ns).find('b:Node', ns),
+                          name=name, src_level=0, address="Z")
 
-    node = parse_xml_node(xml=ElementTree.parse(filename).getroot().find('b:Tree', ns).find('b:Node', ns),
-                          name=name, src_level=0, address="Z", tree=tree)
-
-    tree.root = node
-    return tree
+    return Tree(root, name=name, embryo_type=embryo_type)
 
 
 def read_all_trees(pattern):
