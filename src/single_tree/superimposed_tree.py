@@ -1,5 +1,3 @@
-import copy
-
 from src.single_tree.development_tree import Axis, NONE_NODE
 from src.single_tree.distances import pattern_tree_infinite
 
@@ -182,16 +180,14 @@ class SuperimposedNode:
 
         return res
 
-    def high_fertility_distance(self, global_params, pattern):
+    def high_fertility_distance(self, pattern=pattern_tree_infinite()):
         if pattern.is_none():
             return []
 
         if (self.n1.is_none()) or (self.n2.is_none()):  # note: OR here, not AND
             return []
 
-        dist_ax = self.dist_axis()
-
-        if (dist_ax != 0) and (self.n1.axis != Axis.LEAVE) and (self.n2.axis != Axis.LEAVE):
+        if (self.n1.axis != self.n2.axis) and (self.n1.axis != Axis.LEAVE) and (self.n2.axis != Axis.LEAVE):
             return []
 
         if not self.n1.is_none() and not self.n2.is_none():
@@ -202,8 +198,8 @@ class SuperimposedNode:
 
         res = [[reduced_address, dist_fert, reduced_level, self.n1, self.n2]]
 
-        res += self.high_fertility_distance(global_params, pattern.left)
-        res += self.high_fertility_distance(global_params, pattern.right)
+        res += self.left.high_fertility_distance(pattern.left)
+        res += self.right.high_fertility_distance(pattern.right)
         return res
 
 

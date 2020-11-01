@@ -11,6 +11,7 @@ from src.single_tree.development_tree_utils import prepare_trees, short_sp_name
 from src.single_tree.distances import high_fertility_diff_development_tree_distance
 from src.single_tree.global_params import GlobalParams
 from src.multiple_trees.iterate_trees import number_by_address
+from src.single_tree.superimposed_tree import SuperimposedNode
 
 
 def specie_fertility_distance(max_level=10, is_reducing=True):
@@ -26,7 +27,9 @@ def specie_fertility_distance(max_level=10, is_reducing=True):
         for j in range(i + 1, len(trees)):  # skip repeating pairs
 
             # get array of tuples (node1, node2, distance, ...)
-            distances = high_fertility_diff_development_tree_distance(trees[i], trees[j], global_params)
+            superimposed_node = SuperimposedNode(trees[i].root, trees[j].root)
+            distances = superimposed_node.high_fertility_distance()
+
             for [addr, dist, reduced_level, node1, node2] in distances:
 
                 # ignore cases when at the last level history is completely equal
