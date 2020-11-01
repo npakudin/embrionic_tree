@@ -28,7 +28,7 @@ class SuperimposedNode:
     # Calculates distance between nodes n1 and n2
     def node_dist(self, global_params):
         raw_distance = global_params.fertility_weight * self.dist_fertility() + \
-                       global_params.axis_weight * self.dist_axis() + \
+                       global_params.division_weight * self.dist_division() + \
                        global_params.g_weight * self.dist_gr() + \
                        global_params.chain_length_weight * self.dist_chain_length()
 
@@ -55,7 +55,7 @@ class SuperimposedNode:
 
     # distance is 0 if one of nodes is None, it's calculated in fertility_dist()
     # calculate difference in axis only
-    def dist_axis(self):
+    def dist_division(self):
         if self.n1.is_none() or self.n2.is_none():
             return 0
 

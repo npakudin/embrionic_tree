@@ -141,8 +141,8 @@ class TreeDrawer:
             color = self.draw_settings.color_ineq
 
         cur_node_distance = superimposed_node.node_dist(self.global_params)
-        cur_node_dist_axis = superimposed_node.dist_axis()
-        is_equal_history = is_equal_history and cur_node_dist_axis == 0
+        cur_node_dist_division = superimposed_node.dist_division()
+        is_equal_history = is_equal_history and cur_node_dist_division == 0
 
         center_x = (border_right + border_left) / 2
 

@@ -14,7 +14,7 @@ def node_dist(n1, n2, global_params):
     assert not (n1.is_none() and n2.is_none())
 
     raw_distance = global_params.fertility_weight * dist_fertility(n1, n2) + \
-                   global_params.axis_weight * dist_axis(n1, n2) + \
+                   global_params.division_weight * dist_division(n1, n2) + \
                    global_params.g_weight * dist_gr(n1, n2) + \
                    global_params.chain_length_weight * dist_chain_length(n1, n2)
 
@@ -43,7 +43,7 @@ def dist_fertility(n1, n2):
 
 # distance is 0 if one of nodes is None, it's calculated in fertility_dist()
 # calculate difference in axis only
-def dist_axis(n1, n2):
+def dist_division(n1, n2):
     if n1.is_none() or n2.is_none():
         return 0
 

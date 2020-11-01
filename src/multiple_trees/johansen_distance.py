@@ -45,7 +45,7 @@ for [param_a, is_reducing] in params:
     global_params = GlobalParams(max_level=max_level, param_a=param_a)
     gp = global_params
 
-    print(f"Johansen-Batygina types to species distance, is_reducing: True, param_a: 0.5, axis_weight: 1.0, fertility_weight: 1.0, g_weight: 0.0, chain_length_weight: 0.0")
+    print(f"Johansen-Batygina types to species distance, is_reducing: True, param_a: 0.5, division_weight: 1.0, fertility_weight: 1.0, g_weight: 0.0, chain_length_weight: 0.0")
     print(f"Specie Reference_type 1st_type 1st_type_distance 2nd_type 2nd_type_distance")
     for i in range(len(trees)):
         print(f"{matrDiff.names[i]} {short_embryo_name(trees[i].embryo_type)} ", end='')

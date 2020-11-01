@@ -6,11 +6,10 @@
 #   - multiply fertility_distance * 2^level to get nodes at the highest level
 #       with the biggest difference
 
+from src.multiple_trees.iterate_trees import number_by_address
 from src.single_tree.development_tree_reader import read_all_trees
 from src.single_tree.development_tree_utils import prepare_trees, short_sp_name
-from src.single_tree.distances import high_fertility_diff_development_tree_distance
 from src.single_tree.global_params import GlobalParams
-from src.multiple_trees.iterate_trees import number_by_address
 from src.single_tree.superimposed_tree import SuperimposedNode
 
 
