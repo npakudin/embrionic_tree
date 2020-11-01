@@ -179,10 +179,10 @@ class Tree:
     def prepare(self):
         self.root.internal_prepare(0)
 
-        for i in range(self.root.reduced_depth + 1):
-            cur_node = copy.deepcopy(self.root)
-            cur_node.internal_cut(0, i)
-            self.roots.append(cur_node)
+        # for i in range(self.root.reduced_depth + 1):
+        #     cur_node = copy.deepcopy(self.root)
+        #     cur_node.internal_cut(0, i)
+        #     self.roots.append(cur_node)
 
         self.root.calculate_leaves_number()
 
