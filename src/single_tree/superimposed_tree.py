@@ -1,4 +1,4 @@
-from src.single_tree.development_tree import Axis, NONE_NODE
+from src.single_tree.development_tree import Axis, NONE_NODE, dist_div
 from src.single_tree.distances import pattern_tree_infinite
 
 
@@ -59,37 +59,7 @@ class SuperimposedNode:
         if self.n1.is_none() or self.n2.is_none():
             return 0
 
-        axis1 = self.n1.axis
-        axis2 = self.n2.axis
-
-        (axis1, axis2) = sorted((axis1, axis2))
-        # x < d < у < z < L < N < growth
-
-        if axis1 == axis2:
-            return 0
-        else:
-            # d1, d2    => 1
-            # d1, None  => 1
-            # d1, L     => 0.5
-            # L, None   => 1
-            # if (a1 == 'L' and a2 is not None) or (a2 == 'L' and a1 is not None):
-            #     return 0.5 * weight  # d1, L     => 0.5
-            # if (a1 == 'd' and a2 is not None) or (a2 == 'd' and a1 is not None):
-            #     return 0.60 * weight  # d1, diag  => 0.60
-            # return 1 * weight
-
-            # different for leave, D, Z etc
-            if axis2 == Axis.GROWTH:
-                return 1
-            if axis1 == 'L':
-                if axis2 == 'z':
-                    return 1
-                return 0.5
-            if axis1 == 'd':
-                if axis2 == 'z':
-                    return 1
-                return 0.5
-            return 1
+        return dist_div(self.n1.axis, self.n2.axis)
 
     def dist_gr(self):
         g1 = 1 if (self.n1.is_none()) or (self.n1.growth is None) else self.n1.growth

@@ -1,6 +1,6 @@
 import copy
 
-from src.single_tree.development_tree import get_axis, Axis, TreeNode
+from src.single_tree.development_tree import get_axis, Axis, TreeNode, dist_div
 
 
 def addr(node, reduced_addr):
@@ -47,37 +47,7 @@ def dist_division(n1, n2):
     if n1.is_none() or n2.is_none():
         return 0
 
-    axis1 = get_axis(n1)
-    axis2 = get_axis(n2)
-
-    (axis1, axis2) = sorted((axis1, axis2))
-    # x < d < у < z < L < N
-
-    if axis1 == axis2:
-        return 0
-    else:
-        # d1, d2    => 1
-        # d1, None  => 1
-        # d1, L     => 0.5
-        # L, None   => 1
-        # if (a1 == 'L' and a2 is not None) or (a2 == 'L' and a1 is not None):
-        #     return 0.5 * weight  # d1, L     => 0.5
-        # if (a1 == 'd' and a2 is not None) or (a2 == 'd' and a1 is not None):
-        #     return 0.60 * weight  # d1, diag  => 0.60
-        # return 1 * weight
-
-        # different for leave, D, Z etc
-        if axis2 == Axis.GROWTH:
-            return 1
-        if axis1 == 'L':
-            if axis2 == 'z':
-                return 1
-            return 0.5
-        if axis1 == 'd':
-            if axis2 == 'z':
-                return 1
-            return 0.5
-        return 1
+    return dist_div(get_axis(n1), get_axis(n2))
 
 
 def dist_gr(n1, n2):

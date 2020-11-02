@@ -3,14 +3,32 @@ import copy
 
 # order should be: x < d < у < z < L < N
 # to provide it, use lexicographic order of: x < xd < у < z < zLeave < zzGrowth
-class Axis():
+class Axis:
     X = 'x'
-    DIAGONAL = 'xd'
     Y = 'y'
+    DIAGONAL = 'yd'
+    LEAVE = 'yyLeave'
     Z = 'z'
-    GROWTH = 'zzGrowth'
-    LEAVE = 'zLeave'
-    NONE = 'zNone' # for really not existing node
+    GROWTH = 'zGrowth'
+    APOPTOSIS = 'zzApoptosis'
+    NONE = 'zzNone' # for really not existing node
+
+
+def dist_div(axis1, axis2):
+    if axis1 == axis2:
+        return 0
+
+    (axis1, axis2) = sorted((axis1, axis2))
+    # X < Y < Diagonal < Leave < Z < Growth < Apoptosis < None
+
+    if axis2 in [Axis.Z, Axis.GROWTH, Axis.APOPTOSIS, Axis.NONE]:
+        return 1
+    if axis2 in [Axis.DIAGONAL, Axis.LEAVE]:
+        return 0.5
+    if axis2 == Axis.Y and axis1 == Axis.X:
+        return 1
+
+    assert False, f"Unhandled axes pair: {axis1}, {axis2}"
 
 
 def get_axis(node):
