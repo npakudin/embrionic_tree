@@ -1,5 +1,4 @@
-from src.single_tree.development_tree import Axis, NONE_NODE, dist_div
-from src.single_tree.distances import pattern_tree_infinite
+from src.single_tree.development_tree import Axis, NONE_NODE, dist_div, pattern_tree_infinite
 
 
 class SuperimposedNode:
@@ -27,8 +26,7 @@ class SuperimposedNode:
 
     # Calculates distance between nodes n1 and n2
     def node_dist(self, global_params):
-        raw_distance = global_params.fertility_weight * self.dist_fertility() + \
-                       global_params.division_weight * self.dist_division() + \
+        raw_distance = global_params.division_weight * self.dist_division() + \
                        global_params.g_weight * self.dist_gr() + \
                        global_params.chain_length_weight * self.dist_chain_length()
 
@@ -46,19 +44,7 @@ class SuperimposedNode:
 
         return raw_distance * weight
 
-    # distance is 1 if one of nodes exists and the 2nd does not
-    # don't care about axis
-    def dist_fertility(self):
-        if self.n1.is_none() != self.n2.is_none():
-            return 1
-        return 0
-
-    # distance is 0 if one of nodes is None, it's calculated in fertility_dist()
-    # calculate difference in axis only
     def dist_division(self):
-        if self.n1.is_none() or self.n2.is_none():
-            return 0
-
         return dist_div(self.n1.axis, self.n2.axis)
 
     def dist_gr(self):

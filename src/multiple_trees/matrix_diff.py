@@ -1,8 +1,8 @@
 import numpy
 
+from src.single_tree.development_tree import pattern_tree_infinite
 from src.single_tree.development_tree_reader import read_all_trees
 from src.single_tree.development_tree_utils import prepare_trees
-from src.single_tree.distances import pattern_tree_infinite
 from src.single_tree.global_params import GlobalParams
 from src.single_tree.superimposed_tree import SuperimposedNode
 from src.view.build_morph_graph import taxon_from_xml

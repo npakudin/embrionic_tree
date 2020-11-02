@@ -1,11 +1,10 @@
-from src.single_tree.distances import node_dist
-from src.single_tree.global_params import GlobalParams
 from src.multiple_trees.matrix_diff import MatrixDiff
-
+from src.single_tree.global_params import GlobalParams
 # Calculates number of types of distances between nodes on each level
 # Get all tree pairs, and for each pair impose one REDUCED tree to another
 #   get all nodes - sometimes both, sometimes one node existing and the 2nd "virtual"
 #   for each node pair increment variable in the table (level - type_of_node)
+from src.single_tree.superimposed_tree import SuperimposedNode
 
 ALL = 0  # total number of nodes
 LEFT = 1  # left only node exists
@@ -31,7 +30,8 @@ def proceed_node(node1, node2, level):
     else:
         total[level][EQ] += 1
 
-    node_distance = node_dist(node1, node2, global_params)
+    superimposed_node = SuperimposedNode(node1, node2)
+    node_distance = superimposed_node.node_dist(global_params)
 
     total_distance = node_distance
     total_distance += proceed_node(node1.left, node2.left, level + 1)
