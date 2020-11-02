@@ -4,37 +4,42 @@ from mpl_toolkits.mplot3d import Axes3D
 
 from src.multiple_trees.matrix_diff import MatrixDiff
 
-# param_a: 0.35, corrcoef: 0.4430 - level_weight_multiplier=[1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2]
-# param_a: 0.30, corrcoef: 0.4616 - level_weight_multiplier=[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-# param_a: 0.10, corrcoef: 0.4524 - level_weight_multiplier=[1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-
-
-
 matrDiff = MatrixDiff("../../input/xtg/*.xtg", "../../input/systematic_tree_morph.xtg", ["Angiosperms"], max_level=10)
 
-def create_fun(chain_length_weight):
+
+def create_fun(chain_length_weight, increasing_level):
     def fun(a, g_weight):
-        return matrDiff.matr_diff_sum([a, g_weight, chain_length_weight])
+        return matrDiff.matr_diff_sum([a, g_weight, chain_length_weight, increasing_level])
     return fun
 
 
-a = np.linspace(0.001, 1.0, 11)
-g_weight = np.linspace(-0.1, 1.0, 12)
-chain_length = 0.0
+# define as a function to prevent reusing vars in create_fun by mistake on edit
+def show_3d_plot():
+    a = np.linspace(0.001, 1.0, 11)
+    # a = 0.4
+    g_weight = np.linspace(0.0, 1.0, 11)
+    # g_weight = 0.4
+    chain_length_weight = 0.0
+    # chain_length_weight = np.linspace(0.0, 0.5, 6)
+    increasing_level = -1
+    # increasing_level = np.linspace(-1, 8, 10)
 
-X, Y = np.meshgrid(a, g_weight)
-Z = np.vectorize(create_fun(chain_length))(X, Y)
+    x, y = np.meshgrid(a, g_weight)
+    z = np.vectorize(create_fun(chain_length_weight, increasing_level))(x, y)
 
-fig = plt.figure()
+    fig = plt.figure()
 
-ax = Axes3D(fig)
-ax.plot_surface(X, Y, Z, rstride=1, cstride=1, cmap='viridis', edgecolor='none')
-ax.set_xlabel('param_a')
-ax.set_ylabel('g_weight')
-ax.set_zlabel('coefcorr')
-ax.set_title(f"chain_length_weight={chain_length}")
+    ax = Axes3D(fig)
+    ax.plot_surface(x, y, z, rstride=1, cstride=1, cmap='viridis', edgecolor='none')
+    ax.set_xlabel('chain_length')
+    ax.set_ylabel('g_weight')
+    ax.set_zlabel('coefcorr')
+    ax.set_title(f"chain_length_weight={chain_length_weight},increasing_level={increasing_level}")
 
-plt.show()
+    plt.show()
+
+
+show_3d_plot()
 
 # 0.30070, 0.50000000, 0.50000000 : 0.41224894149190
 # 0.30070, 0.40000000, 0.00000000 : 0.42048571352381
@@ -45,7 +50,6 @@ plt.show()
 # 0.40060, 0.60000000, 0.00000000 : 0.41840974229453
 
 
-
 # fig = plt.figure()
 #
 # ax = plt.axes(projection='3d')
@@ -53,7 +57,7 @@ plt.show()
 #                 cmap='viridis', edgecolor='none')
 # ax.set_title('surface')
 
-#exit()
+# exit()
 
 
 # 0.04000, 0.50000000, 0.50000000 : -0.45027154234063 - reduced

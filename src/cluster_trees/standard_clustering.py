@@ -56,7 +56,7 @@ for param_a in np.linspace(0.5, 1.0, 2):
                 clustered_trees = hierarchy.linkage(dist_array, effective_cluster_algorithm)
 
                 corr = corr_clustered_trees(clustered_trees, matrDiff.names, matrDiff.make_systematic_matrix())
-                print(f"{global_params.g_weight:0.2f} {param_a:0.2f} {cluster_algorithm} {corr:0.8f}")
+                print(f"{global_params.g_weight:0.2f} {param_a:0.2f} {increasing_level:2} {cluster_algorithm} {corr:0.8f}")
 
                 if cluster_algorithm not in alg_to_corr.keys():
                     alg_to_corr[cluster_algorithm] = []
