@@ -4,7 +4,7 @@ from src.single_tree.development_tree_reader import read_all_trees
 from src.single_tree.superimposed_tree import SuperimposedNode
 
 
-def get_distances_by_files(pattern, global_params, is_reducing=True):
+def get_distances_by_files(pattern, global_params, is_reducing, use_min_common_depth=False):
     # read trees from *.xtg files in xtg folder
     src_trees = read_all_trees(pattern=pattern)
 
@@ -15,7 +15,7 @@ def get_distances_by_files(pattern, global_params, is_reducing=True):
     for tree in trees:
         if is_reducing:
             tree.reduce()
-        tree.prepare()
+        tree.prepare(use_min_common_depth)
 
     # calculate distances matrix
     distance_matrix = [[SuperimposedNode(v1.root, v2.root).full_distance(global_params) for v2 in trees] for v1 in trees]

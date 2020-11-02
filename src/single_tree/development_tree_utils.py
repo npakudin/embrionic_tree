@@ -1,5 +1,5 @@
 # Reduces trees and then calculates reduced_level etc
-def prepare_trees(trees, max_level=10, is_reducing=True):
+def prepare_trees(trees, max_level, is_reducing, use_min_common_depth):
     for tree in trees:
         # print(f"prepare {tree.name}")
 
@@ -9,7 +9,7 @@ def prepare_trees(trees, max_level=10, is_reducing=True):
 
         if is_reducing:
             tree.reduce()
-        tree.prepare()
+        tree.prepare(use_min_common_depth)
         tree.cut(max_level=max_level)
 
 

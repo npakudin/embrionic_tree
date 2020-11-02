@@ -33,13 +33,14 @@ class TestDistance(TestCase):
 
     def test_calculate_number_on_level_2_trees_common_trees(self):
         is_reducing = False
+        use_min_common_depth = False
         trees = read_all_trees(pattern="../../test/test_input/development_tree_utils/*.xtg")
 
         # prepare to calculate distances
         for tree in trees:
             if is_reducing:
                 tree.reduce()
-            tree.prepare()
+            tree.prepare(use_min_common_depth)
 
         node1 = trees[0].root
         node2 = trees[1].root

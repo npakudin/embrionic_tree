@@ -259,13 +259,13 @@ class TreeDrawer:
         im.save(f"{path}/{name}.png")
 
 
-def get_prepared_trees(is_reducing, max_level):
+def get_prepared_trees(is_reducing, max_level, use_min_common_depth=False):
     systematic_tree = "morph"
 
     matr_diff = MatrixDiff("../../input/xtg/*.xtg", f"../../input/systematic_tree_{systematic_tree}.xtg",
-                           ["Angiosperms"], max_level=max_level, is_reducing=is_reducing)
+                           ["Angiosperms"], max_level=max_level, is_reducing=is_reducing, use_min_common_depth=use_min_common_depth)
     trees = matr_diff.vertices
     for tree in trees:
-        tree.prepare()
+        tree.prepare(use_min_common_depth)
 
     return trees

@@ -206,13 +206,16 @@ class Tree:
     def reduce(self):
         self.root.internal_reduce(parent_growth=1, chain_length=1)
 
-    def prepare(self):
+    def prepare(self, use_min_common_depth):
         self.root.internal_prepare(0)
 
-        for i in range(self.root.reduced_depth + 1):
-            cur_node = copy.deepcopy(self.root)
-            cur_node.internal_cut(0, i)
-            self.roots.append(cur_node)
+        # this if - performance optimization only
+        if use_min_common_depth:
+            # fill roots with cut trees to compare trees of different depth, e.g. with Johansen
+            for i in range(self.root.reduced_depth + 1):
+                cur_node = copy.deepcopy(self.root)
+                cur_node.internal_cut(0, i)
+                self.roots.append(cur_node)
 
         self.root.calculate_leaves_number()
 
