@@ -1,11 +1,8 @@
 from unittest import TestCase
 
 from src.multiple_trees.iterate_trees import generate_bin_tree
-from src.single_tree.compare_trees import get_distances_by_files
-from src.single_tree.development_tree import TreeNode, Axis, NONE_NODE
 from src.single_tree.development_tree_reader import read_all_trees
 from src.single_tree.development_tree_utils import calculate_number_on_level_2_trees
-from src.single_tree.global_params import GlobalParams
 
 
 class TestDistance(TestCase):

@@ -18,7 +18,6 @@ def get_distances_by_files(pattern, global_params, is_reducing=True):
         tree.prepare()
 
     # calculate distances matrix
-    #distance_matrix = [[development_tree_distance(v1, v2, global_params) for v2 in trees] for v1 in trees]
     distance_matrix = [[SuperimposedNode(v1.root, v2.root).full_distance(global_params) for v2 in trees] for v1 in trees]
 
     return [src_trees, distance_matrix]

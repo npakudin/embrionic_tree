@@ -1,7 +1,7 @@
 import copy
 import math
 from unittest import TestCase
-from src.single_tree.compare_trees import get_distances_by_files
+from src.multiple_trees.compare_trees import get_distances_by_files
 from src.single_tree.global_params import GlobalParams
 
 global_params = GlobalParams(max_level=11, param_a=0.6, g_weight=0.1, chain_length_weight=0.1)

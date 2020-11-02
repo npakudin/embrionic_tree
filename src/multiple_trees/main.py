@@ -1,4 +1,4 @@
-from src.single_tree.compare_trees import get_distances_by_files
+from src.multiple_trees.compare_trees import get_distances_by_files
 from src.single_tree.global_params import GlobalParams
 
 global_params = GlobalParams(max_level=10, param_a=0.50, g_weight=0.05,
