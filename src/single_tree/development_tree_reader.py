@@ -30,7 +30,7 @@ def parse_xml_node(xml, name, src_level, address):
             node.axis = Axis.GROWTH
             node.growth = float(data[1])
             assert node.growth >= 1
-        except:
+        except ValueError:
             if data[1] == "x":
                 node.axis = Axis.X
             elif data[1] == "y":
@@ -59,16 +59,17 @@ def parse_xml_node(xml, name, src_level, address):
     return node
 
 
-def read_tree_from_xml(filename):
-    def parse_name_type(name_type):
-        strings = name_type.split('_')  # ["Arabidopsis", "thaliana", "onagrad"]
-        if len(strings) == 1:
-            return strings[0], strings[0]
-        if len(strings) == 3:
-            [gen_name, sp_name, embryo_type] = strings
-            return f"{gen_name}_{sp_name}", embryo_type
-        return name_type, name_type
+def parse_name_type(name_type):
+    strings = name_type.split('_')  # ["Arabidopsis", "thaliana", "onagrad"]
+    if len(strings) == 1:
+        return strings[0], strings[0]
+    if len(strings) == 3:
+        [gen_name, sp_name, embryo_type] = strings
+        return f"{gen_name}_{sp_name}", embryo_type
+    return name_type, name_type
 
+
+def read_tree_from_xml(filename):
     path = filename.split('/')
     # "../input/xtg/Arabidopsis_thaliana_onagrad.xtg" => "Arabidopsis_thaliana_onagrad"
     filename_type = path[len(path) - 1][:-4]

@@ -36,7 +36,8 @@ class SuperimposedNode:
 
         # increase subtree weight
         if raw_distance > global_params.subtree_threshold:
-            # print(f"subtree_raw_distance: {'%0.2f' % raw_distance} n1: {addr(n1, 'full_addr_1')} n2: {addr(n2, 'full_addr_2')}")
+            # print(f"subtree_raw_distance: {'%0.2f' % raw_distance} n1: {addr(n1, 'full_addr_1')}
+            #   n2: {addr(n2, 'full_addr_2')}")
             weight *= global_params.subtree_multiplier
 
         # increase some levels weight
@@ -69,7 +70,7 @@ class SuperimposedNode:
 
     def calculate_leaves_number(self, start_numbers):
         if self.is_none():
-            self.leaves_number = 0 # it's already 0
+            self.leaves_number = 0  # it's already 0
             return
 
         # calculate for all descendants
@@ -125,11 +126,12 @@ class SuperimposedNode:
                                                                                        left2.fertility)
                 # DOESN'T WORK HERE
                 if reverse_order_fertility > direct_order_fertility:
-                    # swap
-                    tmp = left2
-                    left2 = right2
-                    right2 = tmp
-                    # print(f"swap {direct_order_fertility} {reverse_order_fertility} {n1.reduced_level} {n2.reduced_level} {n1.address} {n2.address} {n1.axis} {n2.axis}")
+                    # # swap
+                    # tmp = left2
+                    # left2 = right2
+                    # right2 = tmp
+                    print(f"swap {direct_order_fertility} {reverse_order_fertility} {self.n1.reduced_level}"
+                          f"{self.n2.reduced_level} {self.n1.address} {self.n2.address} {self.n1.axis} {self.n2.axis}")
 
         res += self.left.full_distance(global_params, pattern.left)
         res += self.right.full_distance(global_params, pattern.right)
@@ -147,12 +149,13 @@ class SuperimposedNode:
             return []
 
         if not self.n1.is_none() and not self.n2.is_none():
-            assert self.n1.reduced_address == self.n2.reduced_address, f"{self.n1.reduced_address} - {self.n2.reduced_address}"
+            assert self.n1.reduced_address == self.n2.reduced_address,\
+                f"{self.n1.reduced_address} - {self.n2.reduced_address}"
         reduced_level = self.get_reduced_level()
         reduced_address = self.n2.reduced_address if (self.n1.is_none()) else self.n1.reduced_address
-        dist_fert = self.dist_leaves_number()
+        dist_fertility = self.dist_leaves_number()
 
-        res = [[reduced_address, dist_fert, reduced_level, self.n1, self.n2]]
+        res = [[reduced_address, dist_fertility, reduced_level, self.n1, self.n2]]
 
         res += self.left.high_fertility_distance(pattern.left)
         res += self.right.high_fertility_distance(pattern.right)

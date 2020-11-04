@@ -11,7 +11,7 @@ class Axis:
     Z = 'z'
     GROWTH = 'zGrowth'
     APOPTOSIS = 'zzApoptosis'
-    NONE = 'zzNone' # for really not existing node
+    NONE = 'zzNone'  # for really not existing node
 
 
 def dist_div(axis1, axis2):
@@ -120,7 +120,7 @@ class TreeNode:
         if self.right.is_none():
             # if continue chain - add 1 to its' length
             return self.left.internal_reduce(parent_growth=self.growth, chain_length=chain_length + 1)
-        #assert self.left is not None
+        # assert self.left is not None
 
         # if there is a division - set length to 1
         self.left = self.left.internal_reduce(parent_growth=1, chain_length=1)
@@ -156,7 +156,8 @@ class TreeNode:
         if self.is_none():
             return
 
-        #assert (self.left.is_none() and self.right.is_none) == (self.axis == Axis.LEAVE), f"{self.axis}, {self.left.is_none()}, {self.right.is_none()}"
+        # assert (self.left.is_none() and self.right.is_none) == (self.axis == Axis.LEAVE),
+        #   f"{self.axis}, {self.left.is_none()}, {self.right.is_none()}"
 
         if self.axis == Axis.LEAVE:
             self.leaves_number = 1
@@ -165,17 +166,17 @@ class TreeNode:
             self.right.calculate_leaves_number()
             self.leaves_number = self.left.leaves_number + self.right.leaves_number
 
-    def recursive(self, params, handler, params_getter):
-        if self.is_none():
-            return 0
-
-        left_params = params_getter(self, params)
-        left_res = self.recursive(left_params, handler, params_getter)
-        right_params = params_getter(self, params)
-        right_params = self.recursive(right_params, handler, params_getter)
-
-        cur_res = handler(self, params)
-        return cur_res
+    # def recursive(self, params, handler, params_getter):
+    #     if self.is_none():
+    #         return 0
+    #
+    #     left_params = params_getter(self, params)
+    #     left_res = self.recursive(left_params, handler, params_getter)
+    #     right_params = params_getter(self, params)
+    #     right_res = self.recursive(right_params, handler, params_getter)
+    #
+    #     cur_res = handler(self, params)
+    #     return cur_res
 
     def is_none(self):
         return self.axis == Axis.NONE

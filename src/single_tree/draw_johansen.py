@@ -1,6 +1,6 @@
 from src.multiple_trees.matrix_diff import MatrixDiff
 from src.single_tree.global_params import GlobalParams
-from src.view.draw_compared_trees import TreeDrawer, TreeDrawSettings, get_prepared_trees
+from src.view.draw_compared_trees import TreeDrawer, TreeDrawSettings
 
 
 def draw_trees(folder, draw_settings, is_reducing, max_level=10, param_a=0.5):

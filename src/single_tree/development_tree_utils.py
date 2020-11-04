@@ -3,7 +3,7 @@ def prepare_trees(trees, max_level, is_reducing, use_min_common_depth):
     for tree in trees:
         # print(f"prepare {tree.name}")
 
-        # cut all to 11 (10, because it's 0-based) levels to ignore overlevels if we have 12 or 13 for some species
+        # cut all to 11 (10, because it's 0-based) levels to ignore over_levels if we have 12 or 13 for some species
         # notice: zygote has level=0
         tree.cut(max_level=10)
 
@@ -73,4 +73,3 @@ def calculate_number_of_leaves(node1, node2):
 
     node1.number_of_leaves = number_of_leaves
     node2.number_of_leaves = number_of_leaves
-
