@@ -1,4 +1,4 @@
-from src.single_tree.development_tree import Axis, NONE_NODE, dist_div, pattern_tree_infinite
+from src.single_tree.development_tree import Axis, NONE_NODE, dist_div, INFINITE_PATTERN
 
 
 class SuperimposedNode:
@@ -103,7 +103,7 @@ class SuperimposedNode:
     def is_none(self):
         return self.n1.is_none() and self.n2.is_none()
 
-    def full_distance(self, global_params, pattern=pattern_tree_infinite()):
+    def full_distance(self, global_params, pattern=INFINITE_PATTERN):
         if pattern.is_none():
             return 0
 
@@ -136,7 +136,7 @@ class SuperimposedNode:
 
         return res
 
-    def high_fertility_distance(self, pattern=pattern_tree_infinite()):
+    def high_fertility_distance(self, pattern=INFINITE_PATTERN):
         if pattern.is_none():
             return []
 

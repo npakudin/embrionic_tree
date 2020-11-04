@@ -227,8 +227,8 @@ NONE_NODE.reduced_depth = 0
 NONE_NODE.leaves_number = 0
 
 
-def pattern_tree_infinite():
-    root = TreeNode(axis=Axis.X)
-    root.left = root
-    root.right = root
-    return root
+INFINITE_PATTERN = TreeNode(axis=Axis.X)
+INFINITE_PATTERN.left = INFINITE_PATTERN
+INFINITE_PATTERN.right = INFINITE_PATTERN
+INFINITE_PATTERN.reduced_depth = 0
+INFINITE_PATTERN.leaves_number = 0

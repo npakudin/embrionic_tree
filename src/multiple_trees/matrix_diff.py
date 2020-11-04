@@ -1,6 +1,6 @@
 import numpy
 
-from src.single_tree.development_tree import pattern_tree_infinite
+from src.single_tree.development_tree import INFINITE_PATTERN
 from src.single_tree.development_tree_reader import read_all_trees
 from src.single_tree.development_tree_utils import prepare_trees
 from src.single_tree.global_params import GlobalParams
@@ -143,7 +143,7 @@ class MatrixDiff:
         left_bottom_matrix = self.make_experiment_matrix(global_params)
         return to_full_matrix(left_bottom_matrix)
 
-    def make_experiment_matrix(self, global_params, pattern=pattern_tree_infinite()):
+    def make_experiment_matrix(self, global_params, pattern=INFINITE_PATTERN):
         trees = self.vertices
 
         experiment_matrix = []
