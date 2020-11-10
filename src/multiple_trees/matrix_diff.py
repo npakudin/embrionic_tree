@@ -1,92 +1,20 @@
 import numpy
 
-from src.single_tree.development_tree import INFINITE_PATTERN
-from src.single_tree.development_tree_reader import read_all_trees
-from src.single_tree.development_tree_utils import prepare_trees
+from src.multiple_trees.trees_matrix import TreesMatrix
 from src.single_tree.global_params import GlobalParams
-from src.single_tree.superimposed_tree import SuperimposedNode
 from src.view.build_morph_graph import taxon_from_xml
 
 
-def apply_each(matr, fun):
-    res = []
-    for i, row in enumerate(matr):
-        res.append([])
-        for j, col in enumerate(row):
-            res[i].append(fun(matr[i][j]))
-    return res
-
-
-def apply_reduce(matr, fun, init_value):
-    res = init_value
-    for i, row in enumerate(matr):
-        for j, col in enumerate(row):
-            res = fun(res, matr[i][j])
-    return res
-
-
-def normalize(matr):
-    summ = apply_reduce(matr, lambda accumulator, val: accumulator + abs(val), 0.0)
-    res = apply_each(matr, lambda val: val / summ)
-    return res
-
-
-def make_experiment_array(experiment_matrix):
-    experiment_array = []
-    for j in range(len(experiment_matrix)):  # column
-        for i in range(len(experiment_matrix) - j - 1):  # row
-            experiment_array.append(experiment_matrix[i + j + 1][j])
-    return experiment_array
-
-
-def print_matrix(matr, name, tree_names, corrcoef=None, with_headers=False):
-    print(f"")
-    print(f"{name}")
-    if with_headers:
-        print(f"Sp. ", end='')
-    for tree_name in tree_names:
-        print(f"{tree_name.replace(' ', '_')} ", end='')
-    print(f"")
-
-    plot_matr = [[(0 if i == j else (matr[i][j] if i > j else matr[j][i])) for j in
-                  range(len(matr))] for i in range(len(matr))]
-
-    summ = 0
-    maxx = 0
-    for i, row in enumerate(plot_matr):
-        if with_headers:
-            print(f"{tree_names[i].replace(' ', '_')} ", end='')
-        for index, item in enumerate(row):
-            if index == i:
-                print("- ", end='')
-            else:
-                print("%0.2f " % (item), end='')
-            summ += item
-            if item > maxx:
-                maxx = item
-        print()
-    avg = summ / (len(plot_matr) * (len(plot_matr) - 1))
-    print(f"avg: {avg}; max: {maxx}")
-    if corrcoef is not None:
-        print(f"corrcoef: {corrcoef}")
-
-
-def diff_matrices(experiment_morph_coeff, experiment_matrix, systematic_matrix):
+def diff_matrices(experiment_morph_coef, experiment_matrix, systematic_matrix):
     res = 0
     for i, experiment_row in enumerate(experiment_matrix):
         for j, experiment_col in enumerate(experiment_row):
             if j > i:
-                experiment = experiment_morph_coeff * experiment_matrix[i][j]
+                experiment = experiment_morph_coef * experiment_matrix[i][j]
                 morph = systematic_matrix[i][j]
 
                 res += abs(experiment - morph) / (min(experiment, morph) + 1.0E-100)
     return res
-
-
-def to_full_matrix(left_bottom_matrix):
-    plot_matr = [[(0 if i == j else (left_bottom_matrix[i][j] if i > j else left_bottom_matrix[j][i])) for j in
-                  range(len(left_bottom_matrix))] for i in range(len(left_bottom_matrix))]
-    return plot_matr
 
 
 def corrcoef(matr1, matr2):
@@ -102,59 +30,25 @@ def corrcoef(matr1, matr2):
     return corrcoef_matrix[0][1]
 
 
-class MatrixDiff:
+class MatrixDiff(TreesMatrix):
     def __init__(self, experiment_pattern, morph_file, leave_list, max_level=10, filter_by_taxon=True,
                  is_reducing=True, use_min_common_depth=False):
-        vertices = read_all_trees(pattern=experiment_pattern)
+        super().__init__(experiment_pattern, max_level, is_reducing, use_min_common_depth)
 
         # morph matrix
         taxon = taxon_from_xml(morph_file)
         taxon.leave_only_names(leave_list)
-
-        taxon.leave_only_names([v.name for v in vertices])
-
-        # sort by name, but also possible to sort both names and taxon_names by order_index
-        # for it in this file and in get_leaves
-        # replace "key=lambda x: x.name" to "key=lambda x: x.order_index"
-        leaves = taxon.get_leaves()
-        for index, leave in enumerate(leaves):
-            leave.order_index = index
+        taxon.leave_only_names([v.name for v in self.vertices])
+        self.taxon_matrix = taxon.calculate()
 
         taxon_names = list(map(lambda x: x.name, taxon.get_leaves()))
         # print("taxon_names")
         # print(taxon_names)
 
-        # O(n^2), but n~26, so for now it's OK
-        for vertex in vertices:
-            for index, leave in enumerate(leaves):
-                if leave.name == vertex.name:
-                    vertex.order_index = index
-
         # filter experiment vertices
-        vertices = filter(lambda x: x.name in taxon_names, vertices) if filter_by_taxon else vertices
-        self.vertices = sorted(list(vertices), key=lambda x: x.name)
+        self.vertices = filter(lambda x: x.name in taxon_names, self.vertices) if filter_by_taxon else self.vertices
+        self.vertices = sorted(list(self.vertices), key=lambda x: x.name)
         self.names = [v.name for v in self.vertices]
-
-        prepare_trees(self.vertices, max_level, is_reducing, use_min_common_depth)
-
-        self.taxon_matrix = taxon.calculate()
-
-    def make_full_experiment_matrix(self, global_params):
-        left_bottom_matrix = self.make_experiment_matrix(global_params)
-        return to_full_matrix(left_bottom_matrix)
-
-    def make_experiment_matrix(self, global_params, pattern=INFINITE_PATTERN):
-        trees = self.vertices
-
-        experiment_matrix = []
-        for i in range(len(trees)):
-            experiment_matrix.append([])
-            for j in range(i):
-                superimposed_node = SuperimposedNode(trees[i].root, trees[j].root)
-                dist = superimposed_node.full_distance(global_params, pattern=pattern)
-                experiment_matrix[i].append(dist)
-
-        return experiment_matrix
 
     def make_systematic_matrix(self):
         def systematic_dist(val):
@@ -194,5 +88,3 @@ class MatrixDiff:
         increasing_level = x[3]
         print(f"{a:0.5f}, {g_weight:0.8f}, {chain_length_weight:0.8f}, {int(increasing_level):2} : {res:0.14f}")
         return res
-
-

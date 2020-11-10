@@ -4,6 +4,7 @@ from PIL import Image, ImageDraw
 from PIL.ImageFont import truetype
 
 from src.multiple_trees.matrix_diff import MatrixDiff
+from src.multiple_trees.trees_matrix import TreesMatrix
 from src.single_tree.development_tree import Axis
 from src.single_tree.superimposed_tree import SuperimposedNode
 
@@ -260,11 +261,10 @@ class TreeDrawer:
 
 
 def get_prepared_trees(is_reducing, max_level, use_min_common_depth=False):
-    systematic_tree = "morph"
+    trees_matrix = TreesMatrix("../../input/xtg/*.xtg", max_level=max_level, is_reducing=is_reducing,
+                               use_min_common_depth=use_min_common_depth)
 
-    matr_diff = MatrixDiff("../../input/xtg/*.xtg", f"../../input/systematic_tree_{systematic_tree}.xtg",
-                           ["Angiosperms"], max_level=max_level, is_reducing=is_reducing, use_min_common_depth=use_min_common_depth)
-    trees = matr_diff.vertices
+    trees = trees_matrix.vertices
     for tree in trees:
         tree.prepare(use_min_common_depth)
 

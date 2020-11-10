@@ -141,12 +141,12 @@ def create_fun(param_a):
     return fun
 
 
-if True:
-    #param_a = np.linspace(0.1, 1.0, 10)
+def do_it():
+    # param_a = np.linspace(0.1, 1.0, 10)
     param_a = 0.5
     g_weight = np.linspace(0.0, 1.0, 11)
     chain_length = np.linspace(0.0, 1.0, 11)
-    #chain_length = 0.0
+    # chain_length = 0.0
 
     X, Y = np.meshgrid(g_weight, chain_length)
     Z = np.vectorize(create_fun(param_a))(X, Y)
@@ -157,11 +157,13 @@ if True:
     ax.plot_surface(X, Y, Z, rstride=1, cstride=1, cmap='viridis', edgecolor='none')
     ax.set_xlabel('g_weight')
     ax.set_ylabel('chain_length')
-    ax.set_zlabel('coefcorr')
+    ax.set_zlabel('corr_coef')
     ax.set_title(f"chain_length_weight={chain_length}")
 
     plt.show()
 
+
+do_it()
 
 # param_a: 0.35, corrcoef: 0.4430 - level_weight_multiplier=[1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2]
 # param_a: 0.30, corrcoef: 0.4616 - level_weight_multiplier=[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]

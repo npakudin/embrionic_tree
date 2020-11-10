@@ -1,14 +1,14 @@
-from src.multiple_trees.matrix_diff import MatrixDiff
+from src.multiple_trees.trees_matrix import TreesMatrix
 from src.single_tree.global_params import GlobalParams
 from src.single_tree.superimposed_tree import SuperimposedNode
 
 
-def first_vowel(str, from_index=1):
+def first_vowel(s, from_index=1):
     vowels = ['a', 'e', 'i', 'o', 'u', 'y']
-    for i in range(from_index, len(str)):
-        if str[i] in vowels:
+    for i in range(from_index, len(s)):
+        if s[i] in vowels:
             return i
-    return len(str)
+    return len(s)
 
 
 # # 'Arabidopsis_thaliana' => 'Arab. t.'
@@ -27,52 +27,54 @@ def short_embryo_name(name):
     return name.replace("caryophyllad", "caryophyll.").replace("chenopodiad", "chenopod.")
 
 
-systematic_tree = "morph"
-max_level = 10
-use_min_common_depth = True
+def do_it():
+    max_level = 10
+    use_min_common_depth = True
 
-# [param_a, is_reducing]
-params = [[0.5, True], [1.0, False]]
+    # [param_a, is_reducing]
+    params = [[0.5, True], [1.0, False]]
 
-for [param_a, is_reducing] in params:
-    matrDiff = MatrixDiff("../../input/xtg/*.xtg", f"../../input/systematic_tree_{systematic_tree}.xtg",
-                          ["Angiosperms"], max_level=max_level, filter_by_taxon=False, is_reducing=is_reducing,
-                          use_min_common_depth=use_min_common_depth)
-    johansenMatrDiff = MatrixDiff("../../input/xtg_johansen/*.xtg", f"../../input/systematic_tree_{systematic_tree}.xtg",
-                                  ["Angiosperms"], max_level=max_level, filter_by_taxon=False, is_reducing=is_reducing,
-                                  use_min_common_depth=use_min_common_depth)
+    for [param_a, is_reducing] in params:
+        trees_matrix = TreesMatrix("../../input/xtg/*.xtg", max_level=max_level, is_reducing=is_reducing,
+                                   use_min_common_depth=use_min_common_depth)
 
-    trees = matrDiff.vertices
-    johansenTrees = johansenMatrDiff.vertices
+        johansen_trees_matrix = TreesMatrix("../../input/xtg_johansen/*.xtg", max_level=max_level,
+                                            is_reducing=is_reducing, use_min_common_depth=use_min_common_depth)
 
-    global_params = GlobalParams(max_level=max_level, param_a=param_a, use_min_common_depth=True)
-    gp = global_params
+        trees = trees_matrix.vertices
+        johansen_trees = johansen_trees_matrix.vertices
 
-    matches_number = 0
-    print(f"Johansen-Batygina types to species distance, is_reducing: True, param_a: 0.5, division_weight: 1.0, g_weight: 0.0, chain_length_weight: 0.0")
-    print(f"Specie Reference_type 1st_type 1st_type_distance 2nd_type 2nd_type_distance")
-    for i in range(len(trees)):
-        print(f"{matrDiff.names[i]} {short_embryo_name(trees[i].embryo_type)} ", end='')
-        res = []
-        min_dist = (-1, 1.0E+100)
-        for j in range(len(johansenTrees)):
-            min_reduced_depth = min(trees[i].root.reduced_depth, johansenTrees[j].root.reduced_depth)
-            cut_tree1 = trees[i].roots[min_reduced_depth]
-            cut_tree2 = johansenTrees[j].roots[min_reduced_depth]
+        global_params = GlobalParams(max_level=max_level, param_a=param_a, use_min_common_depth=True)
 
-            superimposed_node = SuperimposedNode(cut_tree1, cut_tree2)
-            dist = superimposed_node.full_distance(global_params)
-            res.append((dist, johansenMatrDiff.names[j]))
-            # draw_tree(trees[i], johansenTrees[j], global_params, dist, 0, "johansen")
+        matches_number = 0
+        print(f"Johansen-Batygina types to species distance, is_reducing: True, param_a: 0.5, division_weight: 1.0, "
+              f"g_weight: 0.0, chain_length_weight: 0.0")
+        print(f"Specie Reference_type 1st_type 1st_type_distance 2nd_type 2nd_type_distance")
+        for i in range(len(trees)):
+            print(f"{trees_matrix.names[i]} {short_embryo_name(trees[i].embryo_type)} ", end='')
+            res = []
+            # min_dist = (-1, 1.0E+100)
+            for j in range(len(johansen_trees)):
+                min_reduced_depth = min(trees[i].root.reduced_depth, johansen_trees[j].root.reduced_depth)
+                cut_tree1 = trees[i].roots[min_reduced_depth]
+                cut_tree2 = johansen_trees[j].roots[min_reduced_depth]
 
-        res = sorted(res, key=lambda dist_name: dist_name[0])
-        for (dist, name) in res[:2]:
-            print(f"{short_embryo_name(name)} {dist:0.2f} ", end='')
-        print(f"")
+                superimposed_node = SuperimposedNode(cut_tree1, cut_tree2)
+                dist = superimposed_node.full_distance(global_params)
+                res.append((dist, johansen_trees_matrix.names[j]))
+                # draw_tree(trees[i], johansen_trees[j], global_params, dist, 0, "johansen")
 
-        if trees[i].embryo_type == res[0][1]:
-            matches_number += 1
-    print(f"matches_number: {matches_number}\n")
+            res = sorted(res, key=lambda dist_name: dist_name[0])
+            for (dist, name) in res[:2]:
+                print(f"{short_embryo_name(name)} {dist:0.2f} ", end='')
+            print(f"")
+
+            if trees[i].embryo_type == res[0][1]:
+                matches_number += 1
+        print(f"matches_number: {matches_number}\n")
+
+
+do_it()
 
 # johansen_experiment_matrix = johansenMatrDiff.make_experiment_matrix(global_params)
 # print_matrix(johansen_experiment_matrix, "johansen_experiment_matrix", johansenMatrDiff.names)
@@ -108,7 +110,8 @@ for [param_a, is_reducing] in params:
 #
 #
 # print()
-# print(f"name reference_value 1st_embryo_type 1st_embryo_type_dist 2nd_embryo_type 2nd_embryo_type_dist 3rd_embryo_type 3rd_embryo_type_dist")
+# print(f"name reference_value 1st_embryo_type 1st_embryo_type_dist 2nd_embryo_type 2nd_embryo_type_dist" \
+#       f"3rd_embryo_type 3rd_embryo_type_dist")
 # # for j in range(len(johansenTrees)):
 # #     print(f"{johansenMatrDiff.names[j]} ", end='')
 # # print(f"nearest_johansen_dist nearest_johansen")

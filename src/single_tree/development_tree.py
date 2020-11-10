@@ -191,7 +191,6 @@ class Tree:
         self.embryo_type = embryo_type
         self.root = root
         self.roots = []  # trees, which were cut to levels 0, 1, 2, 3 etc
-        self.order_index = None
 
     def __str__(self):
         return self.get_full_addr()
