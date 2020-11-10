@@ -32,8 +32,8 @@ def corrcoef(matr1, matr2):
 
 class MatrixDiff(TreesMatrix):
     def __init__(self, experiment_pattern, morph_file, leave_list, max_level=10, filter_by_taxon=True,
-                 is_reducing=True, use_min_common_depth=False):
-        super().__init__(experiment_pattern, max_level, is_reducing, use_min_common_depth)
+                 is_reducing=True, use_min_common_depth=False, use_flipping=False):
+        super().__init__(experiment_pattern, max_level, is_reducing, use_min_common_depth, use_flipping)
 
         # morph matrix
         taxon = taxon_from_xml(morph_file)

@@ -13,9 +13,9 @@ from src.single_tree.global_params import GlobalParams
 from src.single_tree.superimposed_tree import SuperimposedNode
 
 
-def specie_fertility_distance(max_level=10, is_reducing=True):
+def specie_fertility_distance(max_level=10, is_reducing=True, use_min_common_depth=False, use_flipping=False):
     trees = read_all_trees(pattern="../../input/xtg/*.xtg")
-    prepare_trees(trees, max_level, is_reducing)
+    prepare_trees(trees, max_level, is_reducing, use_min_common_depth, use_flipping)
 
     global_params = GlobalParams(max_level=max_level, param_a=0.5, g_weight=0.0, chain_length_weight=0.0)
 

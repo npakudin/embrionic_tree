@@ -1,7 +1,7 @@
 import copy
 
+from src.multiple_trees.trees_matrix import full_distance
 from src.single_tree.development_tree_reader import read_all_trees
-from src.single_tree.superimposed_tree import SuperimposedNode
 
 
 def get_distances_by_files(pattern, global_params, is_reducing, use_min_common_depth=False):
@@ -18,6 +18,6 @@ def get_distances_by_files(pattern, global_params, is_reducing, use_min_common_d
         tree.prepare(use_min_common_depth)
 
     # calculate distances matrix
-    distance_matrix = [[SuperimposedNode(v1.root, v2.root).full_distance(global_params) for v2 in trees] for v1 in trees]
+    distance_matrix = [[full_distance(global_params, v1.root, v2.root, v2.flipped_root) for v2 in trees] for v1 in trees]
 
     return [src_trees, distance_matrix]

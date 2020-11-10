@@ -260,9 +260,9 @@ class TreeDrawer:
         im.save(f"{path}/{name}.png")
 
 
-def get_prepared_trees(is_reducing, max_level, use_min_common_depth=False):
+def get_prepared_trees(is_reducing, max_level, use_min_common_depth=False, use_flipping=False):
     trees_matrix = TreesMatrix("../../input/xtg/*.xtg", max_level=max_level, is_reducing=is_reducing,
-                               use_min_common_depth=use_min_common_depth)
+                               use_min_common_depth=use_min_common_depth, use_flipping=use_flipping)
 
     trees = trees_matrix.vertices
     for tree in trees:

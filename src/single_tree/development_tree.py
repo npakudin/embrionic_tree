@@ -142,6 +142,18 @@ class TreeNode:
 
         self.reduced_depth = 1 + max(self.left.reduced_depth, self.right.reduced_depth)
 
+    def flip(self):
+        if self.is_none():
+            return
+
+        if self.axis == Axis.Y or self.axis == Axis.DIAGONAL:
+            tmp = self.left
+            self.left = self.right
+            self.right = tmp
+
+        self.left.flip()
+        self.right.flip()
+
     def calculate_fertility(self, param_a):
         if self.is_none():
             return 0
@@ -191,6 +203,8 @@ class Tree:
         self.embryo_type = embryo_type
         self.root = root
         self.roots = []  # trees, which were cut to levels 0, 1, 2, 3 etc
+        self.flipped_root = None
+        self.flipped_roots = []
 
     def __str__(self):
         return self.get_full_addr()
@@ -206,8 +220,12 @@ class Tree:
     def reduce(self):
         self.root.internal_reduce(parent_growth=1, chain_length=1)
 
-    def prepare(self, use_min_common_depth):
+    def prepare(self, use_min_common_depth, use_flipping):
         self.root.internal_prepare(0)
+
+        if use_flipping:
+            self.flipped_root = copy.deepcopy(self.root)
+            self.flipped_root.flip()
 
         # this if - performance optimization only
         if use_min_common_depth:
@@ -216,6 +234,11 @@ class Tree:
                 cur_node = copy.deepcopy(self.root)
                 cur_node.internal_cut(0, i)
                 self.roots.append(cur_node)
+
+                if use_flipping:
+                    flipped_cur_node = copy.deepcopy(cur_node)
+                    flipped_cur_node.flip()
+                    self.flipped_roots.append(flipped_cur_node)
 
         self.root.calculate_leaves_number()
 

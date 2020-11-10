@@ -4,6 +4,7 @@ class GlobalParams:
                  subtree_threshold=1.0E+100, subtree_multiplier=1.0,
                  level_weight_multiplier=None,
                  use_min_common_depth=False,
+                 use_flipping=False,
                  is_swap_left_right=False
                  ):
         self.max_level = max_level
@@ -17,4 +18,5 @@ class GlobalParams:
             level_weight_multiplier = [1] * 11
         self.level_weight_multiplier = level_weight_multiplier
         self.use_min_common_depth = use_min_common_depth
+        self.use_flipping = use_flipping
         self.is_swap_left_right = is_swap_left_right

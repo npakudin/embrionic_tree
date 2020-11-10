@@ -3,8 +3,9 @@ import numpy as np
 import scipy.spatial.distance as ssd
 from scipy.cluster import hierarchy
 
+from src.multiple_trees.trees_matrix import to_full_matrix, print_matrix
 from src.single_tree.global_params import GlobalParams
-from src.multiple_trees.matrix_diff import MatrixDiff, print_matrix, to_full_matrix
+from src.multiple_trees.matrix_diff import MatrixDiff
 
 systematic_tree = "morph"
 cluster_algorithm = "complete"
@@ -23,8 +24,8 @@ matrDiff = MatrixDiff("../../input/xtg/*.xtg", f"../../input/systematic_tree_{sy
 experiment_matrix = matrDiff.make_experiment_matrix(global_params)
 plot_matrix = to_full_matrix(experiment_matrix)
 
-corrcoef = matrDiff.corrcoef(experiment_matrix)
-print_matrix(plot_matrix, "experiment_matrix", matrDiff.names, corrcoef=corrcoef, with_headers=True)
+corr_coef = matrDiff.corrcoef(experiment_matrix)
+print_matrix(plot_matrix, "experiment_matrix", matrDiff.names, corr_coef=corr_coef, with_headers=True)
 
 # convert the redundant n*n square matrix form into a condensed nC2 array
 # distArray[{n choose 2}-{n-i choose 2} + (j-i-1)] is the distance between points i and j
@@ -34,8 +35,6 @@ Z = hierarchy.linkage(distArray, 'complete')
 # print(Z)
 
 plt.figure()
-dn = hierarchy.dendrogram(Z,
-                          labels=np.array([x.split('_')[0] + ' ' + x.split('_')[1][:5] for x in matrDiff.names], np.str)
-                          , orientation='right', count_sort='ascending', distance_sort='ascending')
+dn = hierarchy.dendrogram(Z, labels=np.array([x.split('_')[0] + ' ' + x.split('_')[1][:5] for x in matrDiff.names], np.str), orientation='right', count_sort='ascending', distance_sort='ascending')
 plt.show()
 exit()

@@ -1,4 +1,4 @@
-from src.multiple_trees.trees_matrix import TreesMatrix
+from src.multiple_trees.trees_matrix import TreesMatrix, full_distance
 from src.single_tree.global_params import GlobalParams
 from src.single_tree.superimposed_tree import SuperimposedNode
 
@@ -36,15 +36,17 @@ def do_it():
 
     for [param_a, is_reducing] in params:
         trees_matrix = TreesMatrix("../../input/xtg/*.xtg", max_level=max_level, is_reducing=is_reducing,
-                                   use_min_common_depth=use_min_common_depth)
+                                   use_min_common_depth=use_min_common_depth, use_flipping=use_flipping)
 
         johansen_trees_matrix = TreesMatrix("../../input/xtg_johansen/*.xtg", max_level=max_level,
-                                            is_reducing=is_reducing, use_min_common_depth=use_min_common_depth)
+                                            is_reducing=is_reducing, use_min_common_depth=use_min_common_depth,
+                                            use_flipping=use_flipping)
 
         trees = trees_matrix.vertices
         johansen_trees = johansen_trees_matrix.vertices
 
-        global_params = GlobalParams(max_level=max_level, param_a=param_a, use_min_common_depth=True)
+        global_params = GlobalParams(max_level=max_level, param_a=param_a, use_min_common_depth=True,
+                                     use_flipping=use_flipping)
 
         matches_number = 0
         print(f"Johansen-Batygina types to species distance, is_reducing: True, param_a: 0.5, division_weight: 1.0, "
@@ -56,11 +58,11 @@ def do_it():
             # min_dist = (-1, 1.0E+100)
             for j in range(len(johansen_trees)):
                 min_reduced_depth = min(trees[i].root.reduced_depth, johansen_trees[j].root.reduced_depth)
-                cut_tree1 = trees[i].roots[min_reduced_depth]
-                cut_tree2 = johansen_trees[j].roots[min_reduced_depth]
+                dist = full_distance(global_params,
+                                     trees[i].roots[min_reduced_depth],
+                                     johansen_trees[j].roots[min_reduced_depth],
+                                     johansen_trees[j].flipped_roots[min_reduced_depth])
 
-                superimposed_node = SuperimposedNode(cut_tree1, cut_tree2)
-                dist = superimposed_node.full_distance(global_params)
                 res.append((dist, johansen_trees_matrix.names[j]))
                 # draw_tree(trees[i], johansen_trees[j], global_params, dist, 0, "johansen")
 

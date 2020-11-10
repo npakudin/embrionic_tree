@@ -74,13 +74,14 @@ def to_full_matrix(left_bottom_matrix):
 
 
 class TreesMatrix:
-    def __init__(self, experiment_pattern, max_level=10, is_reducing=True, use_min_common_depth=False):
+    def __init__(self, experiment_pattern, max_level=10, is_reducing=True, use_min_common_depth=False,
+                 use_flipping=False):
         vertices = read_all_trees(pattern=experiment_pattern)
 
         self.vertices = sorted(list(vertices), key=lambda x: x.name)
         self.names = [v.name for v in self.vertices]
 
-        prepare_trees(self.vertices, max_level, is_reducing, use_min_common_depth)
+        prepare_trees(self.vertices, max_level, is_reducing, use_min_common_depth, use_flipping)
 
     def make_full_experiment_matrix(self, global_params):
         left_bottom_matrix = self.make_experiment_matrix(global_params)
@@ -93,8 +94,17 @@ class TreesMatrix:
         for i in range(len(trees)):
             experiment_matrix.append([])
             for j in range(i):
-                superimposed_node = SuperimposedNode(trees[i].root, trees[j].root)
-                dist = superimposed_node.full_distance(global_params, pattern=pattern)
+                dist = full_distance(global_params, trees[i].root, trees[j].root, trees[j].flipped_root, pattern=pattern)
+
                 experiment_matrix[i].append(dist)
 
         return experiment_matrix
+
+
+def full_distance(global_params, root1, root2, flipped_root2, pattern=INFINITE_PATTERN):
+    dist1 = SuperimposedNode(root1, root2).full_distance(global_params, pattern=pattern)
+    dist2 = dist1
+    if global_params.use_flipping:
+        dist2 = SuperimposedNode(root1, flipped_root2).full_distance(global_params, pattern=pattern)
+    return min(dist1, dist2)
+
