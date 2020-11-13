@@ -30,6 +30,7 @@ def short_embryo_name(name):
 def do_it():
     max_level = 10
     use_min_common_depth = True
+    use_flipping = False
 
     # [param_a, is_reducing]
     params = [[0.5, True], [1.0, False]]
@@ -58,10 +59,15 @@ def do_it():
             # min_dist = (-1, 1.0E+100)
             for j in range(len(johansen_trees)):
                 min_reduced_depth = min(trees[i].root.reduced_depth, johansen_trees[j].root.reduced_depth)
+
+                flipped_root = None
+                if use_flipping:
+                    flipped_root = johansen_trees[j].flipped_roots[min_reduced_depth]
+
                 dist = full_distance(global_params,
                                      trees[i].roots[min_reduced_depth],
                                      johansen_trees[j].roots[min_reduced_depth],
-                                     johansen_trees[j].flipped_roots[min_reduced_depth])
+                                     flipped_root)
 
                 res.append((dist, johansen_trees_matrix.names[j]))
                 # draw_tree(trees[i], johansen_trees[j], global_params, dist, 0, "johansen")
