@@ -4,7 +4,8 @@ import scipy.spatial.distance as ssd
 from scipy.cluster import hierarchy
 
 from src.cluster_trees.clustering import corr_clustered_trees
-from src.multiple_trees.matrix_diff import MatrixDiff, to_full_matrix
+from src.multiple_trees.matrix_diff import MatrixDiff
+from src.multiple_trees.trees_matrix import to_full_matrix
 from src.single_tree.global_params import GlobalParams
 
 

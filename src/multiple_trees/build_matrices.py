@@ -144,8 +144,8 @@ def create_fun(param_a):
 def do_it():
     # param_a = np.linspace(0.1, 1.0, 10)
     param_a = 0.5
-    g_weight = np.linspace(0.0, 1.0, 11)
-    chain_length = np.linspace(0.0, 1.0, 11)
+    g_weight = np.linspace(0.0, 1.0, 6)
+    chain_length = np.linspace(0.0, 1.0, 6)
     # chain_length = 0.0
 
     X, Y = np.meshgrid(g_weight, chain_length)

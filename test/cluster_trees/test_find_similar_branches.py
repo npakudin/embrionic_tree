@@ -2,8 +2,9 @@ from unittest import TestCase
 
 from scipy.cluster import hierarchy
 from src.cluster_trees.find_similar_branches import find_similar_branches
-from src.multiple_trees.matrix_diff import to_full_matrix
 import scipy.spatial.distance as ssd
+
+from src.multiple_trees.trees_matrix import to_full_matrix
 
 
 def tree_to_matr(t):

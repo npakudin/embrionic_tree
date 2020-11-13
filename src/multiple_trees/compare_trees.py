@@ -4,7 +4,7 @@ from src.multiple_trees.trees_matrix import full_distance
 from src.single_tree.development_tree_reader import read_all_trees
 
 
-def get_distances_by_files(pattern, global_params, is_reducing, use_min_common_depth=False):
+def get_distances_by_files(pattern, global_params, is_reducing, use_flipping=False, use_min_common_depth=False):
     # read trees from *.xtg files in xtg folder
     src_trees = read_all_trees(pattern=pattern)
 
@@ -15,7 +15,7 @@ def get_distances_by_files(pattern, global_params, is_reducing, use_min_common_d
     for tree in trees:
         if is_reducing:
             tree.reduce()
-        tree.prepare(use_min_common_depth)
+        tree.prepare(use_min_common_depth, use_flipping)
 
     # calculate distances matrix
     distance_matrix = [[full_distance(global_params, v1.root, v2.root, v2.flipped_root) for v2 in trees] for v1 in trees]

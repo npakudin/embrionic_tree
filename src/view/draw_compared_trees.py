@@ -266,6 +266,6 @@ def get_prepared_trees(is_reducing, max_level, use_min_common_depth=False, use_f
 
     trees = trees_matrix.vertices
     for tree in trees:
-        tree.prepare(use_min_common_depth)
+        tree.prepare(use_min_common_depth, use_flipping)
 
     return trees
