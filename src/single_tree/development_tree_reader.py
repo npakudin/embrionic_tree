@@ -20,7 +20,10 @@ def parse_xml_node(xml, name, src_level, address):
 
     assert len(data) == 2, f"name: {name}, data: {data}"  # error message on wrong input
 
-    if data[1] == 's' or data[1] == 'e':
+    if data[1] == 'e':
+        # chain item, no growth
+        node.axis = Axis.LEAVE
+    elif data[1] == 's':
         # chain item, no growth
         node.axis = Axis.GROWTH
         node.growth = 1
@@ -41,14 +44,20 @@ def parse_xml_node(xml, name, src_level, address):
             elif data[1] == "d" or data[1] == "xy":
                 node.axis = Axis.DIAGONAL
                 # print(f"diagonal {name}")
+            elif data[1] == "a":
+                node.axis = Axis.APOPTOSIS
+            elif data[1] == "n":
+                node.axis = Axis.NONE
+                node.reduced_depth = 0
+                node.leaves_number = 0
             else:
                 assert False, f"wrong node description: '{data[0]} {data[1]}' in file: {name}, address: {address}"
 
     children = xml.findall('b:Node', ns)
     assert len(children) <= 2, f"name: {name}, children: {children}"
 
-    # if no children - it's a leave
-    if len(children) == 0:
+    # if no children - it's a leave:
+    if len(children) == 0 and node.axis == Axis.GROWTH:
         node.axis = Axis.LEAVE
 
     if len(children) > 0:
