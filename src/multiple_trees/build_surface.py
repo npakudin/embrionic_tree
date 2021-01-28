@@ -164,6 +164,8 @@ def do_it():
 
 
 do_it()
+#get_corrcoef(0.5, 0, 0)
+
 
 # param_a: 0.35, corrcoef: 0.4430 - level_weight_multiplier=[1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2]
 # param_a: 0.30, corrcoef: 0.4616 - level_weight_multiplier=[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]

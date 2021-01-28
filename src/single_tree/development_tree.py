@@ -67,6 +67,14 @@ class TreeNode:
         right_str = "" if self.right.is_none() else self.right.full_tree_str()
         return f"({left_str}, {right_str})"
 
+    def full_axis_tree_str(self):
+        left_str = "" if self.left.is_none() else self.left.full_axis_tree_str()
+        right_str = "" if self.right.is_none() else self.right.full_axis_tree_str()
+        children_str = ""
+        if left_str != "" or right_str != "":
+            children_str = f"({left_str}, {right_str})"
+        return f"{self.axis}{children_str}"
+
     # cut tree to max_level if more levels exist in the source tree
     def cut(self, max_level):
         self.internal_cut(0, max_level)
@@ -97,10 +105,10 @@ class TreeNode:
             self.right = tmp
 
     # merge chains (nodes in line without division) into single edge
-    def reduce(self):
-        self.internal_reduce(parent_growth=1, chain_length=1)
+    def reduce(self, is_test_nodes=False):
+        self.internal_reduce(is_test_nodes=is_test_nodes, parent_growth=1, chain_length=1)
 
-    def internal_reduce(self, parent_growth, chain_length):
+    def internal_reduce(self, is_test_nodes, parent_growth, chain_length):
         if self.is_none():
             return self
 
@@ -110,21 +118,24 @@ class TreeNode:
         self.growth = self.growth * parent_growth
 
         # HACK to remove axis Z
-        if self.axis == Axis.Z:
-            self.axis = Axis.GROWTH
-            self.right = NONE_NODE
+        if not is_test_nodes:
+            if self.axis == Axis.Z:
+                self.axis = Axis.GROWTH
+                self.right = NONE_NODE
 
         if self.left.is_none() and self.right.is_none():
-            self.axis = Axis.LEAVE  # this is a leave
+            if not is_test_nodes:
+                # it's OK in test_input - to draw X at the last level for illustration in the paper
+                assert self.axis == Axis.LEAVE, f"Invalid node type: {self.axis} for node {self.address}"
             return self
         if self.right.is_none():
             # if continue chain - add 1 to its' length
-            return self.left.internal_reduce(parent_growth=self.growth, chain_length=chain_length + 1)
+            return self.left.internal_reduce(is_test_nodes=is_test_nodes, parent_growth=self.growth, chain_length=chain_length + 1)
         # assert self.left is not None
 
         # if there is a division - set length to 1
-        self.left = self.left.internal_reduce(parent_growth=1, chain_length=1)
-        self.right = self.right.internal_reduce(parent_growth=1, chain_length=1)
+        self.left = self.left.internal_reduce(is_test_nodes=is_test_nodes, parent_growth=1, chain_length=1)
+        self.right = self.right.internal_reduce(is_test_nodes=is_test_nodes, parent_growth=1, chain_length=1)
 
         return self
 
@@ -217,8 +228,8 @@ class Tree:
     def cut(self, max_level):
         self.root.internal_cut(0, max_level)
 
-    def reduce(self):
-        self.root.internal_reduce(parent_growth=1, chain_length=1)
+    def reduce(self, is_test_nodes=False):
+        self.root.internal_reduce(is_test_nodes=is_test_nodes, parent_growth=1, chain_length=1)
 
     def prepare(self, use_min_common_depth, use_flipping):
         self.root.internal_prepare(0)

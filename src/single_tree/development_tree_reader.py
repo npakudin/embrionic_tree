@@ -6,7 +6,7 @@ ns = {'b': 'http://bioinfweb.info/xmlns/xtg'}
 
 
 # name is necessary for debug and input control
-def parse_xml_node(xml, name, src_level, address):
+def parse_xml_node(xml, name, src_level, address, is_test_nodes):
     data = xml.find('b:Branch', ns).find('b:TextLabel', ns).attrib['Text'].replace(",", ".").lower().split(' ')
 
     node = TreeNode(address=address, src_level=src_level, left=NONE_NODE, right=NONE_NODE)
@@ -51,19 +51,27 @@ def parse_xml_node(xml, name, src_level, address):
                 node.reduced_depth = 0
                 node.leaves_number = 0
             else:
-                assert False, f"wrong node description: '{data[0]} {data[1]}' in file: {name}, address: {address}"
+                assert False, f"wrong node description: '{data[0]} {data[1]}'. File: {name}, address: {address}"
 
     children = xml.findall('b:Node', ns)
     assert len(children) <= 2, f"name: {name}, children: {children}"
 
     # if no children - it's a leave:
-    if len(children) == 0 and node.axis == Axis.GROWTH:
-        node.axis = Axis.LEAVE
+    if len(children) == 0:
+        if node.axis == Axis.LEAVE or node.axis == Axis.APOPTOSIS:
+            pass # it's OK
+        else:
+            if node.axis == Axis.GROWTH:
+                node.axis = Axis.LEAVE
+            else:
+                if not is_test_nodes:
+                    # it's OK in test_input - to draw X at the last level for illustration in the paper
+                    assert False, f"invalid node type for 0 children: '{node.axis}'. File: {name}, address: {address}"
 
     if len(children) > 0:
-        node.left = parse_xml_node(xml=children[0], name=name, src_level=src_level + 1, address=address + ".L")
+        node.left = parse_xml_node(xml=children[0], name=name, src_level=src_level + 1, address=address + ".L", is_test_nodes=is_test_nodes)
     if len(children) > 1:
-        node.right = parse_xml_node(xml=children[1], name=name, src_level=src_level + 1, address=address + ".R")
+        node.right = parse_xml_node(xml=children[1], name=name, src_level=src_level + 1, address=address + ".R", is_test_nodes=is_test_nodes)
 
     return node
 
@@ -78,28 +86,33 @@ def parse_name_type(name_type):
     return name_type, name_type
 
 
-def read_tree_from_xml(filename):
+def read_tree_from_xml(filename, is_test_nodes):
     path = filename.split('/')
     # "../input/xtg/Arabidopsis_thaliana_onagrad.xtg" => "Arabidopsis_thaliana_onagrad"
     filename_type = path[len(path) - 1][:-4]
     (name, embryo_type) = parse_name_type(filename_type)
 
     root = parse_xml_node(xml=ElementTree.parse(filename).getroot().find('b:Tree', ns).find('b:Node', ns),
-                          name=name, src_level=0, address="Z")
+                          name=name, src_level=0, address="Z", is_test_nodes=is_test_nodes)
 
     return Tree(root, name=name, embryo_type=embryo_type)
 
 
-def read_all_trees(pattern):
+def read_all_trees(pattern, is_test_nodes=False, max_level=11):
     # read source files
     filenames = glob.glob(pattern)
     filenames.sort()
-    src_trees = [read_tree_from_xml(filename) for filename in filenames]
+    src_trees = [read_tree_from_xml(filename, is_test_nodes) for filename in filenames]
 
-    # # cut to max_level and assert, that all files has at least 11 levels
-    # for src_tree in src_trees:
-    #     src_tree.cut(max_level)
-    #
-    #     #assert src_tree.depth == max_level - 1, f"{src_tree.name}, {src_tree.depth}"
+    # it's very important to cut trees here, BEFORE reduce
+    # Example: distance between chain_13 and chain_13_with_division_at_12 = 0
+    # cut all to 11 (10, because it's 0-based) levels to ignore over_levels if we have 12 or 13 for some species
+    # notice: zygote has level=0
+    for src_tree in src_trees:
+        src_tree.cut(max_level - 1)
+
+        # Johansen trees have 4-7 levels, real trees have 11-13 levels (and should be cut to 11)
+        # So cannot assert it
+        #assert src_tree.depth == max_level - 1, f"{src_tree.name}, {src_tree.depth}"
 
     return src_trees
