@@ -17,6 +17,7 @@ def draw_plot(clustered_trees, names, plot_name, filename):
     hierarchy.dendrogram(clustered_trees,
                          labels=np.array([x.replace('_', ' ') for x in names], np.str),
                          #labels=np.array([x for x in names], np.str),
+                         link_color_func=lambda k: "black",
                          orientation='right', count_sort='ascending', distance_sort='ascending')
     fig.savefig(filename)
     plt.close(fig)
