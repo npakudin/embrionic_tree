@@ -62,7 +62,8 @@ def parse_xml_node(xml, name, src_level, address, is_test_nodes):
             pass # it's OK
         else:
             if node.axis == Axis.GROWTH:
-                node.axis = Axis.LEAVE
+                if not is_test_nodes and node.growth != 1.0:
+                    node.axis = Axis.LEAVE
             else:
                 if not is_test_nodes:
                     # it's OK in test_input - to draw X at the last level for illustration in the paper

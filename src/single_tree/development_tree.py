@@ -1,8 +1,8 @@
 import copy
 
 
-# order should be: x < d < у < z < L < N
-# to provide it, use lexicographic order of: x < xd < у < z < zLeave < zzGrowth
+# order should be: x < y < D < Leave < z < G() < A < N
+# to provide it, use lexicographic order
 class Axis:
     X = 'x'
     Y = 'y'
@@ -12,6 +12,19 @@ class Axis:
     GROWTH = 'zGrowth'
     APOPTOSIS = 'zzApoptosis'
     NONE = 'zzNone'  # for really not existing node
+
+
+def axis_short_str(axis):
+    return {
+        Axis.X: 'X',
+        Axis.Y: 'Y',
+        Axis.DIAGONAL: 'D',
+        Axis.LEAVE: 'L',
+        Axis.Z: 'Z',
+        Axis.GROWTH: 'G',
+        Axis.APOPTOSIS: 'A',
+        Axis.NONE: 'N',
+    }[axis]
 
 
 def dist_div(axis1, axis2):
@@ -201,6 +214,36 @@ class TreeNode:
     #     cur_res = handler(self, params)
     #     return cur_res
 
+    def __eq__(self, other):
+        return self.axis == other.axis and self.growth == other.growth
+
+    def __gt__(self, other):
+        if self.axis != other.axis:
+            return self.axis > other.axis
+        else:
+            return self.growth > other.growth
+
+    def to_array(self, depth):
+        if self.is_none():
+            return [NONE_NODE] * int(pow(2, depth) - 1)
+
+        return self.left.to_array(depth-1) + [self] + self.right.to_array(depth-1)
+
+    def to_standard_form(self, depth):
+        if self.is_none():
+            return
+
+        self.left.to_standard_form(depth-1)
+        self.right.to_standard_form(depth-1)
+
+        left_str = self.left.to_array(depth-1)
+        right_str = self.right.to_array(depth-1)
+
+        if left_str > right_str:
+            tmp = self.left
+            self.left = self.right
+            self.right = tmp
+
     def is_none(self):
         return self.axis == Axis.NONE
 
@@ -253,12 +296,20 @@ class Tree:
 
         self.root.calculate_leaves_number()
 
+    def to_string(self, depth):
+        return "".join(map(lambda node: axis_short_str(node.axis), self.root.to_array(depth)))
+
+    def to_standard_form(self, depth):
+        return self.root.to_standard_form(depth)
+
 
 NONE_NODE = TreeNode()
 NONE_NODE.left = NONE_NODE
 NONE_NODE.right = NONE_NODE
 NONE_NODE.reduced_depth = 0
 NONE_NODE.leaves_number = 0
+NONE_NODE.axis = Axis.NONE
+NONE_NODE.growth = 1.0
 
 
 INFINITE_PATTERN = TreeNode(axis=Axis.X)

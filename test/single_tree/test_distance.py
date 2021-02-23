@@ -1,6 +1,8 @@
+import copy
 from unittest import TestCase
 
 from src.multiple_trees.compare_trees import get_distances_by_files
+from src.single_tree.development_tree_reader import read_all_trees
 from src.single_tree.global_params import GlobalParams
 
 global_params = GlobalParams(max_level=11, param_a=0.6, g_weight=0.1, chain_length_weight=0.1)
@@ -137,3 +139,42 @@ class TestDistance(TestCase):
         #                                                    GlobalParams(max_level=11), is_reducing=False)
         #
         # self.assertAlmostEqual(1.00, matr[0][1])
+
+    def test_to_standard_form_growth(self):
+        # read trees from *.xtg files in xtg folder
+        src_trees = read_all_trees(pattern="../../test/test_input/test_standard_form_growth_*.xtg", is_test_nodes=True)
+
+        # create a copy of trees to modify
+        trees = [copy.deepcopy(src_tree) for src_tree in src_trees]
+
+        self.assertEqual("XGN X XGN".replace(" ", ""), trees[0].to_string(3))
+        self.assertEqual("XGN X XGN".replace(" ", ""), trees[1].to_string(3))
+
+        trees[0].to_standard_form(3)
+        trees[1].to_standard_form(3)
+
+        self.assertEqual(trees[1].root.to_array(3), trees[0].root.to_array(3))  # equal after standartization
+        self.assertNotEqual(src_trees[1].root.to_array(3), trees[1].root.to_array(3))  # changed
+
+        self.assertEqual(src_trees[0].root.to_array(3), trees[0].root.to_array(3))  # not changed during standartization
+
+    def test_to_standard_form_completion(self):
+        # read trees from *.xtg files in xtg folder
+        src_trees = read_all_trees(pattern="../../test/test_input/test_standard_form_compl_*.xtg", is_test_nodes=True)
+
+        # create a copy of trees to modify
+        trees = [copy.deepcopy(src_tree) for src_tree in src_trees]
+
+        self.assertEqual("ZDG X NAN".replace(" ", ""), trees[0].to_string(3))
+        self.assertEqual("NAN X GDZ".replace(" ", ""), trees[1].to_string(3))
+
+        trees[0].to_standard_form(3)
+        trees[1].to_standard_form(3)
+
+        self.assertEqual("ZDG X NAN".replace(" ", ""), trees[0].to_string(3))
+
+        self.assertEqual(trees[1].root.to_array(3), trees[0].root.to_array(3))  # equal after standartization
+        self.assertNotEqual(src_trees[1].root.to_array(3), trees[1].root.to_array(3))  # changed
+
+        self.assertEqual(src_trees[0].root.to_array(3), trees[0].root.to_array(3))  # not changed during standartization
+
