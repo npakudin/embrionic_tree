@@ -134,9 +134,9 @@ class TreeDrawer:
             return [0, 0]
 
         color = self.draw_settings.color_eq
-        if superimposed_node.n1.is_none():
+        if superimposed_node.n2.is_none():
             color = self.draw_settings.color_left
-        elif superimposed_node.n2.is_none():
+        elif superimposed_node.n1.is_none():
             color = self.draw_settings.color_right
         elif superimposed_node.n1.axis != superimposed_node.n2.axis:
             color = self.draw_settings.color_ineq
