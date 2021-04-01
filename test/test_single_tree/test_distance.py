@@ -12,7 +12,7 @@ class TestDistance(TestCase):
     # def test_chain_length_exist(self):
     #     is_reducing = True
     #     global_params_copy = copy.deepcopy(global_params)
-    #     [_trees, matr] = get_distances_by_files("../../test/test_input/test_chain_level_only_*.xtg", global_params_copy, is_reducing)
+    #     [_trees, matr] = get_distances_by_files("test/test_input/test_chain_level_only_*.xtg", global_params_copy, is_reducing)
     #     # `a` at level 1  +  2*a^2 at level 2
     #     expected_distance = global_params_copy.chain_length_weight *\
     #                         (math.pow(global_params_copy.param_a, 1) + math.pow(global_params_copy.param_a, 2) * 2)
@@ -22,19 +22,19 @@ class TestDistance(TestCase):
     #     is_reducing = True
     #     global_params_copy = copy.deepcopy(global_params)
     #     global_params_copy.chain_length_weight = 0
-    #     [_trees, matr] = get_distances_by_files("../../test/test_input/test_chain_level_only_*.xtg", global_params_copy, is_reducing)
+    #     [_trees, matr] = get_distances_by_files("test/test_input/test_chain_level_only_*.xtg", global_params_copy, is_reducing)
     #     expected_distance = 0
     #     self.assertAlmostEqual(expected_distance, matr[0][1])
     #
     # def test_reduce(self):
     #     is_reducing = True
-    #     [_trees, matr] = get_distances_by_files("../../test/test_input/test_reduce*.xtg", GlobalParams(max_level=11), is_reducing)
+    #     [_trees, matr] = get_distances_by_files("test/test_input/test_reduce*.xtg", GlobalParams(max_level=11), is_reducing)
     #     expected_distance = 0
     #     self.assertAlmostEqual(expected_distance, matr[0][1])
 
     # expected_matr = top-right matr (diagonal is excluded)
     def compare(self, path, is_reducing, expected_matr, g_weight=0.0):
-        [_trees, matr] = get_distances_by_files(f"../../test/test_input/{path}",
+        [_trees, matr] = get_distances_by_files(f"test/test_input/{path}",
                                                 GlobalParams(max_level=11, is_test_nodes=True, g_weight=g_weight),
                                                 is_reducing=is_reducing,
                                                 is_test_nodes=True)
@@ -100,49 +100,19 @@ class TestDistance(TestCase):
     def test_m5(self):
         self.compare("paper_m/M5_*.xtg", False, [[0.00, 0.50, 2.00],
                                                        [0.50, 2.00],
-                                                              [2.00]])
-
-
-        # self.compare("paper_m/M5_*.xtg", True,  [[0.50, 0.00, 1.50],
-        #                                                [0.00, 1.25],
-        #                                                       [1.25]])
-        # self.compare("paper_m/M5_*.xtg", False, [[1.00, 0.00, 0.50],
-        #                                                [0.50, 1.50],
-        #                                                       [1.50]])
-
-        # [_trees, matr] = get_distances_by_files("../../test/test_input/paper_m/M5_*.xtg",
-        #                                                    GlobalParams(max_level=11), is_reducing=False)
-        #
-        # self.assertAlmostEqual(1.0, matr[0][1])
-        # self.assertAlmostEqual(0.0, matr[0][2])
-        # self.assertAlmostEqual(0.5, matr[0][3])
-        #
-        # self.assertAlmostEqual(0.5, matr[1][2])
-        # self.assertAlmostEqual(1.5, matr[1][3])
-        #
-        # self.assertAlmostEqual(1.5, matr[2][3])
+                                                             [2.00]])
 
     def test_m6(self):
         self.compare("paper_m/M6_*.xtg", True,  [[1.25]])
         self.compare("paper_m/M6_*.xtg", False, [[1.25]])
 
-        # [_trees, matr] = get_distances_by_files("../../test/test_input/paper_m/M6_*.xtg",
-        #                                                    GlobalParams(max_level=11), is_reducing=False)
-        #
-        # self.assertAlmostEqual(1.25, matr[0][1])
-
     def test_patt(self):
         self.compare("patt_*.xtg", True,  [[0.75]])
         self.compare("patt_*.xtg", False, [[1.00]])
-        #
-        # [_trees, matr] = get_distances_by_files("../../test/test_input/patt_*.xtg",
-        #                                                    GlobalParams(max_level=11), is_reducing=False)
-        #
-        # self.assertAlmostEqual(1.00, matr[0][1])
 
     def test_to_standard_form_growth(self):
         # read trees from *.xtg files in xtg folder
-        src_trees = read_all_trees(pattern="../../test/test_input/test_standard_form_growth_*.xtg", is_test_nodes=True)
+        src_trees = read_all_trees(pattern="test/test_input/test_standard_form_growth_*.xtg", is_test_nodes=True)
 
         # create a copy of trees to modify
         trees = [copy.deepcopy(src_tree) for src_tree in src_trees]
@@ -160,7 +130,7 @@ class TestDistance(TestCase):
 
     def test_to_standard_form_completion(self):
         # read trees from *.xtg files in xtg folder
-        src_trees = read_all_trees(pattern="../../test/test_input/test_standard_form_compl_*.xtg", is_test_nodes=True)
+        src_trees = read_all_trees(pattern="test/test_input/test_standard_form_compl_*.xtg", is_test_nodes=True)
 
         # create a copy of trees to modify
         trees = [copy.deepcopy(src_tree) for src_tree in src_trees]

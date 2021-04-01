@@ -3,30 +3,6 @@ from src.single_tree.global_params import GlobalParams
 from src.single_tree.superimposed_tree import SuperimposedNode
 
 
-def first_vowel(s, from_index=1):
-    vowels = ['a', 'e', 'i', 'o', 'u', 'y']
-    for i in range(from_index, len(s)):
-        if s[i] in vowels:
-            return i
-    return len(s)
-
-
-# # 'Arabidopsis_thaliana' => 'Arab. t.'
-# def short_sp_name(name):
-#     genus_index = first_vowel(name, from_index=3)
-#     underscore_index = name.find('_')
-#     dot = "." if genus_index < underscore_index else ""
-#     genus_index = min(genus_index, underscore_index)
-#
-#     personal_name = name[underscore_index + 1:]
-#     personal_index = first_vowel(personal_name)
-#     return f"{name[:genus_index]}{dot} {personal_name[:personal_index]}."
-
-
-def short_embryo_name(name):
-    return name.replace("caryophyllad", "caryophyll.").replace("chenopodiad", "chenopod.")
-
-
 def do_it():
     max_level = 10
     use_min_common_depth = True
