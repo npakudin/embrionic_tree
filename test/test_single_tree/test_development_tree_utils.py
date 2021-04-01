@@ -35,7 +35,7 @@ class TestDistance(TestCase):
         is_reducing = False
         use_flipping = False
         use_min_common_depth = False
-        trees = read_all_trees(pattern="../../test/test_input/development_tree_utils/*.xtg")
+        trees = read_all_trees(pattern="test/test_input/development_tree_utils/*.xtg")
 
         # prepare to calculate distances
         for tree in trees:

@@ -29,9 +29,7 @@ def trees_to_clustering(trees):
 
 
 class TestClustering(TestCase):
-    def __init__(self):
-        super().__init__()
-
+    def setUp(self):
         self.t1 = ((0, 1), (2, 3))
         self.t2 = (((0, 1), 2), 3)
         self.t3 = (((0, 2), 1), 3)
