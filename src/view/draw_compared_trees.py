@@ -3,7 +3,6 @@ from pathlib import Path
 from PIL import Image, ImageDraw
 from PIL.ImageFont import truetype
 
-from src.multiple_trees.matrix_diff import MatrixDiff
 from src.multiple_trees.trees_matrix import TreesMatrix
 from src.single_tree.development_tree import Axis
 from src.single_tree.superimposed_tree import SuperimposedNode
@@ -24,25 +23,51 @@ def load_font(font_path=FONT_PATH, font_size=FONT_SIZE):
     return arial_font
 
 
-def axis_node_caption(n1, n2):
-    if n1.axis == Axis.X or n1.axis == Axis.Y or n1.axis == Axis.Z:
-        return f"{n1.axis.upper()}"
-    elif n1.axis == Axis.DIAGONAL:
+def single_axis_node_caption(node):
+    if node.axis == Axis.X or node.axis == Axis.Y or node.axis == Axis.Z:
+        return f"{node.axis.upper()}"
+    elif node.axis == Axis.DIAGONAL:
         return "D"
+    elif node.axis == Axis.APOPTOSIS:
+        return "A"
+    elif node.axis == Axis.NONE:
+        return "N"
+    elif node.axis == Axis.LEAVE:
+        return "L"
     return ""
 
 
-def unreduced_node_caption_1(n1, n2):
-    res = axis_node_caption(n1, n2)
+def single_node_caption_1(node):
+    res = single_axis_node_caption(node)
 
-    if n1.growth is not None and n1.growth != 1.0:
-        res = f"{n1.growth:.1f}"
+    if node.growth is not None and node.growth != 1.0:
+        res = f"{node.growth:.1f},{res}".strip(",")
+
+    return res.strip()
+
+
+def not_empty_single_node_caption_1(node):
+    res = single_node_caption_1(node)
+    if not res:
+        res = "1.0"
+    return res
+
+
+def double_node_caption_1(n1, n2):
+    a1 = not_empty_single_node_caption_1(n1)
+    a2 = not_empty_single_node_caption_1(n2)
+
+    return f"{a1}/{a2}"
+
+
+def unreduced_node_caption_1(n1, n2):
+    res = single_axis_node_caption(n1)
 
     return res.strip()
 
 
 def reduced_node_caption_1(n1, n2):
-    return axis_node_caption(n1, n2)
+    return single_axis_node_caption(n1)
 
 
 def reduced_node_caption_2(n1, n2):
@@ -156,8 +181,7 @@ class TreeDrawer:
         if not superimposed_node.left.is_none():
             # is_right_exists = not superimposed_node.right.is_none()
             # right = center_x if is_right_exists else border_right
-            right = border_left + (
-                    border_right - border_left) * superimposed_node.left.leaves_number / superimposed_node.leaves_number
+            right = border_left + (border_right - border_left) * superimposed_node.left.leaves_number / superimposed_node.leaves_number
 
             [add_max_dist, add_min_dist] = self.draw_superimposed_node(superimposed_node.left,
                                                                        border_left, border_top, right, item_top,
@@ -168,8 +192,7 @@ class TreeDrawer:
         if not superimposed_node.right.is_none():
             # is_left_exists = not superimposed_node.left.is_none()
             # left = center_x if is_left_exists else border_left
-            left = border_left + (
-                    border_right - border_left) * superimposed_node.left.leaves_number / superimposed_node.leaves_number
+            left = border_left + (border_right - border_left) * superimposed_node.left.leaves_number / superimposed_node.leaves_number
 
             [add_max_dist, add_min_dist] = self.draw_superimposed_node(superimposed_node.right,
                                                                        left, border_top, border_right, item_top,
@@ -185,7 +208,7 @@ class TreeDrawer:
                           outline='black')
 
         node_caption_1 = self.draw_settings.node_caption_1(superimposed_node.n1, superimposed_node.n2)
-        self.draw_caption(node_caption_1, item_left, item_top + 4)
+        self.draw_caption(node_caption_1, item_left, item_top + (ITEM_SIZE - self.draw_settings.font.size) / 2)
 
         node_caption_2 = self.draw_settings.node_caption_2(superimposed_node.n1, superimposed_node.n2)
         self.draw_caption(node_caption_2, item_left, item_top + 30)
@@ -224,6 +247,8 @@ class TreeDrawer:
         else:
             image_height += 60
 
+        image_width = max(image_width, 400)
+
         im = Image.new('RGBA', [image_width, image_height], (255, 255, 255, 255))
         self.draw = ImageDraw.Draw(im)
 
@@ -254,10 +279,13 @@ class TreeDrawer:
 
         del self.draw
 
-        path = f"../../output/{folder}"
-        Path(path).mkdir(parents=True, exist_ok=True)
-        name = tree1.name if tree1.name == tree2.name else f"{tree1.name}-{tree2.name}"
-        im.save(f"{path}/{name}.png")
+        if folder:
+            path = f"output/{folder}"
+            Path(path).mkdir(parents=True, exist_ok=True)
+            name = tree1.name if tree1.name == tree2.name else f"{tree1.name}-{tree2.name}"
+            im.save(f"{path}/{name}.png")
+
+        return im
 
 
 def get_prepared_trees(is_reducing, max_level, use_min_common_depth=False, use_flipping=False):

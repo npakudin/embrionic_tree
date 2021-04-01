@@ -82,7 +82,7 @@ class SuperimposedNode:
         self.number_on_level = start_numbers[self.get_reduced_level()]
 
         [n1, n2] = self.ordered_nodes()
-        if n1.axis == Axis.LEAVE and (n2.axis == Axis.LEAVE or n2.is_none()):
+        if n1.is_leave() and (n2.is_leave() or n2.is_none()):
             self.leaves_number = 1
             self.leftest_leave_number = self.number_on_level
         else:

@@ -244,11 +244,13 @@ class TreeNode:
             self.left = self.right
             self.right = tmp
 
-    def is_none(self):
-        return self.axis == Axis.NONE
+    def is_leave(self):
+        return self.left.is_none() and self.right.is_none()
+        # return self.axis == Axis.LEAVE - cannot use for illustrating trees with showed Null nodes
 
-    def is_exist(self):
-        return self.axis != Axis.NONE
+    def is_none(self):
+        return self.left is self
+        # return self.axis == Axis.NONE - cannot use for illustrating trees with showed Null nodes
 
 
 class Tree:
