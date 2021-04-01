@@ -11,7 +11,8 @@ ITEM_SIZE = 32
 ITEM_SPACE = 20
 FONT_SIZE = 19
 LEGEND_FONT_SIZE = 30
-FONT_PATH = "/Library/Fonts/Arial.ttf"
+#FONT_PATH = "/Library/Fonts/Arial.ttf"
+FONT_PATH = "input/fonts/Alike-Regular.ttf"
 
 
 def load_font(font_path=FONT_PATH, font_size=FONT_SIZE):
@@ -49,7 +50,7 @@ def single_node_caption_1(node):
 def not_empty_single_node_caption_1(node):
     res = single_node_caption_1(node)
     if not res:
-        res = "1.0"
+        res = "G"
     return res
 
 
