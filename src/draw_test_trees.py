@@ -4,16 +4,17 @@ from src.single_tree.development_tree_reader import read_all_trees
 from src.single_tree.development_tree_utils import prepare_trees
 from src.single_tree.global_params import GlobalParams
 from src.view.draw_compared_trees import TreeDrawSettings, TreeDrawer, reduced_node_caption_1, double_node_caption_1, \
-    load_font, FONT_PATH
+    load_font, FONT_PATH, node_dist_caption_2
 
 max_level = 10
 param_a = 0.5
-is_reducing = True
+is_reducing = False
 global_params = GlobalParams(max_level=max_level, param_a=param_a)
 
 draw_settings = TreeDrawSettings(color_left=0xFF285EDD, color_right=0xFFFC7074,
                                  color_eq=0xFFE8E4DE, color_ineq=0xFFE8E4DE,
                                  get_node_caption_1=double_node_caption_1,
+                                 get_node_caption_2=node_dist_caption_2,
                                  font=load_font(FONT_PATH, 10),
                                  legend_font=load_font(FONT_PATH, 20),
                                  width=2000, height=720)

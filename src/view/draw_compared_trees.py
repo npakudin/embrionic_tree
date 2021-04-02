@@ -51,7 +51,7 @@ def single_node_caption_1(node):
 def not_empty_single_node_caption_1(node):
     res = single_node_caption_1(node)
     if not res:
-        res = "G"
+        res = "1.0"
     return res
 
 
@@ -72,7 +72,9 @@ def reduced_node_caption_1(n1, n2):
     return single_axis_node_caption(n1)
 
 
-def reduced_node_caption_2(n1, n2):
+def reduced_node_caption_2(superimposed_node, global_params):
+    n1 = superimposed_node.n1
+    n2 = superimposed_node.n2
     if n1.growth is not None and n1.growth != 1.0:
         res = f"{n1.growth:.1f}; "
     else:
@@ -85,6 +87,10 @@ def reduced_node_caption_2(n1, n2):
 
     return res
     #return f"{n1.growth:.1f}; {n1.chain_length}"
+
+
+def node_dist_caption_2(superimposed_node, global_params):
+    return f"{superimposed_node.node_dist(global_params)}"
 
 
 class TreeDrawSettings:
@@ -109,10 +115,10 @@ class TreeDrawSettings:
             return ""
         return self.get_node_caption_1(n1, n2)
 
-    def node_caption_2(self, n1, n2):
+    def node_caption_2(self, superimposed_node, global_params):
         if self.get_node_caption_2 is None:
             return ""
-        return self.get_node_caption_2(n1, n2)
+        return self.get_node_caption_2(superimposed_node, global_params)
 
     @staticmethod
     def fertility_unreduced():
@@ -218,8 +224,8 @@ class TreeDrawer:
         node_caption_1 = self.draw_settings.node_caption_1(superimposed_node.n1, superimposed_node.n2)
         self.draw_caption(node_caption_1, item_left, item_top)
 
-        node_caption_2 = self.draw_settings.node_caption_2(superimposed_node.n1, superimposed_node.n2)
-        self.draw_caption(node_caption_2, item_left, item_top + 30)
+        node_caption_2 = self.draw_settings.node_caption_2(superimposed_node, self.global_params)
+        self.draw_caption(node_caption_2, item_left, item_top + 25)
 
         # leaves1 = superimposed_node.n1.leaves_number
         # leaves2 = superimposed_node.n2.leaves_number
