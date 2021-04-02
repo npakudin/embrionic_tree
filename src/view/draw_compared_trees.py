@@ -153,7 +153,12 @@ class TreeDrawer:
 
     def draw_caption(self, node_caption, center_x, top):
         text_width = self.draw_settings.font.getsize(node_caption)[0]
-        self.draw.text((center_x + (ITEM_SIZE - text_width) / 2, top), node_caption, fill=0xff000000, font=self.draw_settings.font)
+        text_height = self.draw_settings.font.getsize(node_caption)[1]
+        if len(node_caption) >= 6:
+            node_caption = node_caption.replace("/", "/\n")
+            text_width = self.draw_settings.font.getsize(node_caption.split("\n")[0])[0]
+            text_height = self.draw_settings.font.getsize(node_caption.split("\n")[0])[1] * 2
+        self.draw.text((center_x + (ITEM_SIZE - text_width) / 2, top + (ITEM_SIZE - text_height) / 2 - 2), node_caption, fill=0xff000000, font=self.draw_settings.font)
 
     def draw_superimposed_node(self, superimposed_node, border_left, border_top, border_right, border_bottom, level,
                                parent=None, is_equal_history=True):
@@ -211,7 +216,7 @@ class TreeDrawer:
                           outline='black')
 
         node_caption_1 = self.draw_settings.node_caption_1(superimposed_node.n1, superimposed_node.n2)
-        self.draw_caption(node_caption_1, item_left, item_top + (ITEM_SIZE - self.draw_settings.font.size) / 2)
+        self.draw_caption(node_caption_1, item_left, item_top)
 
         node_caption_2 = self.draw_settings.node_caption_2(superimposed_node.n1, superimposed_node.n2)
         self.draw_caption(node_caption_2, item_left, item_top + 30)

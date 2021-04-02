@@ -8,7 +8,7 @@ from src.view.draw_compared_trees import TreeDrawSettings, TreeDrawer, reduced_n
 
 max_level = 10
 param_a = 0.5
-is_reducing = False
+is_reducing = True
 global_params = GlobalParams(max_level=max_level, param_a=param_a)
 
 draw_settings = TreeDrawSettings(color_left=0xFF285EDD, color_right=0xFFFC7074,
@@ -21,7 +21,7 @@ tree_drawer = TreeDrawer(draw_settings, global_params)
 
 # read and prepare trees: reduce if necessary, precalculate some parameters
 # notice: file names must be "Genus_specie_type.xtg", and it will be shown as "Genus specie"
-trees = read_all_trees(pattern="test/test_input/chains/test_chain*.xtg", is_test_nodes=True, max_level=max_level)
+trees = read_all_trees(pattern="test/test_input/sofa/test_reduce*.xtg", is_test_nodes=True, max_level=max_level)
 #trees = read_all_trees(pattern="test/test_input/paper_m/M2_*.xtg", is_test_nodes=True)
 #trees = read_all_trees(pattern="test/test_input/test_reduce*.xtg", is_test_nodes=True)
 trees = sorted(list(trees), key=lambda x: x.name)
