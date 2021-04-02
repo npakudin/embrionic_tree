@@ -16,7 +16,7 @@ class GlobalParams:
         self.subtree_threshold = subtree_threshold
         self.subtree_multiplier = subtree_multiplier
         if level_weight_multiplier is None:
-            level_weight_multiplier = [1] * 11
+            level_weight_multiplier = [1] * max(11, max_level)
         self.level_weight_multiplier = level_weight_multiplier
         self.use_min_common_depth = use_min_common_depth
         self.use_flipping = use_flipping

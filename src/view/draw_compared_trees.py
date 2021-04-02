@@ -12,7 +12,8 @@ ITEM_SPACE = 20
 FONT_SIZE = 19
 LEGEND_FONT_SIZE = 30
 #FONT_PATH = "/Library/Fonts/Arial.ttf"
-FONT_PATH = "input/fonts/Alike-Regular.ttf"
+#FONT_PATH = "input/fonts/OpenSans-Light.ttf"
+FONT_PATH = "input/fonts/OpenSans-Regular.ttf"
 
 
 def load_font(font_path=FONT_PATH, font_size=FONT_SIZE):
@@ -179,10 +180,11 @@ class TreeDrawer:
 
         total_max_distance = cur_node_distance
         total_min_distance = cur_node_distance
+        new_border = border_left + (border_right - border_left) * superimposed_node.left.leaves_number / superimposed_node.leaves_number
         if not superimposed_node.left.is_none():
             # is_right_exists = not superimposed_node.right.is_none()
             # right = center_x if is_right_exists else border_right
-            right = border_left + (border_right - border_left) * superimposed_node.left.leaves_number / superimposed_node.leaves_number
+            right = new_border
 
             [add_max_dist, add_min_dist] = self.draw_superimposed_node(superimposed_node.left,
                                                                        border_left, border_top, right, item_top,
@@ -193,7 +195,7 @@ class TreeDrawer:
         if not superimposed_node.right.is_none():
             # is_left_exists = not superimposed_node.left.is_none()
             # left = center_x if is_left_exists else border_left
-            left = border_left + (border_right - border_left) * superimposed_node.left.leaves_number / superimposed_node.leaves_number
+            left = new_border
 
             [add_max_dist, add_min_dist] = self.draw_superimposed_node(superimposed_node.right,
                                                                        left, border_top, border_right, item_top,

@@ -102,6 +102,8 @@ def read_tree_from_xml(filename, is_test_nodes):
 def read_all_trees(pattern, is_test_nodes=False, max_level=11):
     # read source files
     filenames = glob.glob(pattern)
+    if len(filenames) == 0:
+        filenames = glob.glob(f"../../{pattern}")
     filenames.sort()
     src_trees = [read_tree_from_xml(filename, is_test_nodes) for filename in filenames]
 

@@ -25,14 +25,14 @@ class TestDistance(TestCase):
         # if reduce - all trees are the same
         # distance between chain_13 and chain_13_with_division_at_12 = 0
         distance_13_13_with_div_at_12 = 0
-        self.compare("chains/test_chain_*.xtg", True,  [[0, 0, 0],
+        self.compare("chains/test_chain*.xtg", True,  [[0, 0, 0],
                                                            [0, 0],
                                                               [distance_13_13_with_div_at_12]])
 
         # if NO reduce
         dist_level_10 = pow(0.5, 9)  # d(Leave, Growth)
         dist_level_11 = pow(0.5, 10) # d(Leave, Null)
-        dist_chain_10_chain_11 = dist_level_10 +  dist_level_11
+        dist_chain_10_chain_11 = dist_level_10 + dist_level_11
         dist_chain_10_chain_13 = dist_chain_10_chain_11 # equal because of cut at level 11
         dist_chain_11_chain_13 = 0 # equal because of cut at level 11
         self.compare("chains/test_chain_*.xtg", False, [[dist_chain_10_chain_11, dist_chain_10_chain_13, dist_chain_10_chain_13],
@@ -52,12 +52,10 @@ class TestDistance(TestCase):
                                                              [0]],
                      g_weight=0.0)
 
-
     def test_m2(self):
-        self.compare("paper_m/M2_*.xtg", True,  [[0, 0],
-                                                    [0]])
-        self.compare("paper_m/M2_*.xtg", False, [[0, 0],
-                                                    [0]])
+        # cannot reduce, because shown null nodes aren't completely null - they're shown for test purposes
+        #self.compare("paper_m/M2_*.xtg", True, [[0]])
+        self.compare("paper_m/M2_*.xtg", False, [[0]])
 
     def test_m3(self):
         self.compare("paper_m/M3_*.xtg", True,  [[0, 0],

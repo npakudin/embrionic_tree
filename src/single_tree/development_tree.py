@@ -246,11 +246,11 @@ class TreeNode:
 
     def is_leave(self):
         return self.left.is_none() and self.right.is_none()
-        # return self.axis == Axis.LEAVE - cannot use for illustrating trees with showed Null nodes
+        # return self.axis == Axis.LEAVE  # cannot use for illustrating trees with showed Null nodes
 
     def is_none(self):
-        return self.left is self
-        # return self.axis == Axis.NONE - cannot use for illustrating trees with showed Null nodes
+        return (self.axis == Axis.NONE) and (self.left is self)
+        # return self.axis == Axis.NONE  # cannot use for illustrating trees with showed Null nodes
 
 
 class Tree:
