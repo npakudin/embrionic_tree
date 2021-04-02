@@ -35,7 +35,7 @@ class TestDistance(TestCase):
         dist_chain_10_chain_11 = dist_level_10 + dist_level_11
         dist_chain_10_chain_13 = dist_chain_10_chain_11 # equal because of cut at level 11
         dist_chain_11_chain_13 = 0 # equal because of cut at level 11
-        self.compare("chains/test_chain_*.xtg", False, [[dist_chain_10_chain_11, dist_chain_10_chain_13, dist_chain_10_chain_13],
+        self.compare("chains/test_chain*.xtg", False, [[dist_chain_10_chain_11, dist_chain_10_chain_13, dist_chain_10_chain_13],
                                                                                 [dist_chain_11_chain_13, dist_chain_11_chain_13],
                                                                                                          [0]])
 
@@ -43,12 +43,12 @@ class TestDistance(TestCase):
         # if growth > 0, then distance[0][1] > 0
         # then distance[1][2] tests producing growths in the chain
         d_growth_and_no_growth = pow(0.5, 1) * (256 - 1)
-        self.compare("chains/test_*chain_10.xtg", True,  [[d_growth_and_no_growth, d_growth_and_no_growth],
+        self.compare("chains/test_*chain10.xtg", True,  [[d_growth_and_no_growth, d_growth_and_no_growth],
                                                                                    [0]],
                      g_weight=1.0)
 
         # if growth = 0, then distance[0][1] = 0
-        self.compare("chains/test_*chain_10.xtg", True,  [[0, 0],
+        self.compare("chains/test_*chain10.xtg", True,  [[0, 0],
                                                              [0]],
                      g_weight=0.0)
 
@@ -73,6 +73,10 @@ class TestDistance(TestCase):
         self.compare("paper_m/M5_*.xtg", False, [[0.00, 0.50, 2.00],
                                                        [0.50, 2.00],
                                                              [2.00]])
+
+    def test_sofa_reduce(self):
+        self.compare("sofa/test_reduce*.xtg", True,  [[0.00]])
+        self.compare("sofa/test_reduce*.xtg", False, [[1.00]])
 
     # def test_m6(self):
     #     self.compare("paper_m/M6_*.xtg", True,  [[1.25]])
